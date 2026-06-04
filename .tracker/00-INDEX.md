@@ -15,26 +15,11 @@ Implementation progress overview for the Project project.
 
 | Milestone | Name | Progress | Verified | Status |
 |-----------|------|----------|----------|--------|
-| M1 | Climate-aware data layer (YAML migration + region model + derived core) | █████████░ 90% | 46/53 | In Progress |
+| M1 | Climate-aware data layer (YAML migration + region model + derived core) | ██████████ 100% | 53/53 | Complete |
 
 ## Current Focus
 
-### M1 — Climate-aware data layer (YAML migration + region model + derived core)
-
-| Spec | Verified | Status |
-|------|----------|--------|
-| 01-yaml-files-zod-schemas-build-data-codegen.md | 11/11 | Complete |
-| 02-region-entity-and-data-taxonomy-split.md | 7/7 | Complete |
-| 03-core-derive-ts-heat-demand-and-suitability.md | 7/7 | Complete |
-| 04-research-corrections-and-re-pin-goldens.md | 8/8 | Complete |
-| 05-seasonal-heating-and-winter-gated-grow-out.md | 6/6 | Complete |
-| 06-ui-additions-region-selector-vintage-banner-suitability-badges.md | 7/7 | Complete |
-| 07-docs-readme-and-handoff-addendum.md | 0/7 | Not Started |
-
-### Next Action
-**Spec:** `07-docs-readme-and-handoff-addendum.md` — Docs: README and HANDOFF addendum
-**Task:** README.md contains "Data pipeline" section
-**Status:** Pending
+All milestones complete.
 
 ## Blockers
 

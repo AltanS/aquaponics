@@ -299,3 +299,74 @@ All figures gathered ~mid-2026 for Berlin/Brandenburg. Re-verify before relying 
 ---
 
 *End of handoff. The current `aquaponics-calculator.html` is the behavioural reference; when in doubt, match its output, then improve per §5.*
+
+---
+
+## 3. Climate-aware data layer (M1 implementation)
+
+### 3.1 Climate-aware architecture overview
+
+The data layer now models a **region** as the source of three correlated inputs:
+
+- **Climate** — monthly ambient temperature profile (Jan–Dec °C), supplemental light schedule.
+- **Economics** — all prices (fish, crops), energy rates, wage, rent/lease rates.
+- **Enclosure spec** — type (e.g. insulated-greenhouse) and heat-loss factor (W/m²/°C).
+
+Separating biology (universal) from economics (regional) makes it straightforward to add a second region: create one YAML file, and all derived values update automatically.
+
+### 3.2 Data taxonomy
+
+| Tier | Location | Contents |
+|------|----------|----------|
+| Universal biology | `data/fish.yaml`, `data/crops.yaml` | FCR, growMonths, temp bands, cycleDays, difficulty — **no prices** |
+| Universal structure | `data/scales.yaml` | Scale ladder (hobby → mid), baseHeat, growArea, etc. |
+| Regional | `data/regions/<id>.yaml` | All prices (fish + crop price maps), wage, grid/gas/feed rates, climate block, enclosure spec |
+| Derived | Never stored | heatDemand, suitability, monthlyHeatDemand — computed in `src/core/derive.ts` |
+
+The YAML files are the single source of truth. `pnpm run build:data` validates them with zod and emits `src/data/generated.ts` (checked in; zero runtime deps).
+
+### 3.3 `derive.ts` function inventory
+
+All functions are pure and DOM-free (`src/core/derive.ts`):
+
+| Function | Description |
+|----------|-------------|
+| `deriveHeatDemand(species, region, enclosure, scale)` | Annual heat demand kWh/yr. Calibrated so catfish/small = 55000 kWh (= old baseHeat × 1.0 within 0.01%). Uses `REFERENCE_DT=20°C`, `REFERENCE_WATTS_PER_M2=54.608 W/m²`. |
+| `deriveSuitability(species, region)` | Returns `'native' \| 'workable' \| 'costly'` based on ΔT (loop − annual mean): ≤5 → native, 5–15 → workable, >15 → costly. |
+| `deriveMonthlyHeatDemand(species, region, enclosure, scale)` | 12-element kWh/month array. Sum matches annual within ±2% (calendar-month hours vary). |
+| `deriveEffectiveGrowMonths(species, region)` | Nominal growMonths + count of months where ambient < fcMin ("heating off" sensitivity metric — not a hard override). |
+
+### 3.4 Seasonal model
+
+`CalcInputs.monthlyHeatOpex?: number[]` is an optional 12-element array of heat costs in €/month. When passed to `simulateMonthly`, heat is applied per-month rather than flat. Existing callers that omit the field are unaffected.
+
+`inputs.ts` computes `monthlyHeatOpex` from `deriveMonthlyHeatDemand` when the active region is known, enabling a realistic seasonal cash-flow curve (heating costs peak in January, zero in July).
+
+`deriveEffectiveGrowMonths` answers "if heating were off, how many extra months would grow-out take?" — useful for planning sensitivity, not for the main simulation (heating is assumed always on).
+
+### 3.5 Suitability badges
+
+Each fish tab shows a small inline badge: `native` (green), `workable` (amber), or `costly` (red), derived by `deriveSuitability(fish, activeRegion)`. CSS classes: `badge-native`, `badge-workable`, `badge-costly`. Badges are soft warnings — every tab is always selectable (no hard blocks; consistent with the pairing philosophy in §2.7).
+
+### 3.6 Extending the model
+
+**Adding a region:**
+1. Create `data/regions/<id>.yaml` with `meta`, `climate`, `enclosure`, and `economics` blocks.
+2. Add the id to the region enum in `scripts/build-data.ts`.
+3. Add the `<option>` to `index.html` region selector.
+4. Run `pnpm run build:data` and commit.
+
+**Adding a species:**
+1. Add the entry to `data/fish.yaml` (universal biology, no price).
+2. Add `<id>: <price>` to every region's `fishPrices` map.
+3. Run `pnpm run build:data`.
+
+**Changing a research correction:**
+1. Edit the value in the relevant YAML file.
+2. Add or update the inline comment citing your source.
+3. Run `pnpm run build:data`, then `pnpm test` — if a golden fails, recompute from the formula and re-pin with a comment showing the arithmetic.
+4. Commit YAML + generated.ts + updated test.
+
+---
+
+*End of M1 addendum. The baseline prototype (`aquaponics-calculator.html`) remains the behavioural reference for the original 14 golden tests.*

@@ -4,6 +4,10 @@ import type { ScenarioKey } from '../core';
 /** Available region IDs */
 export type RegionId = 'berlin-brandenburg';
 
+/** Main content tabs — sticky header stays visible while tabbing around. */
+export type TabId = 'results' | 'setup' | 'fish' | 'plants' | 'energy';
+export const TAB_IDS: readonly TabId[] = ['results', 'setup', 'fish', 'plants', 'energy'];
+
 export interface AppState {
   scale: ScaleId;
   species: FishId;
@@ -14,6 +18,8 @@ export interface AppState {
   focus: ScenarioKey;
   /** active region (defaults to Berlin/Brandenburg) */
   region: RegionId;
+  /** active main tab */
+  tab: TabId;
 }
 
 export const state: AppState = {
@@ -24,4 +30,5 @@ export const state: AppState = {
   heatpump: true,
   focus: 'lease',
   region: 'berlin-brandenburg',
+  tab: 'results',
 };

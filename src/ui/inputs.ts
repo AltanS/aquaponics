@@ -5,6 +5,18 @@ import type { CalcInputs } from '../core';
 import { num, setVal } from './dom';
 import type { AppState } from './state';
 
+/** Every editable numeric input id — drives reading, and the persisted snapshot. */
+export const INPUT_IDS = [
+  'fishKg', 'fishPrice', 'fcr', 'feedPrice', 'stockCost', 'growMonths',
+  'growArea', 'yieldM2', 'plantPrice', 'seedCost', 'cycleDays',
+  'sysKwh', 'heatDemand', 'cop', 'pvKwp', 'pvYield', 'scRate',
+  'gridPrice', 'feedIn', 'gasPrice', 'omSolar',
+  'pvCostPerKwp', 'hpCostPerKw', 'hpFullLoadHours',
+  'constructionPerM2', 'rentPerM2Month', 'landLeaseYear', 'equipmentCapex',
+  'laborHrs', 'wage', 'waterNut', 'distrib', 'maint',
+  'deprYears', 'horizonYears',
+] as const;
+
 /** Seed the fish-related inputs from the selected species (preset behaviour). */
 export function applyFishPreset(state: AppState): void {
   const f = FISH[state.species];

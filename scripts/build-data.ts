@@ -173,8 +173,10 @@ function buildEntityBlock<T extends object>(
   typeParam: string,
   entities: Record<string, T>,
 ): string {
-  const sortedKeys = Object.keys(entities).sort();
-  const entries = sortedKeys
+  // Preserve YAML authoring order — it is intentional (e.g. the scale ladder
+  // hobby → pilot → small → mid) and deterministic, since the YAML file is the
+  // source of truth. Do NOT sort alphabetically: that scrambles the UI tabs.
+  const entries = Object.keys(entities)
     .map((key) => `  ${key}: ${toTsLiteral(entities[key], 1)},`)
     .join('\n');
   return `export const ${constName} = {\n${entries}\n} as const satisfies Record<string, ${typeParam}>;\n`;
@@ -202,9 +204,9 @@ export function generate(dataDir: string): string {
   );
   const economics = parseRegionFile(join(dataDir, 'regions/berlin-brandenburg.yaml'));
 
-  const fishIds = Object.keys(fish).sort();
-  const cropIds = Object.keys(crops).sort();
-  const scaleIds = Object.keys(scales).sort();
+  const fishIds = Object.keys(fish);
+  const cropIds = Object.keys(crops);
+  const scaleIds = Object.keys(scales);
 
   const { fishPrices: _fp, cropPrices: _cp, rentPerM2Month, wage, deprYears, horizonYears, ...energyFields } = economics;
 

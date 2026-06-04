@@ -12,10 +12,12 @@ import {
 } from '../core';
 import { el } from './dom';
 import { ct, eur, kwh } from './format';
-import { readInputs } from './inputs';
+import { INPUT_IDS, readInputs } from './inputs';
 import { renderChart } from './chart';
+import { renderSpark } from './spark';
 import { renderTable } from './table';
 import { renderPairs, updateCropDots } from './panels';
+import { snapshot } from './persist';
 import type { AppState } from './state';
 
 /** Data-vintage banner text — always visible near results per spec-06. */
@@ -137,6 +139,7 @@ export function render(state: AppState): void {
   el('sk-rbe').textContent = beText(Rs.breakEven, R.ebitda, i.horizon);
 
   renderChart(Ls, Rs, i.horizon);
+  renderSpark(Ls, Rs, i.horizon);
   renderCompare(L, R);
 
   el('e-gen').textContent = kwh(L.E.gen);
@@ -156,4 +159,18 @@ export function render(state: AppState): void {
   renderPairs(state);
   renderBreakdown(s);
   renderVerdict(L, R, Ls.breakEven, Rs.breakEven, s, i.horizon);
+
+  // Persist the full session (selections + every input) to localStorage.
+  const values: Record<string, string | number | boolean> = {
+    scale: state.scale,
+    species: state.species,
+    crop: state.crop,
+    solar: state.solar,
+    heatpump: state.heatpump,
+    focus: state.focus,
+    region: state.region,
+    tab: state.tab,
+  };
+  for (const id of INPUT_IDS) values[id] = el<HTMLInputElement>(id).value;
+  snapshot(values);
 }

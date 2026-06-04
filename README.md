@@ -52,7 +52,15 @@ test/
 - `src/core/` mirrors the calculation reference in HANDOFF.md §4
   (`computeScenario`, `simulateMonthly`, `pairFishPlant`, `indexScore`, …)
   and never touches the DOM.
-- The UI keeps the prototype's markup/CSS and re-renders live on any input.
+- The UI is organised into main tabs (Results · Scale & costs · Fish · Plants ·
+  Energy) under a sticky header that keeps the four key metrics and a cash-flow
+  sparkline visible while adjusting variables. It re-renders live on any input.
+- **Local persistence:** the whole session (selections, toggles, active tab,
+  every input value) is stored in the browser via
+  [TinyBase](https://tinybase.org/) (`src/ui/persist.ts`, localStorage key
+  `aquaponics-calculator`) — same library/pattern as `~/playground/synth`.
+  Reloading restores the exact session; the **Reset** button in the tab bar
+  wipes it back to defaults. TinyBase is the app's only runtime dependency.
 
 ## Domain notes
 
@@ -115,7 +123,7 @@ src/data/generated.ts is stale — run `pnpm build:data` and commit the result
 
 ### Why generated.ts is checked in
 
-- Zero runtime dependencies: `zod` and `yaml` are devDeps only — the bundle is pure TypeScript.
+- No data-pipeline code in the bundle: `zod` and `yaml` are devDeps only — the data ships as plain TypeScript.
 - Fast imports: no file I/O at startup.
 - CI re-validates YAML via `test/schema.test.ts` — a bad edit fails immediately.
 - Diffs are readable: the generated file is sorted and human-inspectable.

@@ -1,2 +1,7 @@
 test/schema.test.ts
 package.json
+README.md
+scripts/build-data.ts
+src/ui/state.ts
+src/ui/inputs.ts
+src/ui/render.ts

@@ -134,3 +134,19 @@ table.yt tr.y0 td{color:var(--ink-2)}
 .vintage-banner{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-s);padding:8px 14px;font-size:12.5px;color:var(--ink-2);margin-bottom:12px}
 .region-label{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-2);margin-left:12px}
 .region-select{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-s);padding:4px 8px;font-size:13px;color:var(--ink);cursor:pointer}
+
+/* ── Main tabs, panes, sparkline ─────────────────────────────────────────── */
+.maintabs{display:flex;flex-wrap:wrap;gap:8px;padding-top:11px}
+.mtab{font:500 13.5px/1 "IBM Plex Sans";color:var(--ink);background:var(--surface);border:1px solid var(--line-2);border-radius:999px;padding:9px 16px;cursor:pointer;transition:all .15s}
+.mtab:hover{border-color:var(--accent)}
+.mtab.on{background:var(--accent);border-color:var(--accent);color:#fff}
+@media (prefers-color-scheme:dark){.mtab.on{color:#0e1311}}
+.mtab.reset{margin-left:auto;color:var(--ink-2);border-style:dashed}
+.mtab.reset:hover{color:var(--bad);border-color:var(--bad)}
+.pane{display:none}
+.pane.on{display:block;animation:panein .18s ease}
+@keyframes panein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.spark{display:flex;align-items:center;min-width:150px}
+.spark svg{display:block}
+.spark .zero{stroke:var(--line-2);stroke-width:1}
+@media (max-width:900px){.spark{display:none}}

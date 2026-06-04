@@ -92,7 +92,7 @@ entities:
   chard:
     label: "Swiss chard"
     cat: Leafy
-    yld: 30
+    yld: 22  # corrected: 22 per research (docs/research/crop-chard.md)
     price: 5
     seedCost: 7
     cycleDays: 48
@@ -106,7 +106,7 @@ entities:
   pakchoi:
     label: "Pak choi"
     cat: Leafy
-    yld: 28
+    yld: 18  # corrected: 18 per research (docs/research/crop-pakchoi.md)
     price: 6
     seedCost: 8
     cycleDays: 38
@@ -120,7 +120,7 @@ entities:
   feldsalat:
     label: "Lamb's lettuce"
     cat: Leafy
-    yld: 12
+    yld: 8  # corrected: 8 per research (docs/research/crop-feldsalat.md)
     price: 13
     seedCost: 10
     cycleDays: 50

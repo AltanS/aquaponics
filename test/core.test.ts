@@ -130,16 +130,17 @@ describe('ramp simulation & break-even', () => {
     expect(r.pts[12]!.y).toBeCloseTo(500, 8);
   });
 
-  it('long grow-out (noble crayfish, 30 mo) pushes break-even well past the no-lag case', () => {
+  it('long grow-out (noble crayfish, 48 mo) pushes break-even well past the no-lag case', () => {
     const i = makeInputs('small', 'noblecray', 'greens_mix');
     const L = computeScenario('lease', i, BOTH_ON);
     const withLag = simulateMonthly(L, i, i.horizon);
     const noLag = simulateMonthly(L, { growMonths: 0, cycleDays: i.cycleDays }, i.horizon);
-    // golden re-pinned for spec-03: heatDemand now uses deriveHeatDemand (physics-based)
-    // noblecray loopTemp=17.5, ΔT=7.425, deriveHeatDemand/small ≈ 24863 (was 35750 with heatFactor=0.65)
-    expect(withLag.breakEven).toBeCloseTo(6.731, 2); // re-pinned golden (spec-03): heatDemand uses deriveHeatDemand (physics)
+    // golden re-pinned for spec-04: noblecray growMonths corrected 30→48 (docs/research/fish-noblecray.md)
+    // Also spec-03: heatDemand uses deriveHeatDemand (physics-based, ΔT=7.425)
+    // formula: 48-month grow lag + lower heat cost → breakEven shifts out further
+    expect(withLag.breakEven).toBeCloseTo(8.527, 2); // re-pinned golden (spec-04)
     expect(noLag.breakEven).not.toBeNull();
-    expect(withLag.breakEven! - noLag.breakEven!).toBeGreaterThan(2.5); // 30-mo lag + deeper valley
+    expect(withLag.breakEven! - noLag.breakEven!).toBeGreaterThan(2.5); // 48-mo lag + deeper valley
   });
 
   it('default catfish lease does not pay back within the 15-yr horizon (despite positive EBITDA)', () => {
@@ -261,7 +262,7 @@ describe('deriveMonthlyHeatDemand — seasonal', () => {
 describe('deriveEffectiveGrowMonths — winter gating', () => {
   it('catfish (fcMin=25): all 12 Berlin months below 25°C → adds 12 cold months', () => {
     // Berlin monthlyAmbientC max = 20.1°C < 25 → all 12 months are cold
-    // effectiveGrowMonths = 7 (catfish growMonths) + 12 = 19
+    // effectiveGrowMonths = 5 (catfish growMonths, corrected spec-04) + 12 = 17
     const result = deriveEffectiveGrowMonths(FISH.catfish, BERLIN_REGION);
     expect(result).toBe(FISH.catfish.growMonths + 12);
   });

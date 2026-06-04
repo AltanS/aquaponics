@@ -2,135 +2,136 @@ meta:
   schemaVersion: "1.0"
   region: universal
   lastUpdated: "2026-06-04"
+  notes: "Universal fish biology reference data. Prices are regional — see regions/."
 
 entities:
   catfish:
+    growMonths: 5     # months to market size — corrected: 5 mo avg (docs/research/fish-catfish.md)
     label: "African catfish"
     type: Fish
     price: 9          # €/kg direct-sale
     fcr: 1.1          # kg feed per kg live weight
     stockCost: 0.8    # €/kg produced (juveniles)
-    growMonths: 7     # months to market size
     fcMin: 25         # comfort temp band °C (min)
     fcMax: 28         # comfort temp band °C (max)
     difficulty: Easy
     notes: "Air-breathing and extremely hardy — tolerates high density and low oxygen. The classic aquaponics workhorse."
 
   tilapia:
+    growMonths: 9     # months — corrected: 9 mo per research (docs/research/fish-tilapia.md)
     label: "Tilapia"
     type: Fish
     price: 11
     fcr: 1.4
     stockCost: 1.0
-    growMonths: 7
     fcMin: 27
     fcMax: 30
     difficulty: Easy
     notes: "Fast and robust, but needs warm water year-round — expensive to hold through a Brandenburg winter."
 
   trout:
+    growMonths: 14
     label: "Trout"
     type: Fish
     price: 14
     fcr: 1.1
     stockCost: 1.2
-    growMonths: 14
     fcMin: 12
     fcMax: 16
     difficulty: Medium
     notes: "Premium cold-water fish — little heating, but demands high dissolved oxygen and clean, cool water."
 
   carp:
+    growMonths: 18
     label: "Carp"
     type: Fish
     price: 7
     fcr: 1.5
     stockCost: 0.6
-    growMonths: 18
     fcMin: 20
     fcMax: 24
     difficulty: Easy
     notes: "Very hardy and cheap to stock, but low value and slow to size. Traditional German festive fish."
 
   perch:
+    growMonths: 15
     label: "European perch"
     type: Fish
     price: 16
     fcr: 1.4
     stockCost: 1.8
-    growMonths: 15
     fcMin: 21
     fcMax: 24
     difficulty: Medium
     notes: "Good value and a growing RAS species in Europe; steady restaurant demand, fussier than catfish."
 
   pikeperch:
+    growMonths: 16    # corrected: 16 mo per research (docs/research/fish-pikeperch.md)
     label: "Pikeperch (Zander)"
     type: Fish
     price: 22
-    fcr: 1.3
+    fcr: 1.1          # corrected: 1.1 per research (docs/research/fish-pikeperch.md)
     stockCost: 2.5
-    growMonths: 20
     fcMin: 22
     fcMax: 25
     difficulty: Hard
     notes: "Top of the German freshwater market, prized in gastronomy. Demanding — sensitive fry, exacting water."
 
   archar:
+    growMonths: 16
     label: "Arctic char"
     type: Fish
     price: 17
     fcr: 1.1
     stockCost: 1.5
-    growMonths: 16
     fcMin: 10
     fcMax: 14
     difficulty: Medium
     notes: "Premium cold-water salmonid needing even less heating than trout. Strong direct-sale and chef appeal."
 
   sturgeon:
+    growMonths: 24
     label: "Sturgeon"
     type: Fish
     price: 14
     fcr: 1.2
     stockCost: 3.0
-    growMonths: 24
     fcMin: 16
     fcMax: 20
     difficulty: Hard
     notes: "Meat plus long-term caviar potential. High stock cost and a very long horizon — a patient niche play."
 
   redclaw:
+    growMonths: 10
     label: "Redclaw crayfish"
     type: Crustacean
     price: 25
     fcr: 1.6
     stockCost: 3.0
-    growMonths: 10
     fcMin: 25
     fcMax: 28
     difficulty: Medium
     notes: "Tropical crayfish well-suited to aquaponics — warm water plus hiding structure, no migration needs."
 
   prawn:
+    growMonths: 7
     label: "Giant river prawn"
     type: Crustacean
     price: 28
     fcr: 2.0
     stockCost: 3.5
-    growMonths: 7
     fcMin: 27
     fcMax: 30
     difficulty: Hard
     notes: "High value but cannibalistic and warmth-hungry — heating-intensive, lower density, careful management."
 
   noblecray:
+    growMonths: 48    # corrected: 48 mo per research (docs/research/fish-noblecray.md)
     label: "Noble crayfish (Edelkrebs)"
     type: Crustacean
     price: 35
     fcr: 1.8
     stockCost: 4.0
-    growMonths: 30
     fcMin: 16
     fcMax: 19
     difficulty: Hard

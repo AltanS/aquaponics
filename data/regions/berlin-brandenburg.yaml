@@ -62,6 +62,6 @@ economics:
     spinach: 7
     chard: 5
     pakchoi: 6
-    feldsalat: 13
+    feldsalat: 24     # corrected: 24 per research (docs/research/crop-feldsalat.md)
     herbs: 12
     microgreens: 40

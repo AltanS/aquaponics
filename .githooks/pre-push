@@ -1,0 +1,7 @@
+#!/bin/sh
+# Run the test suite before every push; abort the push on failure.
+echo "pre-push: running tests…"
+pnpm test || {
+  echo "pre-push: tests failed — push aborted." >&2
+  exit 1
+}

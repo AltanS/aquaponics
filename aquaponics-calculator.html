@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aquaponics profitability · Berlin / Brandenburg</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f5ef; --surface:#fffefb; --surface-2:#efeee6; --ink:#1c1f1d; --ink-2:#5d635e;
+  --line:rgba(28,31,29,.12); --line-2:rgba(28,31,29,.24);
+  --teal:#1d9e75; --teal-d:#0f6e56; --blue:#2f7fb5; --amber:#d98a17; --purple:#6f63cf; --gray:#8a8980;
+  --good:#0f6e56; --bad:#b23a32; --accent:#1d9e75; --r:14px; --r-s:9px;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#14171a; --surface:#1c2024; --surface-2:#23282c; --ink:#eef0ec; --ink-2:#9aa39c;
+    --line:rgba(255,255,255,.12); --line-2:rgba(255,255,255,.24);
+    --teal:#3fc79a; --teal-d:#8fe6c8; --blue:#5fa8db; --amber:#f0a738; --purple:#9a8ff0; --gray:#a7a69c;
+    --good:#5dcaa5; --bad:#f0938c; --accent:#3fc79a;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1200px;margin:0 auto;padding:0 20px 90px}
+header.top{padding:32px 0 6px}
+.eyebrow{font:500 12px/1 "IBM Plex Mono",monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--teal-d);margin:0 0 12px}
+h1{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(28px,4vw,44px);line-height:1.05;margin:0;letter-spacing:-.01em}
+.sub{color:var(--ink-2);max-width:64ch;margin:14px 0 0;font-size:15px}
+
+.sticky{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);margin:16px 0 26px;padding:13px 0}
+.sticky-in{display:flex;flex-wrap:wrap;gap:18px 26px;align-items:center}
+.toggles{display:flex;gap:8px}
+.tg{display:flex;align-items:center;gap:8px;font:500 13px/1 "IBM Plex Sans";color:var(--ink);background:var(--surface);border:1px solid var(--line-2);border-radius:999px;padding:8px 14px 8px 12px;cursor:pointer;transition:all .15s}
+.tg .led{width:9px;height:9px;border-radius:50%;background:var(--ink-2);transition:background .15s}
+.tg.on{border-color:var(--accent)} .tg.on .led{background:var(--accent)} .tg.off{opacity:.62}
+.skstats{display:flex;flex-wrap:wrap;gap:16px 22px;margin-left:auto}
+.sk{min-width:96px}
+.sk .k{font:500 10px/1.2 "IBM Plex Mono";letter-spacing:.07em;text-transform:uppercase;color:var(--ink-2)}
+.sk .v{font-family:"IBM Plex Mono";font-weight:500;font-size:19px;margin-top:4px} .sk .v small{font-size:.62em;color:var(--ink-2)}
+
+.cols{display:grid;grid-template-columns:1fr 1.04fr;gap:22px;align-items:start}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;margin-bottom:18px}
+.card h2{font-family:"Fraunces",serif;font-weight:500;font-size:19px;margin:0 0 4px;display:flex;align-items:center;gap:9px}
+.card .note{color:var(--ink-2);font-size:13px;margin:0 0 16px}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:0 0 auto}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:13px 16px}
+.f{display:flex;flex-direction:column;gap:6px}.f.full{grid-column:1/-1}
+.f label{font-size:13px;color:var(--ink-2)} .f .unit{font:400 11px/1 "IBM Plex Mono";color:var(--ink-2)}
+input,select{font:500 15px/1 "IBM Plex Mono";color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-s);padding:10px 12px;width:100%;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.pbtn{font:500 13px/1 "IBM Plex Sans";color:var(--ink);background:var(--surface);border:1px solid var(--line-2);border-radius:999px;padding:9px 15px;cursor:pointer;transition:all .15s}
+.pbtn:hover{border-color:var(--accent)} .pbtn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+@media (prefers-color-scheme:dark){.pbtn.on{color:#0e1311}}
+.plabel{font:500 11px/1 "IBM Plex Mono";letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);margin:0 0 9px}
+
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
+.tab{font:500 12.5px/1 "IBM Plex Sans";color:var(--ink);background:var(--surface);border:1px solid var(--line-2);border-radius:999px;padding:7px 12px;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center}
+.tab:hover{border-color:var(--accent)} .tab.on{background:var(--accent);border-color:var(--accent);color:#fff}
+@media (prefers-color-scheme:dark){.tab.on{color:#0e1311}}
+.cdot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;flex:0 0 auto;background:var(--gray)}
+.c-good{background:var(--teal)} .c-work{background:var(--amber)} .c-poor{background:var(--gray);opacity:.55}
+.panel{background:var(--surface-2);border-radius:var(--r-s);padding:14px 15px;margin-bottom:14px}
+.panel .ttl{font:600 15px/1.2 "IBM Plex Sans";margin:0;display:flex;align-items:center;gap:8px}
+.badge{font:500 11px/1 "IBM Plex Mono";padding:4px 8px;border-radius:6px;margin-left:auto;background:var(--line);color:var(--ink-2)}
+.d-easy{background:color-mix(in srgb,var(--teal) 20%,transparent);color:var(--teal-d)}
+.d-med{background:color-mix(in srgb,var(--amber) 22%,transparent);color:var(--amber)}
+.d-hard{background:color-mix(in srgb,var(--bad) 16%,transparent);color:var(--bad)}
+.attrs{display:flex;flex-wrap:wrap;gap:7px;margin:11px 0 9px}
+.chip{font-size:12px;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:5px 9px;color:var(--ink);display:inline-flex;align-items:center}
+.chip b{font-weight:500;color:var(--ink-2);margin-right:5px;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em}
+.anote{font-size:13px;color:var(--ink-2);margin:0;line-height:1.5}
+.pairs{margin-top:11px;font-size:13px;color:var(--ink-2)}
+.pairs .ph{margin-bottom:6px}
+.pairchips{display:flex;flex-wrap:wrap;gap:6px}
+.pairline{font-size:13px;margin:11px 0 0;padding:9px 12px;border-radius:var(--r-s);background:var(--surface);border-left:3px solid var(--line-2);color:var(--ink)}
+.pairline.good{border-color:var(--teal)} .pairline.work{border-color:var(--amber)} .pairline.poor{border-color:var(--bad)}
+
+.idx{margin:0 0 14px;background:var(--surface-2);border-radius:var(--r-s);padding:12px 14px}
+.idx .row{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--ink-2)}
+.idx .score{font-family:"IBM Plex Mono";font-weight:500;font-size:20px;color:var(--ink)} .idx .score small{font-size:.55em;color:var(--ink-2)}
+.idx .track{height:8px;border-radius:5px;background:var(--line);margin-top:9px;overflow:hidden}
+.idx .fill{height:100%;background:var(--accent);transition:width .25s} .idx .raw{font-family:"IBM Plex Mono";color:var(--ink)}
+
+details.cfg{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);margin-bottom:18px}
+details.cfg>summary{list-style:none;cursor:pointer;padding:20px 22px;font-family:"Fraunces",serif;font-weight:500;font-size:19px;display:flex;align-items:center;gap:9px}
+details.cfg>summary::-webkit-details-marker{display:none}
+details.cfg>summary .chev{margin-left:auto;color:var(--ink-2);transition:transform .2s;display:inline-block}
+details.cfg[open]>summary .chev{transform:rotate(180deg)}
+details.cfg .cbody{padding:0 22px 20px} details.cfg .cbody .note{color:var(--ink-2);font-size:13px;margin:0 0 16px}
+
+.scen2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.scard{border:1px solid var(--line-2);border-radius:var(--r);padding:15px 16px}
+.scard.lease{border-color:color-mix(in srgb,var(--teal) 55%,var(--line-2))}
+.scard.rent{border-color:color-mix(in srgb,var(--blue) 55%,var(--line-2))}
+.scard h3{margin:0 0 2px;font:600 14px/1.2 "IBM Plex Sans";display:flex;align-items:center;gap:7px}
+.scard .tiny{font-size:11.5px;color:var(--ink-2);margin:0 0 12px}
+.line{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;padding:5px 0;border-top:1px solid var(--line)}
+.line:first-of-type{border-top:none} .line .lab{color:var(--ink-2)} .line .val{font-family:"IBM Plex Mono";font-weight:500} .line.big .val{font-size:17px}
+
+.chartbox svg{display:block}
+.grid{stroke:var(--line);stroke-width:1} .zero{stroke:var(--line-2);stroke-width:1.5}
+.ax{fill:var(--ink-2);font:400 11px "IBM Plex Mono",monospace}
+.ln{fill:none;stroke-width:2.6;stroke-linejoin:round;stroke-linecap:round}
+.ln-lease{stroke:var(--teal)} .ln-rent{stroke:var(--blue)}
+.bemark{stroke-width:1.2;stroke-dasharray:3 3} .bemark.lease{stroke:var(--teal)} .bemark.rent{stroke:var(--blue)}
+.bedot.lease{fill:var(--teal)} .bedot.rent{fill:var(--blue)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;margin-top:8px}
+.legend span{display:flex;align-items:center;gap:7px}.legend b{font-family:"IBM Plex Mono";font-weight:500}
+.cmp .grp{margin-bottom:14px}.cmp .gl{font-size:12px;color:var(--ink-2);margin-bottom:6px}
+.cmp .b{display:flex;align-items:center;gap:9px;margin:5px 0}
+.cmp .b .tag{font-size:12px;width:42px;color:var(--ink-2)}
+.cmp .b .bar{height:18px;border-radius:5px;min-width:2px;transition:width .25s}
+.cmp .b .num{font-family:"IBM Plex Mono";font-size:12.5px;font-weight:500}
+.bar{display:flex;height:28px;border-radius:8px;overflow:hidden;margin:4px 0 12px;background:var(--surface-2)}
+.bar i{display:block;height:100%;transition:width .25s}
+.focus{display:flex;gap:8px;margin-bottom:14px}
+.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.mini div{background:var(--surface-2);border-radius:var(--r-s);padding:10px 12px}
+.mini .k{font-size:11px;color:var(--ink-2);font-family:"IBM Plex Mono";letter-spacing:.04em}
+.mini .v{font-family:"IBM Plex Mono";font-weight:500;font-size:15px;margin-top:3px}
+.ytwrap{overflow-x:auto}
+table.yt{width:100%;border-collapse:collapse;font-size:12.5px;min-width:440px}
+table.yt th,table.yt td{text-align:right;padding:7px 8px;border-bottom:1px solid var(--line);font-family:"IBM Plex Mono",monospace;font-weight:400;white-space:nowrap}
+table.yt th{color:var(--ink-2);font-weight:500;font-size:10.5px;text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--line-2)}
+table.yt td:first-child,table.yt th:first-child{text-align:left}
+table.yt tr.be td{background:color-mix(in srgb,var(--teal) 13%,transparent)}
+table.yt tr.y0 td{color:var(--ink-2)}
+.cn{color:var(--bad)} .cp{color:var(--good)}
+.verdict{font-size:14px;color:var(--ink-2);border-top:1px solid var(--line);padding-top:14px;margin-top:4px} .verdict b{color:var(--ink);font-weight:600}
+.foot{color:var(--ink-2);font-size:12.5px;margin-top:24px;max-width:90ch}
+.foot code{font-family:"IBM Plex Mono";background:var(--surface-2);padding:1px 5px;border-radius:4px}
+@media (max-width:900px){.cols{grid-template-columns:1fr}.skstats{margin-left:0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <p class="eyebrow">Aquaponics · Berlin / Brandenburg · 2026 figures</p>
+  <h1>Profitability &amp; break-even</h1>
+  <p class="sub">In a coupled system the fish set the water-loop temperature and the plants must live with it. Pick a fish and the crop tabs light up by how well they pair. Plus a grow-out ramp, lease-vs-rent break-even, and a year-by-year table. All assumptions live in the source's <code>DB</code> object.</p>
+</header>
+
+<div class="sticky"><div class="sticky-in">
+  <div class="toggles">
+    <button class="tg on" id="tg-solar"><span class="led"></span>Solar PV</button>
+    <button class="tg on" id="tg-hp"><span class="led"></span>Heat pump</button>
+  </div>
+  <div class="skstats">
+    <div class="sk"><div class="k">Lease · steady net/yr</div><div class="v" id="sk-lnet">–</div></div>
+    <div class="sk"><div class="k">Lease · break-even</div><div class="v" id="sk-lbe">–</div></div>
+    <div class="sk"><div class="k">Rent · steady net/yr</div><div class="v" id="sk-rnet">–</div></div>
+    <div class="sk"><div class="k">Rent · break-even</div><div class="v" id="sk-rbe">–</div></div>
+  </div>
+</div></div>
+
+<div class="cols">
+  <!-- LEFT -->
+  <div>
+    <div class="card">
+      <h2>Scale</h2>
+      <p class="note">Each tier sets size, energy demand and build standard — from a bootstrapped hobby rig to a mid-size commercial farm.</p>
+      <div class="presets" id="scale-set"></div>
+    </div>
+
+    <div class="card">
+      <h2><span class="dot" style="background:var(--teal)"></span>Fish &amp; crustaceans</h2>
+      <p class="note">The selected fish sets the loop temperature — which decides what plants can share the water.</p>
+      <div class="tabs" id="fish-tabs"></div>
+      <div class="panel">
+        <div class="ttl" id="fish-ttl"></div>
+        <div class="attrs" id="fish-attrs"></div>
+        <p class="anote" id="fish-note"></p>
+        <div class="pairs" id="fish-pairs"></div>
+      </div>
+      <div class="idx">
+        <div class="row"><span>Value index <small>price net of feed &amp; stock</small></span><span class="score" id="fish-score">–<small>/100</small></span></div>
+        <div class="track"><div class="fill" id="fish-fill"></div></div>
+        <div class="row" style="margin-top:8px"><span>Gross margin</span><span class="raw" id="fish-raw">–</span></div>
+      </div>
+      <div class="grid2">
+        <div class="f"><label>Harvest <span class="unit">kg live / yr (steady)</span></label><input type="number" id="fishKg" step="50" min="0"></div>
+        <div class="f"><label>Sale price <span class="unit">€/kg</span></label><input type="number" id="fishPrice" step="0.5" min="0"></div>
+        <div class="f"><label>Grow-out to harvest <span class="unit">months — first revenue lag</span></label><input type="number" id="growMonths" step="1" min="0"></div>
+        <div class="f"><label>Feed conversion <span class="unit">kg feed / kg</span></label><input type="number" id="fcr" step="0.05" min="0"></div>
+        <div class="f"><label>Feed price <span class="unit">€/kg</span></label><input type="number" id="feedPrice" step="0.1" min="0"></div>
+        <div class="f"><label>Juvenile cost <span class="unit">€/kg — bought-in fingerlings</span></label><input type="number" id="stockCost" step="0.1" min="0"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="dot" style="background:#639922"></span>Plants</h2>
+      <p class="note">Dots show how each crop pairs with the chosen fish's loop temperature: <span class="cdot c-good"></span>good · <span class="cdot c-work"></span>workable · <span class="cdot c-poor"></span>poor.</p>
+      <div class="tabs" id="crop-tabs"></div>
+      <div class="panel">
+        <div class="ttl" id="crop-ttl"></div>
+        <div class="attrs" id="crop-attrs"></div>
+        <p class="anote" id="crop-note"></p>
+        <p class="pairline" id="crop-pair"></p>
+      </div>
+      <div class="idx">
+        <div class="row"><span>Value index <small>yield × price</small></span><span class="score" id="crop-score">–<small>/100</small></span></div>
+        <div class="track"><div class="fill" id="crop-fill"></div></div>
+        <div class="row" style="margin-top:8px"><span>Revenue density</span><span class="raw" id="crop-raw">–</span></div>
+      </div>
+      <div class="grid2">
+        <div class="f"><label>Grow area <span class="unit">m²</span></label><input type="number" id="growArea" step="10" min="0"></div>
+        <div class="f"><label>Days to first harvest <span class="unit">cycle lag</span></label><input type="number" id="cycleDays" step="1" min="0"></div>
+        <div class="f"><label>Yield <span class="unit">kg / m² / yr</span></label><input type="number" id="yieldM2" step="1" min="0"></div>
+        <div class="f"><label>Plant price <span class="unit">€/kg</span></label><input type="number" id="plantPrice" step="0.25" min="0"></div>
+        <div class="f"><label>Seedling cost <span class="unit">€/m²/yr</span></label><input type="number" id="seedCost" step="1" min="0"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="dot" style="background:var(--amber)"></span>Energy demand</h2>
+      <p class="note">Heat runs on the heat pump when enabled, otherwise a gas boiler. Solar offsets the 24/7 baseload.</p>
+      <div class="grid2">
+        <div class="f"><label>Systems electricity <span class="unit">kWh/yr</span></label><input type="number" id="sysKwh" step="1000" min="0"></div>
+        <div class="f"><label>Heat demand <span class="unit">kWh thermal / yr</span></label><input type="number" id="heatDemand" step="1000" min="0"></div>
+        <div class="f"><label>Heat-pump SCOP <span class="unit">seasonal avg</span></label><input type="number" id="cop" step="0.1" min="1"></div>
+        <div class="f"><label>PV array <span class="unit">kWp</span></label><input type="number" id="pvKwp" step="5" min="0"></div>
+        <div class="f"><label>PV yield <span class="unit">kWh/kWp/yr</span></label><input type="number" id="pvYield" step="10" min="0"></div>
+        <div class="f"><label>Self-consumption <span class="unit">% of PV used</span></label><input type="number" id="scRate" step="5" min="0" max="100"></div>
+      </div>
+      <div class="mini">
+        <div><div class="k">PV generated</div><div class="v" id="e-gen">–</div></div>
+        <div><div class="k">Grid imported</div><div class="v" id="e-imp">–</div></div>
+        <div><div class="k">Effective €/kWh</div><div class="v" id="e-eff">–</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="dot" style="background:var(--purple)"></span>Labour &amp; overheads</h2>
+      <div class="grid2">
+        <div class="f"><label>Labour <span class="unit">hours / week</span></label><input type="number" id="laborHrs" step="1" min="0"></div>
+        <div class="f"><label>Loaded wage <span class="unit">€/h</span></label><input type="number" id="wage" step="0.5" min="0"></div>
+        <div class="f"><label>Water + nutrients <span class="unit">€/yr</span></label><input type="number" id="waterNut" step="250" min="0"></div>
+        <div class="f"><label>Packaging + distribution <span class="unit">€/yr</span></label><input type="number" id="distrib" step="250" min="0"></div>
+        <div class="f"><label>Maintenance + insurance <span class="unit">€/yr</span></label><input type="number" id="maint" step="250" min="0"></div>
+      </div>
+    </div>
+
+    <details class="cfg">
+      <summary>Config · capital &amp; price assumptions<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div class="cbody">
+        <p class="note">The central constants — equal to editing the <code>DB</code> object in the source. Scale presets overwrite the build-related ones.</p>
+        <div class="grid2">
+          <div class="f"><label>Equipment CAPEX <span class="unit">€ — tanks, RAS, beds, pumps</span></label><input type="number" id="equipmentCapex" step="1000" min="0"></div>
+          <div class="f"><label>Construction <span class="unit">€/m² — structure (lease)</span></label><input type="number" id="constructionPerM2" step="10" min="0"></div>
+          <div class="f"><label>Land lease <span class="unit">€/yr (lease)</span></label><input type="number" id="landLeaseYear" step="250" min="0"></div>
+          <div class="f"><label>Structure rent <span class="unit">€/m²/month (rent)</span></label><input type="number" id="rentPerM2Month" step="0.25" min="0"></div>
+          <div class="f"><label>PV cost <span class="unit">€/kWp installed</span></label><input type="number" id="pvCostPerKwp" step="50" min="0"></div>
+          <div class="f"><label>Heat-pump cost <span class="unit">€/kW thermal</span></label><input type="number" id="hpCostPerKw" step="50" min="0"></div>
+          <div class="f"><label>HP full-load hours <span class="unit">h/yr for sizing</span></label><input type="number" id="hpFullLoadHours" step="100" min="100"></div>
+          <div class="f"><label>Grid price <span class="unit">€/kWh</span></label><input type="number" id="gridPrice" step="0.01" min="0"></div>
+          <div class="f"><label>Feed-in tariff <span class="unit">€/kWh exported</span></label><input type="number" id="feedIn" step="0.01" min="0"></div>
+          <div class="f"><label>Gas heat price <span class="unit">€/kWh thermal</span></label><input type="number" id="gasPrice" step="0.01" min="0"></div>
+          <div class="f"><label>Solar O&amp;M <span class="unit">€/kWh self-used</span></label><input type="number" id="omSolar" step="0.005" min="0"></div>
+          <div class="f"><label>Depreciation <span class="unit">years</span></label><input type="number" id="deprYears" step="1" min="1"></div>
+          <div class="f"><label>Chart horizon <span class="unit">years</span></label><input type="number" id="horizonYears" step="1" min="3" max="40"></div>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- RIGHT -->
+  <div>
+    <div class="card">
+      <h2>Lease vs. rent</h2>
+      <div class="scen2">
+        <div class="scard lease">
+          <h3><span class="dot" style="background:var(--teal)"></span>Lease &amp; build</h3>
+          <p class="tiny">Cheap land, you build the structure.</p>
+          <div class="line"><span class="lab">Upfront investment</span><span class="val" id="L-capex">–</span></div>
+          <div class="line"><span class="lab">— of which construction</span><span class="val" id="L-con">–</span></div>
+          <div class="line"><span class="lab">— solar + heat pump</span><span class="val" id="L-eq">–</span></div>
+          <div class="line"><span class="lab">Land lease /yr</span><span class="val" id="L-rent">–</span></div>
+          <div class="line big"><span class="lab">Steady profit /yr</span><span class="val" id="L-ebitda">–</span></div>
+          <div class="line"><span class="lab">Steady net (after deprec.)</span><span class="val" id="L-net">–</span></div>
+          <div class="line"><span class="lab">Break-even (with ramp)</span><span class="val" id="L-be">–</span></div>
+        </div>
+        <div class="scard rent">
+          <h3><span class="dot" style="background:var(--blue)"></span>Rent existing</h3>
+          <p class="tiny">No build, but real monthly rent.</p>
+          <div class="line"><span class="lab">Upfront investment</span><span class="val" id="R-capex">–</span></div>
+          <div class="line"><span class="lab">— of which construction</span><span class="val" id="R-con">–</span></div>
+          <div class="line"><span class="lab">— solar + heat pump</span><span class="val" id="R-eq">–</span></div>
+          <div class="line"><span class="lab">Structure rent /yr</span><span class="val" id="R-rent">–</span></div>
+          <div class="line big"><span class="lab">Steady profit /yr</span><span class="val" id="R-ebitda">–</span></div>
+          <div class="line"><span class="lab">Steady net (after deprec.)</span><span class="val" id="R-net">–</span></div>
+          <div class="line"><span class="lab">Break-even (with ramp)</span><span class="val" id="R-be">–</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Cumulative cash flow &amp; break-even</h2>
+      <p class="note">Year 0 is the upfront investment. The dip deepens through the grow-out phase, then climbs once fish reach market size. Zero-crossing = paid back.</p>
+      <div class="chartbox" id="chart"></div>
+      <div class="legend">
+        <span><span class="dot" style="background:var(--teal)"></span>Lease &amp; build</span>
+        <span><span class="dot" style="background:var(--blue)"></span>Rent existing</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Year-by-year cash flow</h2>
+      <div class="focus" id="focus-set">
+        <button class="pbtn on" data-focus="lease">Lease view</button>
+        <button class="pbtn" data-focus="rent">Rent view</button>
+      </div>
+      <p class="note" id="ramp-note">–</p>
+      <div class="ytwrap"><table class="yt" id="yt"></table></div>
+    </div>
+
+    <div class="card"><h2>The trade, visualised</h2><div class="cmp" id="cmp"></div></div>
+
+    <div class="card">
+      <h2>Steady-state breakdown</h2>
+      <p class="note">Once fully ramped (follows the Lease / Rent view above).</p>
+      <p class="plabel">Revenue mix</p>
+      <div class="bar"><i id="s-fish" style="background:var(--teal)"></i><i id="s-plant" style="background:#639922"></i></div>
+      <div class="legend"><span><span class="dot" style="background:var(--teal)"></span>Fish <b id="v-fish">–</b></span><span><span class="dot" style="background:#639922"></span>Plants <b id="v-plant">–</b></span></div>
+      <p class="plabel" style="margin-top:16px">Operating costs</p>
+      <div class="bar"><i id="s-inp" style="background:#639922"></i><i id="s-energy" style="background:var(--amber)"></i><i id="s-lab" style="background:var(--purple)"></i><i id="s-rent" style="background:var(--blue)"></i><i id="s-over" style="background:var(--gray)"></i></div>
+      <div class="legend">
+        <span><span class="dot" style="background:#639922"></span>Inputs <b id="v-inp">–</b></span>
+        <span><span class="dot" style="background:var(--amber)"></span>Energy <b id="v-energy">–</b></span>
+        <span><span class="dot" style="background:var(--purple)"></span>Labour <b id="v-lab">–</b></span>
+        <span><span class="dot" style="background:var(--blue)"></span>Rent/lease <b id="v-rent">–</b></span>
+        <span><span class="dot" style="background:var(--gray)"></span>Other <b id="v-over">–</b></span>
+      </div>
+      <p class="verdict" id="verdict">–</p>
+    </div>
+
+    <p class="foot">
+      Compatibility is temperature-based: the fish's comfort midpoint sets the shared-loop temperature, and each crop is rated by whether that falls in its preferred (good), tolerable (workable) or outside (poor) root-zone range. "Poor" pairs aren't impossible — they imply a decoupled design with separate water loops. Monthly cash-flow model: year 0 = investment; fish income starts after the grow-out lag (continuous stocking), crops after the first cycle, costs from month 1 (full feed, slightly conservative). Break-even = first month cumulative turns positive. Excluded: financing/interest, tax, working capital, permits/effluent/hygiene. High-value fish/crustaceans (pikeperch, prawn, noble crayfish) are indicative niche species. Defaults: BDEW/Bundesnetzagentur grid prices, Fraunhofer&nbsp;ISE PV cost, EEG&nbsp;2026 feed-in, Amt für Statistik Berlin-Brandenburg land lease, regional commercial rents, German direct-marketing produce &amp; farm-gate prices, statutory minimum wage 2026.
+    </p>
+  </div>
+</div>
+</div>
+
+<script>
+/* ============================================================
+   CONFIG / DB — single source of truth.
+   fcMin/fcMax = fish comfort water temp (sets loop temperature)
+   cMin/cMax   = crop preferred root-zone temp (good pairing)
+   caMin/caMax = crop tolerable root-zone temp (workable pairing)
+   growMonths  = fish grow-out to market (first-revenue lag)
+   cycleDays   = crop days to first harvest
+   ============================================================ */
+var DB = {
+  fish: {
+    catfish:  {label:"African catfish",type:"Fish",price:9, fcr:1.1,stockCost:0.8,heatFactor:1.0, growMonths:7, fcMin:25,fcMax:28,temp:"25–28°C",growout:"6–9 mo",difficulty:"Easy",notes:"Air-breathing and extremely hardy — tolerates high density and low oxygen. The classic aquaponics workhorse."},
+    tilapia:  {label:"Tilapia",type:"Fish",price:11,fcr:1.4,stockCost:1.0,heatFactor:1.15,growMonths:7, fcMin:27,fcMax:30,temp:"26–30°C",growout:"6–8 mo",difficulty:"Easy",notes:"Fast and robust, but needs warm water year-round — expensive to hold through a Brandenburg winter."},
+    trout:    {label:"Trout",type:"Fish",price:14,fcr:1.1,stockCost:1.2,heatFactor:0.6, growMonths:14,fcMin:12,fcMax:16,temp:"10–16°C",growout:"12–16 mo",difficulty:"Medium",notes:"Premium cold-water fish — little heating, but demands high dissolved oxygen and clean, cool water."},
+    carp:     {label:"Carp",type:"Fish",price:7, fcr:1.5,stockCost:0.6,heatFactor:0.7, growMonths:18,fcMin:20,fcMax:24,temp:"18–25°C",growout:"12–24 mo",difficulty:"Easy",notes:"Very hardy and cheap to stock, but low value and slow to size. Traditional German festive fish."},
+    perch:    {label:"European perch",type:"Fish",price:16,fcr:1.4,stockCost:1.8,heatFactor:0.85,growMonths:15,fcMin:21,fcMax:24,temp:"20–25°C",growout:"12–18 mo",difficulty:"Medium",notes:"Good value and a growing RAS species in Europe; steady restaurant demand, fussier than catfish."},
+    pikeperch:{label:"Pikeperch (Zander)",type:"Fish",price:22,fcr:1.3,stockCost:2.5,heatFactor:0.9,growMonths:20,fcMin:22,fcMax:25,temp:"22–26°C",growout:"16–24 mo",difficulty:"Hard",notes:"Top of the German freshwater market, prized in gastronomy. Demanding — sensitive fry, exacting water."},
+    archar:   {label:"Arctic char",type:"Fish",price:17,fcr:1.1,stockCost:1.5,heatFactor:0.55,growMonths:16,fcMin:10,fcMax:14,temp:"8–15°C",growout:"14–18 mo",difficulty:"Medium",notes:"Premium cold-water salmonid needing even less heating than trout. Strong direct-sale and chef appeal."},
+    sturgeon: {label:"Sturgeon",type:"Fish",price:14,fcr:1.2,stockCost:3.0,heatFactor:0.7, growMonths:24,fcMin:16,fcMax:20,temp:"15–22°C",growout:"meat 18–30 mo",difficulty:"Hard",notes:"Meat plus long-term caviar potential. High stock cost and a very long horizon — a patient niche play."},
+    redclaw:  {label:"Redclaw crayfish",type:"Crustacean",price:25,fcr:1.6,stockCost:3.0,heatFactor:1.2,growMonths:10,fcMin:25,fcMax:28,temp:"24–30°C",growout:"9–12 mo",difficulty:"Medium",notes:"Tropical crayfish well-suited to aquaponics — warm water plus hiding structure, no migration needs."},
+    prawn:    {label:"Giant river prawn",type:"Crustacean",price:28,fcr:2.0,stockCost:3.5,heatFactor:1.25,growMonths:7,fcMin:27,fcMax:30,temp:"26–30°C",growout:"6–8 mo",difficulty:"Hard",notes:"High value but cannibalistic and warmth-hungry — heating-intensive, lower density, careful management."},
+    noblecray:{label:"Noble crayfish (Edelkrebs)",type:"Crustacean",price:35,fcr:1.8,stockCost:4.0,heatFactor:0.65,growMonths:30,fcMin:16,fcMax:19,temp:"15–20°C",growout:"2–3 yr",difficulty:"Hard",notes:"Native, very high value, but slow-growing and protection-regulated. A long-horizon premium niche."}
+  },
+  crops: {
+    greens_mix:  {label:"Mixed leafy greens",cat:"Leafy",yld:28,price:4.5,seedCost:9, cycleDays:38,cMin:14,cMax:22,caMin:8,caMax:26,temp:"15–22°C",cycle:"30–45 d",system:"Raft (DWC)",difficulty:"Easy",notes:"A forgiving staple blend with steady year-round turnover under supplementary light."},
+    lettuce_head:{label:"Head lettuce",cat:"Leafy",yld:30,price:4.0,seedCost:8, cycleDays:35,cMin:13,cMax:20,caMin:8,caMax:24,temp:"15–20°C",cycle:"30–40 d",system:"Raft / NFT",difficulty:"Easy",notes:"The classic aquaponics crop; loves cool water and bolts in heat."},
+    lettuce_leaf:{label:"Baby leaf",cat:"Leafy",yld:25,price:6.0,seedCost:10,cycleDays:25,cMin:13,cMax:20,caMin:8,caMax:24,temp:"15–20°C",cycle:"21–30 d",system:"Raft / NFT",difficulty:"Easy",notes:"Fast cut-and-come-again leaf with a high cycle count and good margins."},
+    rocket:      {label:"Rocket / Rucola",cat:"Leafy",yld:22,price:11, seedCost:9, cycleDays:25,cMin:12,cMax:22,caMin:6,caMax:26,temp:"12–20°C",cycle:"21–30 d",system:"Raft / NFT",difficulty:"Easy",notes:"Peppery, fast and premium-priced; several cuts per sowing."},
+    basil:       {label:"Basil",cat:"Herb",yld:18,price:14, seedCost:12,cycleDays:40,cMin:20,cMax:28,caMin:17,caMax:31,temp:"20–26°C",cycle:"30–50 d",system:"Raft / NFT",difficulty:"Medium",notes:"Top €/kg herb that loves warmth but is prone to cold damage and root rot."},
+    spinach:     {label:"Spinach",cat:"Leafy",yld:24,price:7,  seedCost:8, cycleDays:35,cMin:10,cMax:18,caMin:5,caMax:22,temp:"10–18°C",cycle:"30–40 d",system:"Raft / Media",difficulty:"Medium",notes:"Cool-season crop that struggles and gets root disease in warm water."},
+    chard:       {label:"Swiss chard",cat:"Leafy",yld:30,price:5,  seedCost:7, cycleDays:48,cMin:14,cMax:24,caMin:9,caMax:28,temp:"15–24°C",cycle:"40–55 d",system:"Media / Raft",difficulty:"Easy",notes:"Robust, high-biomass, with a long continuous harvest window."},
+    pakchoi:     {label:"Pak choi",cat:"Leafy",yld:28,price:6,  seedCost:8, cycleDays:38,cMin:14,cMax:22,caMin:8,caMax:26,temp:"15–22°C",cycle:"30–45 d",system:"Raft / NFT",difficulty:"Easy",notes:"Fast Asian green with reliable restaurant demand."},
+    feldsalat:   {label:"Lamb's lettuce",cat:"Leafy",yld:12,price:13, seedCost:10,cycleDays:50,cMin:8,cMax:16,caMin:4,caMax:20,temp:"8–16°C",cycle:"40–60 d",system:"Media / Raft",difficulty:"Medium",notes:"Cold-hardy winter premium — slow and low-yielding but high-priced."},
+    herbs:       {label:"Cutting herbs",cat:"Herb",yld:20,price:12, seedCost:12,cycleDays:45,cMin:16,cMax:24,caMin:12,caMax:28,temp:"16–24°C",cycle:"30–60 d",system:"Raft / NFT",difficulty:"Medium",notes:"Mint, parsley and coriander mix; high value with steady demand from chefs."},
+    microgreens: {label:"Microgreens",cat:"Microgreen",yld:20,price:40,seedCost:25,cycleDays:14,cMin:18,cMax:24,caMin:15,caMax:30,temp:"18–24°C",cycle:"7–21 d",system:"Trays / Media",difficulty:"Medium",notes:"Extremely high €/kg and very fast cycles, but labour-heavy with a short shelf life."}
+  },
+  scales: {
+    hobby:{label:"Hobby / DIY",     fishKg:150,  growArea:40,  sysKwh:5000,  baseHeat:8000,  pvKwp:5,  laborHrs:8, waterNut:300, distrib:400,  maint:500,  equipmentCapex:9000,  constructionPerM2:90,  landLeaseYear:600},
+    pilot:{label:"Commercial pilot",fishKg:600,  growArea:100, sysKwh:12000, baseHeat:18000, pvKwp:15, laborHrs:15,waterNut:800, distrib:1500, maint:1500, equipmentCapex:35000, constructionPerM2:350, landLeaseYear:1500},
+    small:{label:"Small commercial",fishKg:3000, growArea:400, sysKwh:40000, baseHeat:55000, pvKwp:50, laborHrs:30,waterNut:2000,distrib:3500, maint:4000, equipmentCapex:110000,constructionPerM2:350, landLeaseYear:3000},
+    mid:  {label:"Mid commercial",  fishKg:12000,growArea:1500,sysKwh:130000,baseHeat:180000,pvKwp:180,laborHrs:80,waterNut:7000,distrib:14000,maint:12000,equipmentCapex:380000,constructionPerM2:350, landLeaseYear:8000}
+  },
+  energy:{ feedPrice:1.6, cop:3.0, pvYield:950, scRate:55, gridPrice:0.25, feedIn:0.07, gasPrice:0.11, omSolar:0.015, pvCostPerKwp:1200, hpCostPerKw:1100, hpFullLoadHours:2000 },
+  property:{ rentPerM2Month:4.5 },
+  finance:{ wage:17, deprYears:12, horizonYears:15 }
+};
+
+/* ============================================================ */
+var state={scale:"small",species:"catfish",crop:"greens_mix",solar:true,heatpump:true,focus:"lease"};
+var Hglob=15;
+var g=function(id){return document.getElementById(id);};
+var n=function(id){var v=parseFloat(g(id).value);return isNaN(v)?0:v;};
+var eur=function(v){return (v<0?"-€":"€")+Math.round(Math.abs(v)).toLocaleString("de-DE");};
+var kwh=function(v){return Math.round(v).toLocaleString("de-DE")+" kWh";};
+var ct=function(v){return (v*100).toFixed(1).replace(".",",")+" ct";};
+var chip=function(k,v){return '<span class="chip"><b>'+k+'</b>'+v+'</span>';};
+var diffClass=function(d){d=(d||"").toLowerCase();return d.indexOf("hard")===0?"d-hard":(d.indexOf("easy")===0?"d-easy":"d-med");};
+var heatWord=function(h){return h>=1.1?"High":h>=0.9?"Moderate":h>=0.7?"Low–mod":"Low";};
+
+/* fish→plant temperature pairing */
+function loopTemp(fk){var f=DB.fish[fk];return (f.fcMin+f.fcMax)/2;}
+function pairFor(fk,ck){var lt=loopTemp(fk),c=DB.crops[ck];
+  var cls=(lt>=c.cMin&&lt<=c.cMax)?"good":((lt>=c.caMin&&lt<=c.caMax)?"work":"poor");
+  var dir=lt>c.cMax?"warm":(lt<c.cMin?"cool":"");
+  return {cls:cls,loop:lt,dir:dir};}
+
+function fill(){
+  var s=DB.scales[state.scale], f=DB.fish[state.species], c=DB.crops[state.crop], e=DB.energy, p=DB.property, fin=DB.finance;
+  g("fishKg").value=s.fishKg; g("growArea").value=s.growArea; g("sysKwh").value=s.sysKwh; g("pvKwp").value=s.pvKwp;
+  g("laborHrs").value=s.laborHrs; g("waterNut").value=s.waterNut; g("distrib").value=s.distrib; g("maint").value=s.maint;
+  g("equipmentCapex").value=s.equipmentCapex; g("constructionPerM2").value=s.constructionPerM2; g("landLeaseYear").value=s.landLeaseYear;
+  g("heatDemand").value=Math.round(s.baseHeat*f.heatFactor);
+  g("fishPrice").value=f.price; g("fcr").value=f.fcr; g("stockCost").value=f.stockCost; g("growMonths").value=f.growMonths;
+  g("yieldM2").value=c.yld; g("plantPrice").value=c.price; g("seedCost").value=c.seedCost; g("cycleDays").value=c.cycleDays;
+  g("feedPrice").value=e.feedPrice; g("cop").value=e.cop; g("pvYield").value=e.pvYield; g("scRate").value=e.scRate;
+  g("gridPrice").value=e.gridPrice; g("feedIn").value=e.feedIn; g("gasPrice").value=e.gasPrice; g("omSolar").value=e.omSolar;
+  g("pvCostPerKwp").value=e.pvCostPerKwp; g("hpCostPerKw").value=e.hpCostPerKw; g("hpFullLoadHours").value=e.hpFullLoadHours;
+  g("rentPerM2Month").value=p.rentPerM2Month; g("wage").value=fin.wage; g("deprYears").value=fin.deprYears; g("horizonYears").value=fin.horizonYears;
+}
+function readInputs(){return {
+  fishKg:n("fishKg"),fishPrice:n("fishPrice"),fcr:n("fcr"),feedPrice:n("feedPrice"),stockCost:n("stockCost"),growMonths:Math.max(0,n("growMonths")),
+  growArea:n("growArea"),yieldM2:n("yieldM2"),plantPrice:n("plantPrice"),seedCost:n("seedCost"),cycleDays:Math.max(0,n("cycleDays")),
+  sysKwh:n("sysKwh"),heatDemand:n("heatDemand"),cop:Math.max(1,n("cop")),pvKwp:n("pvKwp"),pvYield:n("pvYield"),scRate:n("scRate"),
+  gridPrice:n("gridPrice"),feedIn:n("feedIn"),gasPrice:n("gasPrice"),omSolar:n("omSolar"),
+  pvCostPerKwp:n("pvCostPerKwp"),hpCostPerKw:n("hpCostPerKw"),hpFullLoadHours:Math.max(100,n("hpFullLoadHours")),
+  constructionPerM2:n("constructionPerM2"),rentPerM2Month:n("rentPerM2Month"),landLeaseYear:n("landLeaseYear"),
+  equipmentCapex:n("equipmentCapex"),laborHrs:n("laborHrs"),wage:n("wage"),waterNut:n("waterNut"),distrib:n("distrib"),maint:n("maint"),
+  deprYears:Math.max(1,n("deprYears")),horizon:Math.max(3,n("horizonYears"))
+};}
+
+function energy(i){
+  var heatElec=state.heatpump? i.heatDemand/i.cop : 0;
+  var gasCost=state.heatpump? 0 : i.heatDemand*i.gasPrice;
+  var demand=i.sysKwh+heatElec, gen=state.solar? i.pvKwp*i.pvYield : 0;
+  var self=Math.min(demand,gen*i.scRate/100), imp=Math.max(0,demand-self), exp=Math.max(0,gen-self);
+  var elec=imp*i.gridPrice+self*i.omSolar-exp*i.feedIn;
+  return {opex:elec+gasCost,demand:demand,gen:gen,imp:imp,eff:demand>0?(elec+gasCost)/demand:0};
+}
+function energyCapex(i){return {pv:state.solar?i.pvKwp*i.pvCostPerKwp:0, hp:state.heatpump?(i.heatDemand/i.hpFullLoadHours)*i.hpCostPerKw:0};}
+function scenario(key,i){
+  var fishRev=i.fishKg*i.fishPrice, plantRev=i.growArea*i.yieldM2*i.plantPrice, rev=fishRev+plantRev;
+  var inputs=i.fishKg*i.fcr*i.feedPrice + i.fishKg*i.stockCost + i.growArea*i.seedCost;
+  var E=energy(i), labor=i.laborHrs*52*i.wage;
+  var rent=key==="lease"? i.landLeaseYear : i.rentPerM2Month*i.growArea*12;
+  var over=i.waterNut+i.distrib+i.maint;
+  var opex=inputs+E.opex+labor+rent+over, ebitda=rev-opex;
+  var EC=energyCapex(i), construction=key==="lease"? i.constructionPerM2*i.growArea : 0;
+  var capex=i.equipmentCapex+construction+EC.pv+EC.hp, depr=capex/i.deprYears;
+  return {rev:rev,fishRev:fishRev,plantRev:plantRev,inputs:inputs,energy:E.opex,labor:labor,rent:rent,over:over,
+          opex:opex,ebitda:ebitda,capex:capex,construction:construction,energyCapex:EC.pv+EC.hp,depr:depr,net:ebitda-depr,E:E};
+}
+function series(s,i,H){
+  var months=H*12, fr=s.fishRev/12, pr=s.plantRev/12, opx=s.opex/12, Lf=i.growMonths, Lc=i.cycleDays/30;
+  var cum=-s.capex, pts=[{x:0,y:cum}], be=null, prev=cum;
+  for(var m=1;m<=months;m++){var cash=(m>Lf?fr:0)+(m>Lc?pr:0)-opx; cum+=cash; pts.push({x:m/12,y:cum});
+    if(be===null&&prev<0&&cum>=0) be=(m-1+(0-prev)/(cum-prev))/12; prev=cum;}
+  return {pts:pts,be:be};
+}
+function yearRows(s,i,H){
+  var fr=s.fishRev/12, pr=s.plantRev/12, opx=s.opex/12, Lf=i.growMonths, Lc=i.cycleDays/30;
+  var rows=[{y:0,fish:0,plant:0,cost:0,cash:-s.capex,cum:-s.capex}], cum=-s.capex;
+  for(var y=1;y<=H;y++){var yf=0,yp=0,yo=0;
+    for(var mm=1;mm<=12;mm++){var m=(y-1)*12+mm;yf+=(m>Lf?fr:0);yp+=(m>Lc?pr:0);yo+=opx;}
+    var cash=yf+yp-yo; cum+=cash; rows.push({y:y,fish:yf,plant:yp,cost:yo,cash:cash,cum:cum});}
+  return rows;
+}
+function indexOf(val,vals){var mn=Math.min.apply(null,vals),mx=Math.max.apply(null,vals);return Math.max(0,Math.min(100,Math.round(mx>mn?(val-mn)/(mx-mn)*100:50)));}
+function widths(parts){var t=parts.reduce(function(a,p){return a+Math.max(0,p.v);},0);parts.forEach(function(p){g(p.id).style.width=(t>0?Math.max(0,p.v)/t*100:0)+"%";});}
+function fmtK(v){var a=Math.abs(v),s=v<0?"-":"";if(a>=1000)return s+"€"+(a/1000).toFixed(a>=10000?0:1)+"k";return s+"€"+Math.round(a);}
+
+function chart(Ls,Rs,H){
+  var W=640,Ht=320,pl=62,pr=14,pt=16,pb=34,iw=W-pl-pr,ih=Ht-pt-pb;
+  var ally=Ls.pts.concat(Rs.pts).map(function(p){return p.y;}).concat([0]);
+  var mn=Math.min.apply(null,ally),mx=Math.max.apply(null,ally);if(mn===mx)mx=mn+1;
+  var pad=(mx-mn)*0.08;mn-=pad;mx+=pad;
+  var X=function(x){return pl+x/H*iw;},Y=function(v){return pt+(mx-v)/(mx-mn)*ih;};
+  var o="",i,v,yy;
+  for(i=0;i<=4;i++){v=mn+(mx-mn)*i/4;yy=Y(v);o+='<line class="grid" x1="'+pl+'" y1="'+yy+'" x2="'+(W-pr)+'" y2="'+yy+'"/>';o+='<text class="ax" x="'+(pl-8)+'" y="'+(yy+4)+'" text-anchor="end">'+fmtK(v)+'</text>';}
+  var y0=Y(0);o+='<line class="zero" x1="'+pl+'" y1="'+y0+'" x2="'+(W-pr)+'" y2="'+y0+'"/>';
+  var step=H<=10?2:(H<=20?5:10);
+  for(i=0;i<=H;i+=step)o+='<text class="ax" x="'+X(i)+'" y="'+(Ht-14)+'" text-anchor="middle">'+i+'</text>';
+  o+='<text class="ax" x="'+(pl+iw/2)+'" y="'+(Ht-1)+'" text-anchor="middle">years</text>';
+  function poly(pts,cls){var p="";for(var k=0;k<pts.length;k++)p+=X(pts[k].x)+","+Y(pts[k].y)+" ";return '<polyline class="ln '+cls+'" points="'+p+'"/>';}
+  o+=poly(Ls.pts,"ln-lease")+poly(Rs.pts,"ln-rent");
+  function mark(be,cls){if(be!==null&&be<=H){var bx=X(be);o+='<line class="bemark '+cls+'" x1="'+bx+'" y1="'+pt+'" x2="'+bx+'" y2="'+y0+'"/>';o+='<circle class="bedot '+cls+'" cx="'+bx+'" cy="'+y0+'" r="4"/>';o+='<text class="ax" x="'+bx+'" y="'+(pt+12)+'" text-anchor="middle">'+be.toFixed(1)+'y</text>';}}
+  mark(Ls.be,"lease");mark(Rs.be,"rent");
+  g("chart").innerHTML='<svg viewBox="0 0 '+W+' '+Ht+'" width="100%">'+o+'</svg>';
+}
+function cmp(L,R){
+  function grp(t,la,ra){var mx=Math.max(Math.abs(la),Math.abs(ra),1);
+    function bar(tag,val,col){return '<div class="b"><span class="tag">'+tag+'</span><span class="bar" style="width:'+(Math.abs(val)/mx*100)+'%;background:'+col+'"></span><span class="num">'+eur(val)+'</span></div>';}
+    return '<div class="grp"><div class="gl">'+t+'</div>'+bar("Lease",la,"var(--teal)")+bar("Rent",ra,"var(--blue)")+'</div>';}
+  g("cmp").innerHTML=grp("Upfront investment",L.capex,R.capex)+grp("Steady profit / yr",L.ebitda,R.ebitda);
+}
+function beText(s){return s.be!==null?s.be.toFixed(1)+" yr":(s.ebitda>0?"> "+Hglob+" yr":"never");}
+function setLine(p,s,be){s.be=be;
+  g(p+"-capex").textContent=eur(s.capex); g(p+"-con").textContent=eur(s.construction); g(p+"-eq").textContent=eur(s.energyCapex);
+  g(p+"-rent").textContent=eur(s.rent);
+  g(p+"-ebitda").textContent=eur(s.ebitda); g(p+"-ebitda").style.color=s.ebitda>=0?"var(--good)":"var(--bad)";
+  g(p+"-net").textContent=eur(s.net); g(p+"-net").style.color=s.net>=0?"var(--good)":"var(--bad)";
+  g(p+"-be").textContent=beText(s);
+}
+function fishPanel(){var f=DB.fish[state.species];
+  g("fish-ttl").innerHTML=f.label+' <span class="badge '+diffClass(f.difficulty)+'">'+f.difficulty+'</span>';
+  g("fish-attrs").innerHTML=chip("Type",f.type)+chip("Water",f.temp)+chip("Loop ≈",Math.round(loopTemp(state.species))+"°C")+chip("Grow-out",f.growout)+chip("Heating",heatWord(f.heatFactor));
+  g("fish-note").textContent=f.notes;}
+function cropPanel(){var c=DB.crops[state.crop];
+  g("crop-ttl").innerHTML=c.label+' <span class="badge '+diffClass(c.difficulty)+'">'+c.difficulty+'</span>';
+  g("crop-attrs").innerHTML=chip("Category",c.cat)+chip("Root temp",c.temp)+chip("Cycle",c.cycle)+chip("System",c.system);
+  g("crop-note").textContent=c.notes;}
+function renderTable(rows){
+  var beYear=null,k;
+  for(k=0;k<rows.length;k++){if(rows[k].y>0&&rows[k].cum>=0){beYear=rows[k].y;break;}}
+  var h='<thead><tr><th>Year</th><th>Fish</th><th>Plants</th><th>Costs</th><th>Cash flow</th><th>Cumulative</th></tr></thead><tbody>';
+  for(k=0;k<rows.length;k++){var r=rows[k];var cls=(r.y===0?"y0":"")+(r.y===beYear?" be":"");
+    h+='<tr class="'+cls+'"><td>'+(r.y===0?"0 · invest":r.y)+'</td><td>'+(r.y===0?"–":eur(r.fish))+'</td><td>'+(r.y===0?"–":eur(r.plant))+'</td><td>'+(r.y===0?"–":eur(r.cost))+'</td><td>'+eur(r.cash)+'</td><td class="'+(r.cum>=0?"cp":"cn")+'">'+eur(r.cum)+'</td></tr>';}
+  g("yt").innerHTML=h+'</tbody>';
+}
+function updateCropDots(){var btns=g("crop-tabs").querySelectorAll(".tab");
+  for(var j=0;j<btns.length;j++){var b=btns[j],p=pairFor(state.species,b.dataset.key),d=b.querySelector(".cdot");
+    if(d) d.className="cdot "+(p.cls==="good"?"c-good":(p.cls==="work"?"c-work":"c-poor"));
+    b.title=(p.cls==="good"?"Good pairing":(p.cls==="work"?"Workable pairing":"Poor pairing"))+" with "+DB.fish[state.species].label;}}
+function renderPairs(){
+  var fk=state.species, lt=Math.round(loopTemp(fk)), good=[],work=[],ck;
+  for(ck in DB.crops){var p=pairFor(fk,ck);if(p.cls==="good")good.push(ck);else if(p.cls==="work")work.push(ck);}
+  var html='<div class="ph">At its loop temperature (≈'+lt+'°C), '+DB.fish[fk].label+' pairs best with:</div><div class="pairchips">';
+  if(good.length){for(var a=0;a<good.length;a++)html+='<span class="chip"><span class="cdot c-good"></span>'+DB.crops[good[a]].label+'</span>';}
+  else html+='<span style="opacity:.7">— no strong matches; this fish suits a decoupled (separate-loop) design</span>';
+  html+='</div>';
+  if(work.length){html+='<div class="ph" style="margin-top:8px">Workable as a compromise:</div><div class="pairchips">';for(var w=0;w<work.length;w++)html+='<span class="chip"><span class="cdot c-work"></span>'+DB.crops[work[w]].label+'</span>';html+='</div>';}
+  g("fish-pairs").innerHTML=html;
+  // current crop verdict
+  var pp=pairFor(fk,state.crop), fl=Math.round(pp.loop), fn=DB.fish[fk].label, cn=DB.crops[state.crop].label, t;
+  if(pp.cls==="good") t="Good fit with "+fn+" — a shared loop around "+fl+"°C suits both.";
+  else if(pp.cls==="work") t="Workable with "+fn+" at ≈"+fl+"°C, but a touch "+(pp.dir==="warm"?"warm":"cool")+" for "+cn+" — expect "+(pp.dir==="warm"?"faster bolting / lower quality":"slower growth")+".";
+  else t="Poor match: "+fn+" runs the loop near "+fl+"°C, outside "+cn+"'s range. You'd need a decoupled system with separate water loops to grow both.";
+  if(pp.cls!=="poor"&&pp.loop<14) t+=" At this temperature nitrification is slow — size the biofilter generously.";
+  g("crop-pair").className="pairline "+pp.cls; g("crop-pair").innerHTML=t;
+}
+
+function render(){
+  var i=readInputs(); Hglob=i.horizon;
+  var L=scenario("lease",i), R=scenario("rent",i);
+  var Ls=series(L,i,i.horizon), Rs=series(R,i,i.horizon);
+  setLine("L",L,Ls.be); setLine("R",R,Rs.be);
+  g("sk-lnet").innerHTML=eur(L.net); g("sk-lnet").style.color=L.net>=0?"var(--good)":"var(--bad)";
+  g("sk-rnet").innerHTML=eur(R.net); g("sk-rnet").style.color=R.net>=0?"var(--good)":"var(--bad)";
+  g("sk-lbe").innerHTML=beText(L); g("sk-rbe").innerHTML=beText(R);
+  chart(Ls,Rs,i.horizon); cmp(L,R);
+  g("e-gen").textContent=kwh(L.E.gen); g("e-imp").textContent=kwh(L.E.imp); g("e-eff").textContent=ct(L.E.eff)+"/kWh";
+
+  var s=state.focus==="lease"?L:R;
+  renderTable(yearRows(s,i,i.horizon));
+  var firstFishYr=Math.max(1,Math.floor(i.growMonths/12)+(i.growMonths%12?1:0));
+  g("ramp-note").innerHTML="Fish reach market size after <b>"+Math.round(i.growMonths)+" months</b> (first meaningful fish income ~year "+firstFishYr+"); crops sell after ~<b>"+Math.round(i.cycleDays)+" days</b>. Costs run from month 1. Highlighted row = payback.";
+
+  var cropVals=[],fishVals=[],kk;
+  for(kk in DB.crops) cropVals.push(DB.crops[kk].yld*DB.crops[kk].price);
+  for(kk in DB.fish) fishVals.push(DB.fish[kk].price-DB.fish[kk].fcr*i.feedPrice-DB.fish[kk].stockCost);
+  var cropVal=i.yieldM2*i.plantPrice, fishVal=i.fishPrice-i.fcr*i.feedPrice-i.stockCost;
+  g("crop-score").innerHTML=indexOf(cropVal,cropVals)+"<small>/100</small>"; g("crop-fill").style.width=indexOf(cropVal,cropVals)+"%"; g("crop-raw").textContent=eur(cropVal)+" /m²/yr";
+  g("fish-score").innerHTML=indexOf(fishVal,fishVals)+"<small>/100</small>"; g("fish-fill").style.width=indexOf(fishVal,fishVals)+"%"; g("fish-raw").textContent=eur(fishVal)+" /kg";
+
+  updateCropDots(); renderPairs();
+
+  g("v-fish").textContent=eur(s.fishRev); g("v-plant").textContent=eur(s.plantRev);
+  widths([{id:"s-fish",v:s.fishRev},{id:"s-plant",v:s.plantRev}]);
+  g("v-inp").textContent=eur(s.inputs); g("v-energy").textContent=eur(s.energy); g("v-lab").textContent=eur(s.labor);
+  g("v-rent").textContent=eur(s.rent); g("v-over").textContent=eur(s.over);
+  widths([{id:"s-inp",v:s.inputs},{id:"s-energy",v:s.energy},{id:"s-lab",v:s.labor},{id:"s-rent",v:s.rent},{id:"s-over",v:s.over}]);
+
+  var winner=(L.be!==null&&R.be!==null)?(L.be<R.be?"Lease":"Rent"):(L.be!==null?"Lease":(R.be!==null?"Rent":null));
+  var v="<b>"+(winner?winner+" breaks even first</b>":"Neither pays back within "+i.horizon+" years</b>")+". ";
+  v+="Lease ties up <b>"+eur(L.capex)+"</b> upfront; renting needs "+eur(R.capex)+" but "+eur(R.rent)+"/yr in rent. ";
+  v+="Plants carry <b>"+Math.round(s.plantRev/Math.max(1,s.rev)*100)+"%</b> of steady revenue.";
+  g("verdict").innerHTML=v;
+}
+
+function buildTabs(id,obj,active,cb,dot){var c=g(id);c.innerHTML="";Object.keys(obj).forEach(function(k){
+  var b=document.createElement("button");b.className="tab"+(k===active?" on":"");b.dataset.key=k;
+  b.innerHTML=(dot?'<span class="cdot"></span>':'')+obj[k].label;
+  b.addEventListener("click",function(){c.querySelectorAll(".tab").forEach(function(x){x.classList.remove("on");});b.classList.add("on");cb(k);});
+  c.appendChild(b);});}
+
+buildTabs("scale-set",DB.scales,state.scale,function(k){state.scale=k;fill();render();},false);
+buildTabs("fish-tabs",DB.fish,state.species,function(k){state.species=k;var s=DB.scales[state.scale],f=DB.fish[k];
+  g("fishPrice").value=f.price;g("fcr").value=f.fcr;g("stockCost").value=f.stockCost;g("growMonths").value=f.growMonths;
+  g("heatDemand").value=Math.round(s.baseHeat*f.heatFactor);fishPanel();render();},false);
+buildTabs("crop-tabs",DB.crops,state.crop,function(k){state.crop=k;var c=DB.crops[k];
+  g("yieldM2").value=c.yld;g("plantPrice").value=c.price;g("seedCost").value=c.seedCost;g("cycleDays").value=c.cycleDays;cropPanel();render();},true);
+
+fill(); fishPanel(); cropPanel(); render();
+document.querySelectorAll("input").forEach(function(el){el.addEventListener("input",render);});
+g("focus-set").addEventListener("click",function(e){var b=e.target.closest("[data-focus]");if(!b)return;
+  this.querySelectorAll(".pbtn").forEach(function(x){x.classList.remove("on");});b.classList.add("on");state.focus=b.dataset.focus;render();});
+function tog(btn,key){g(btn).addEventListener("click",function(){state[key]=!state[key];this.classList.toggle("on",state[key]);this.classList.toggle("off",!state[key]);render();});}
+tog("tg-solar","solar"); tog("tg-hp","heatpump");
+</script>
+</body>
+</html>

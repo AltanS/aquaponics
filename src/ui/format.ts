@@ -1,0 +1,36 @@
+import type { Difficulty } from '../data';
+
+export function eur(v: number): string {
+  return (v < 0 ? '-€' : '€') + Math.round(Math.abs(v)).toLocaleString('de-DE');
+}
+
+export function kwh(v: number): string {
+  return `${Math.round(v).toLocaleString('de-DE')} kWh`;
+}
+
+export function ct(v: number): string {
+  return `${(v * 100).toFixed(1).replace('.', ',')} ct`;
+}
+
+/** Compact € for chart axes: €350k / €9.5k / €600. */
+export function fmtK(v: number): string {
+  const a = Math.abs(v);
+  const sign = v < 0 ? '-' : '';
+  if (a >= 1000) return `${sign}€${(a / 1000).toFixed(a >= 10000 ? 0 : 1)}k`;
+  return `${sign}€${Math.round(a)}`;
+}
+
+export function chip(key: string, value: string): string {
+  return `<span class="chip"><b>${key}</b>${value}</span>`;
+}
+
+export function diffClass(d: Difficulty): string {
+  return d === 'Hard' ? 'd-hard' : d === 'Easy' ? 'd-easy' : 'd-med';
+}
+
+export function heatWord(heatFactor: number): string {
+  if (heatFactor >= 1.1) return 'High';
+  if (heatFactor >= 0.9) return 'Moderate';
+  if (heatFactor >= 0.7) return 'Low–mod';
+  return 'Low';
+}

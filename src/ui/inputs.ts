@@ -38,9 +38,15 @@ export function applyCropPreset(state: AppState): void {
   setVal('cycleDays', c.cycleDays);
 }
 
-/** Seed every input from the current scale + species + crop + global defaults. */
-export function fillAll(state: AppState): void {
+/**
+ * Seed the scale-owned inputs from the selected tier (preset behaviour).
+ * Deliberately does NOT touch prices/economics the user may have adjusted —
+ * a scale click only overwrites what the scale owns, plus the derived heat
+ * demand (it depends on grow area).
+ */
+export function applyScalePreset(state: AppState): void {
   const s = SCALES[state.scale];
+  const f = FISH[state.species];
   setVal('fishKg', s.fishKg);
   setVal('growArea', s.growArea);
   setVal('sysKwh', s.sysKwh);
@@ -52,7 +58,12 @@ export function fillAll(state: AppState): void {
   setVal('equipmentCapex', s.equipmentCapex);
   setVal('constructionPerM2', s.constructionPerM2);
   setVal('landLeaseYear', s.landLeaseYear);
+  setVal('heatDemand', Math.round(deriveHeatDemand(f, BERLIN_REGION, BERLIN_ENCLOSURE, s)));
+}
 
+/** Seed every input from the current scale + species + crop + global defaults. */
+export function fillAll(state: AppState): void {
+  applyScalePreset(state);
   applyFishPreset(state);
   applyCropPreset(state);
 

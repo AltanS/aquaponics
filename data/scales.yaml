@@ -6,7 +6,7 @@ meta:
 
 entities:
   hobby:
-    label: "Hobby / DIY"
+    label: "Hobby / DIY · 40 m²"
     fishKg: 150           # kg live weight annual harvest
     growArea: 40          # m²
     sysKwh: 5000          # kWh/yr systems electricity
@@ -21,7 +21,7 @@ entities:
     landLeaseYear: 600    # €/yr
 
   pilot:
-    label: "Commercial pilot"
+    label: "Pilot · 100 m²"
     fishKg: 600
     growArea: 100
     sysKwh: 12000
@@ -36,7 +36,7 @@ entities:
     landLeaseYear: 1500
 
   small:
-    label: "Small commercial"
+    label: "Small · 400 m²"
     fishKg: 3000
     growArea: 400
     sysKwh: 40000
@@ -51,7 +51,7 @@ entities:
     landLeaseYear: 3000
 
   mid:
-    label: "Mid commercial"
+    label: "Mid · 1500 m²"
     fishKg: 12000
     growArea: 1500
     sysKwh: 130000

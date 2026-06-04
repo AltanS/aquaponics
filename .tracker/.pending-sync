@@ -5,3 +5,4 @@ scripts/build-data.ts
 src/ui/state.ts
 src/ui/inputs.ts
 src/ui/render.ts
+src/style.css

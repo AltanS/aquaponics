@@ -2,7 +2,7 @@ import './style.css';
 import { CROPS, FISH, SCALES } from './data';
 import type { ScenarioKey } from './core';
 import { el } from './ui/dom';
-import { applyCropPreset, applyFishPreset, fillAll, INPUT_IDS } from './ui/inputs';
+import { applyCropPreset, applyFishPreset, applyScalePreset, fillAll, INPUT_IDS } from './ui/inputs';
 import { renderCropPanel, renderFishPanel } from './ui/panels';
 import { buildTabs } from './ui/tabs';
 import { render } from './ui/render';
@@ -72,7 +72,7 @@ function syncWidgets(): void {
 function wire(): void {
   buildTabs('scale-set', SCALES, state.scale, (key) => {
     state.scale = key;
-    fillAll(state);
+    applyScalePreset(state); // scale-owned fields only — keeps user price tweaks
     render(state);
   });
 

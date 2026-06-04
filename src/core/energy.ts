@@ -11,6 +11,14 @@ export interface EnergyResult {
   imp: number;
   /** effective €/kWh across total demand */
   eff: number;
+  /** grid import cost €/yr */
+  gridCost: number;
+  /** PV O&M on self-consumed kWh €/yr */
+  omCost: number;
+  /** feed-in revenue for exported surplus €/yr (positive number, credited) */
+  exportCredit: number;
+  /** gas boiler cost €/yr (heat pump OFF) */
+  gasCost: number;
 }
 
 /**
@@ -27,9 +35,11 @@ export function computeEnergy(i: CalcInputs, t: Toggles): EnergyResult {
   const selfUsed = Math.min(demand, (gen * i.scRate) / 100);
   const imp = Math.max(0, demand - selfUsed);
   const exp = Math.max(0, gen - selfUsed);
-  const elecCost = imp * i.gridPrice + selfUsed * i.omSolar - exp * i.feedIn;
-  const opex = elecCost + gasCost;
-  return { opex, demand, gen, imp, eff: demand > 0 ? opex / demand : 0 };
+  const gridCost = imp * i.gridPrice;
+  const omCost = selfUsed * i.omSolar;
+  const exportCredit = exp * i.feedIn;
+  const opex = gridCost + omCost - exportCredit + gasCost;
+  return { opex, demand, gen, imp, eff: demand > 0 ? opex / demand : 0, gridCost, omCost, exportCredit, gasCost };
 }
 
 export interface EnergyCapex {

@@ -25,6 +25,8 @@ entities:
     yld: 30
     price: 4.0
     seedCost: 8
+    unitWeightKg: 0.35  # ≈325 g/head (IGB Berlin; docs/research/crop-lettuce_head.md)
+    unitLabel: "head"
     cycleDays: 35
     cMin: 13
     cMax: 20
@@ -109,6 +111,8 @@ entities:
     yld: 18  # corrected: 18 per research (docs/research/crop-pakchoi.md)
     price: 6
     seedCost: 8
+    unitWeightKg: 0.3  # ≈300 g/head
+    unitLabel: "head"
     cycleDays: 38
     cMin: 14
     cMax: 22

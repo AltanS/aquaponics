@@ -1,0 +1,23 @@
+meta:
+  schemaVersion: "1.0"
+  region: universal
+  lastUpdated: "2026-06-04"
+  notes: "Model attribution assumptions for the per-enterprise (fish vs plants) breakdowns. These split shared costs (labour, energy) so each enterprise gets an honest contribution-profit estimate. They are coarse planning shares, not measurements — adjust per setup."
+
+model:
+  # Share of weekly labour spent directly on fish husbandry
+  # (feeding, water tests, grading, harvest/slaughter).
+  laborShareFish: 0.35
+
+  # Share spent directly on plant production (seeding, transplanting,
+  # harvest, packing). Plants are the labour-heavy side: research pegs
+  # labour at 65-69% of variable cost for lettuce (docs/research/crop-lettuce_head.md).
+  laborSharePlants: 0.45
+
+  # Remainder (1 - fish - plants = 0.20) is general/admin/sales labour,
+  # attributed to each enterprise pro-rata to its revenue share.
+
+  # Share of net energy cost attributed to the fish loop. Heating dominates
+  # energy OPEX and the fish set the loop temperature; pumps/aeration also
+  # serve the fish side. The remainder (lights, climate) goes to plants.
+  energyShareFish: 0.70

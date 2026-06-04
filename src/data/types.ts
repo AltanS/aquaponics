@@ -16,6 +16,8 @@ export interface FishSpecies {
   fcr: number;
   /** €/kg produced — bought-in juveniles (the model does NOT breed) */
   stockCost: number;
+  /** kg per market-size animal — used for per-unit breakdowns (fish/month) */
+  marketWeightKg: number;
   /** grow-out to market size, months — first-revenue lag */
   growMonths: number;
   /** comfort water-temp band °C (min) — band midpoint sets the loop temperature */
@@ -35,6 +37,10 @@ export interface Crop {
   price: number;
   /** €/m²/yr */
   seedCost: number;
+  /** kg per sellable unit (e.g. a head of lettuce) — enables per-unit breakdowns */
+  unitWeightKg?: number;
+  /** label for one sellable unit, e.g. "head" */
+  unitLabel?: string;
   /** days to first harvest — revenue lag */
   cycleDays: number;
   /** preferred root-zone °C (min) → "good" pairing */
@@ -113,4 +119,17 @@ export interface FinanceDefaults {
   deprYears: number;
   /** cash-flow chart/table horizon */
   horizonYears: number;
+}
+
+/**
+ * Attribution assumptions for per-enterprise (fish vs plants) breakdowns —
+ * sourced from data/model.yaml. Coarse planning shares, not measurements.
+ */
+export interface ModelAssumptions {
+  /** share of weekly labour spent directly on fish husbandry (0–1) */
+  laborShareFish: number;
+  /** share spent directly on plant production (0–1); remainder = general, split by revenue */
+  laborSharePlants: number;
+  /** share of net energy cost attributed to the fish loop (0–1) */
+  energyShareFish: number;
 }

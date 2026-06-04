@@ -6,3 +6,6 @@ src/ui/state.ts
 src/ui/inputs.ts
 src/ui/render.ts
 src/style.css
+src/data/types.ts
+src/core/index.ts
+src/data/index.ts

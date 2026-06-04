@@ -29,6 +29,7 @@ const FishSpeciesSchema = z.object({
   price: z.number({ error: 'price must be a number in €/kg' }),
   fcr: z.number({ error: 'fcr must be a number in kg/kg' }),
   stockCost: z.number({ error: 'stockCost must be a number in €/kg' }),
+  marketWeightKg: z.number({ error: 'marketWeightKg must be a number in kg per market-size animal' }).positive(),
   growMonths: z.number({ error: 'growMonths must be a number in months' }),
   fcMin: z.number({ error: 'fcMin must be a number in °C' }),
   fcMax: z.number({ error: 'fcMax must be a number in °C' }),
@@ -42,6 +43,8 @@ const CropSchema = z.object({
   yld: z.number({ error: 'yld must be a number in kg/m²/yr' }),
   price: z.number({ error: 'price must be a number in €/kg' }),
   seedCost: z.number({ error: 'seedCost must be a number in €/m²/yr' }),
+  unitWeightKg: z.number({ error: 'unitWeightKg must be a number in kg per sellable unit' }).positive().optional(),
+  unitLabel: z.string().optional(),
   cycleDays: z.number({ error: 'cycleDays must be a number in days' }),
   cMin: z.number({ error: 'cMin must be a number in °C' }),
   cMax: z.number({ error: 'cMax must be a number in °C' }),
@@ -86,6 +89,16 @@ const EconomicsSchema = z.object({
   fishPrices: z.record(z.string(), z.number()),
   cropPrices: z.record(z.string(), z.number()),
 });
+
+const ModelSchema = z
+  .object({
+    laborShareFish: z.number({ error: 'laborShareFish must be a share 0–1' }).min(0).max(1),
+    laborSharePlants: z.number({ error: 'laborSharePlants must be a share 0–1' }).min(0).max(1),
+    energyShareFish: z.number({ error: 'energyShareFish must be a share 0–1' }).min(0).max(1),
+  })
+  .refine((m) => m.laborShareFish + m.laborSharePlants <= 1, {
+    message: 'laborShareFish + laborSharePlants must not exceed 1 (remainder = general labour)',
+  });
 
 const IdPattern = /^[a-z][a-z0-9_]*$/;
 
@@ -204,6 +217,17 @@ export function generate(dataDir: string): string {
   );
   const economics = parseRegionFile(join(dataDir, 'regions/berlin-brandenburg.yaml'));
 
+  const modelRaw = parseYaml(readFileSync(join(dataDir, 'model.yaml'), 'utf-8')) as { model?: unknown };
+  if (!modelRaw || typeof modelRaw !== 'object' || !modelRaw.model) {
+    throw new Error('model.yaml → missing "model:" block');
+  }
+  const modelValidation = ModelSchema.safeParse(modelRaw.model);
+  if (!modelValidation.success) {
+    const issues = modelValidation.error.issues.map((i) => `  ${i.path.join('.')}: ${i.message}`).join('\n');
+    throw new Error(`model.yaml/model validation failed:\n${issues}`);
+  }
+  const model = modelValidation.data;
+
   const fishIds = Object.keys(fish);
   const cropIds = Object.keys(crops);
   const scaleIds = Object.keys(scales);
@@ -221,7 +245,7 @@ export function generate(dataDir: string): string {
     '//',
     '// Zero runtime dependencies — zod and yaml are devDeps only.',
     '',
-    "import type { Crop, EnergyDefaults, FinanceDefaults, FishSpecies, PropertyDefaults, Scale } from './types';",
+    "import type { Crop, EnergyDefaults, FinanceDefaults, FishSpecies, ModelAssumptions, PropertyDefaults, Scale } from './types';",
     '',
     buildEntityBlock('FISH', 'FishSpecies', fish),
     `export type FishId = ${fishIds.map((id) => JSON.stringify(id)).join(' | ')};`,
@@ -237,6 +261,8 @@ export function generate(dataDir: string): string {
     `export const PROPERTY: PropertyDefaults = ${toTsLiteral(property)};`,
     '',
     `export const FINANCE: FinanceDefaults = ${toTsLiteral(finance)};`,
+    '',
+    `export const MODEL: ModelAssumptions = ${toTsLiteral(model)};`,
     '',
   ];
 

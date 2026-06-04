@@ -13,6 +13,12 @@ export {
 export { loopTemp, pairFishPlant, type PairClass, type Pairing } from './pairing';
 export { cropValue, fishValue, indexScore } from './indices';
 export {
+  enterpriseContribution,
+  type AttributionShares,
+  type ContributionResult,
+  type EnterpriseTotals,
+} from './contribution';
+export {
   deriveHeatDemand,
   deriveSuitability,
   deriveMonthlyHeatDemand,

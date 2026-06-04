@@ -297,3 +297,52 @@ describe('simulateMonthly with monthlyHeatOpex (seasonal mode)', () => {
     expect(Math.abs(annualMonthly - flatAnnual) / flatAnnual).toBeLessThan(0.02);
   });
 });
+
+// ── Per-enterprise contribution split (fish vs plants) ──────────────────────
+
+import { enterpriseContribution } from '../src/core';
+
+describe('enterprise contribution', () => {
+  // Synthetic, hand-computed case: both enterprises earn €10,000/yr.
+  const i = {
+    ...makeInputs('small', 'catfish', 'greens_mix'),
+    fishKg: 1000, fishPrice: 10, fcr: 1, feedPrice: 1, stockCost: 1,
+    growArea: 100, yieldM2: 20, plantPrice: 5, seedCost: 10,
+    laborHrs: 10, wage: 20,
+  };
+  const shares = { laborShareFish: 0.35, laborSharePlants: 0.45, energyShareFish: 0.7 };
+
+  it('splits labour, energy and direct costs and computes contribution profit', () => {
+    const c = enterpriseContribution(i, 1000, shares, 0.5, 0.4);
+    // hoursTotal 520; revenue share 50/50 → fish gets 0.35 + 0.2×0.5 = 0.45
+    expect(c.fish.laborHours).toBeCloseTo(234, 8);
+    expect(c.plants.laborHours).toBeCloseTo(286, 8);
+    expect(c.fish.revenue).toBe(10000);
+    expect(c.plants.revenue).toBe(10000);
+    expect(c.fish.direct).toBe(2000); // feed 1000 + juveniles 1000
+    expect(c.plants.direct).toBe(1000); // seedlings
+    expect(c.fish.energy).toBeCloseTo(700, 8);
+    expect(c.plants.energy).toBeCloseTo(300, 8);
+    expect(c.fish.profit).toBeCloseTo(10000 - 2000 - 4680 - 700, 6); // 2620
+    expect(c.plants.profit).toBeCloseTo(10000 - 1000 - 5720 - 300, 6); // 2980
+    expect(c.fish.profitPerHour).toBeCloseTo(2620 / 234, 6);
+    expect(c.plants.profitPerHour).toBeCloseTo(2980 / 286, 6);
+  });
+
+  it('converts kg to sellable units via market/unit weights', () => {
+    const c = enterpriseContribution(i, 1000, shares, 0.5, 0.4);
+    expect(c.fish.kgPerYear).toBe(1000);
+    expect(c.fish.unitsPerYear).toBeCloseTo(2000, 8); // 1000 kg ÷ 0.5 kg/fish
+    expect(c.plants.kgPerYear).toBe(2000); // 100 m² × 20 kg/m²
+    expect(c.plants.unitsPerYear).toBeCloseTo(5000, 8); // ÷ 0.4 kg/head
+    const noUnits = enterpriseContribution(i, 1000, shares, 0.5, null);
+    expect(noUnits.plants.unitsPerYear).toBeNull();
+  });
+
+  it('enterprise totals sum to the venture-level lines (rev, inputs, labour, energy)', () => {
+    const c = enterpriseContribution(i, 1000, shares, 0.5, 0.4);
+    expect(c.fish.revenue + c.plants.revenue).toBeCloseTo(i.fishKg * i.fishPrice + i.growArea * i.yieldM2 * i.plantPrice, 6);
+    expect(c.fish.labor + c.plants.labor).toBeCloseTo(i.laborHrs * 52 * i.wage, 6);
+    expect(c.fish.energy + c.plants.energy).toBeCloseTo(1000, 6);
+  });
+});

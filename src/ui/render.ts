@@ -17,6 +17,7 @@ import { renderChart } from './chart';
 import { renderSpark } from './spark';
 import { renderTable } from './table';
 import { renderPairs, updateCropDots } from './panels';
+import { renderTotals } from './totals';
 import { snapshot } from './persist';
 import type { AppState } from './state';
 
@@ -145,6 +146,7 @@ export function render(state: AppState): void {
   el('e-gen').textContent = kwh(L.E.gen);
   el('e-imp').textContent = kwh(L.E.imp);
   el('e-eff').textContent = `${ct(L.E.eff)}/kWh`;
+  renderTotals(state, i, L.E);
 
   const s = state.focus === 'lease' ? L : R;
   renderTable(yearRows(s, i, i.horizon));

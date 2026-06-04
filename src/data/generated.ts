@@ -4,7 +4,7 @@
 //
 // Zero runtime dependencies — zod and yaml are devDeps only.
 
-import type { Crop, EnergyDefaults, FinanceDefaults, FishSpecies, PropertyDefaults, Scale } from './types';
+import type { Crop, EnergyDefaults, FinanceDefaults, FishSpecies, ModelAssumptions, PropertyDefaults, Scale } from './types';
 
 export const FISH = {
   catfish: {
@@ -14,6 +14,7 @@ export const FISH = {
     fcr: 1.1,
     growMonths: 5,
     label: "African catfish",
+    marketWeightKg: 1.5,
     notes: "Air-breathing and extremely hardy — tolerates high density and low oxygen. The classic aquaponics workhorse.",
     price: 9,
     stockCost: 0.8,
@@ -26,6 +27,7 @@ export const FISH = {
     fcr: 1.4,
     growMonths: 9,
     label: "Tilapia",
+    marketWeightKg: 0.6,
     notes: "Fast and robust, but needs warm water year-round — expensive to hold through a Brandenburg winter.",
     price: 11,
     stockCost: 1,
@@ -38,6 +40,7 @@ export const FISH = {
     fcr: 1.1,
     growMonths: 14,
     label: "Trout",
+    marketWeightKg: 0.4,
     notes: "Premium cold-water fish — little heating, but demands high dissolved oxygen and clean, cool water.",
     price: 14,
     stockCost: 1.2,
@@ -50,6 +53,7 @@ export const FISH = {
     fcr: 1.5,
     growMonths: 18,
     label: "Carp",
+    marketWeightKg: 1.2,
     notes: "Very hardy and cheap to stock, but low value and slow to size. Traditional German festive fish.",
     price: 7,
     stockCost: 0.6,
@@ -62,6 +66,7 @@ export const FISH = {
     fcr: 1.4,
     growMonths: 15,
     label: "European perch",
+    marketWeightKg: 0.15,
     notes: "Good value and a growing RAS species in Europe; steady restaurant demand, fussier than catfish.",
     price: 16,
     stockCost: 1.8,
@@ -74,6 +79,7 @@ export const FISH = {
     fcr: 1.1,
     growMonths: 16,
     label: "Pikeperch (Zander)",
+    marketWeightKg: 1.2,
     notes: "Top of the German freshwater market, prized in gastronomy. Demanding — sensitive fry, exacting water.",
     price: 22,
     stockCost: 2.5,
@@ -86,6 +92,7 @@ export const FISH = {
     fcr: 1.1,
     growMonths: 16,
     label: "Arctic char",
+    marketWeightKg: 0.4,
     notes: "Premium cold-water salmonid needing even less heating than trout. Strong direct-sale and chef appeal.",
     price: 17,
     stockCost: 1.5,
@@ -98,6 +105,7 @@ export const FISH = {
     fcr: 1.2,
     growMonths: 24,
     label: "Sturgeon",
+    marketWeightKg: 2.5,
     notes: "Meat plus long-term caviar potential. High stock cost and a very long horizon — a patient niche play.",
     price: 14,
     stockCost: 3,
@@ -110,6 +118,7 @@ export const FISH = {
     fcr: 1.6,
     growMonths: 10,
     label: "Redclaw crayfish",
+    marketWeightKg: 0.065,
     notes: "Tropical crayfish well-suited to aquaponics — warm water plus hiding structure, no migration needs.",
     price: 25,
     stockCost: 3,
@@ -122,6 +131,7 @@ export const FISH = {
     fcr: 2,
     growMonths: 7,
     label: "Giant river prawn",
+    marketWeightKg: 0.075,
     notes: "High value but cannibalistic and warmth-hungry — heating-intensive, lower density, careful management.",
     price: 28,
     stockCost: 3.5,
@@ -134,6 +144,7 @@ export const FISH = {
     fcr: 1.8,
     growMonths: 48,
     label: "Noble crayfish (Edelkrebs)",
+    marketWeightKg: 0.1,
     notes: "Native, very high value, but slow-growing and protection-regulated. A long-horizon premium niche.",
     price: 35,
     stockCost: 4,
@@ -170,6 +181,8 @@ export const CROPS = {
     notes: "The classic aquaponics crop; loves cool water and bolts in heat.",
     price: 4,
     seedCost: 8,
+    unitLabel: "head",
+    unitWeightKg: 0.35,
     yld: 30,
   },
   lettuce_leaf: {
@@ -254,6 +267,8 @@ export const CROPS = {
     notes: "Fast Asian green with reliable restaurant demand.",
     price: 6,
     seedCost: 8,
+    unitLabel: "head",
+    unitWeightKg: 0.3,
     yld: 18,
   },
   feldsalat: {
@@ -389,4 +404,10 @@ export const FINANCE: FinanceDefaults = {
   deprYears: 12,
   horizonYears: 15,
   wage: 17,
+};
+
+export const MODEL: ModelAssumptions = {
+  energyShareFish: 0.7,
+  laborShareFish: 0.35,
+  laborSharePlants: 0.45,
 };

@@ -18,6 +18,15 @@ pnpm build:data  # regenerate src/data/generated.ts after editing /data/*.yaml
 A `pre-push` git hook in `.githooks/` runs the tests before every push
 (activated via `core.hooksPath` by the `prepare` script on `pnpm install`).
 
+### Tailscale access
+
+`pnpm dev` / `pnpm preview` listen on **all interfaces, port 5174**
+(`vite.config.ts`: `host: true`; 5173 belongs to `../tgl` on this host —
+override with `PORT=…`). Tailscale MagicDNS hostnames (`bluefin`,
+`*.tailnet.internal`, `*.ts.net`) are allowlisted through Vite's Host-header
+check; other Host values get a 403. Open `http://bluefin:5174/` (or the
+node's `100.x` Tailscale IP) from any device on the tailnet.
+
 ## Architecture
 
 Data / logic / UI are strictly separated (HANDOFF.md §6):

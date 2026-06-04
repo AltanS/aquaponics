@@ -2,7 +2,6 @@ meta:
   schemaVersion: "1.0"
   region: universal
   lastUpdated: "2026-06-04"
-  notes: "Universal fish biology reference data. Prices are regional — see regions/. heatFactor kept for T3 (removed in spec-03)."
 
 entities:
   catfish:
@@ -11,7 +10,6 @@ entities:
     price: 9          # €/kg direct-sale
     fcr: 1.1          # kg feed per kg live weight
     stockCost: 0.8    # €/kg produced (juveniles)
-    heatFactor: 1.0   # multiplier on scale baseHeat
     growMonths: 7     # months to market size
     fcMin: 25         # comfort temp band °C (min)
     fcMax: 28         # comfort temp band °C (max)
@@ -24,7 +22,6 @@ entities:
     price: 11
     fcr: 1.4
     stockCost: 1.0
-    heatFactor: 1.15
     growMonths: 7
     fcMin: 27
     fcMax: 30
@@ -37,7 +34,6 @@ entities:
     price: 14
     fcr: 1.1
     stockCost: 1.2
-    heatFactor: 0.6
     growMonths: 14
     fcMin: 12
     fcMax: 16
@@ -50,7 +46,6 @@ entities:
     price: 7
     fcr: 1.5
     stockCost: 0.6
-    heatFactor: 0.7
     growMonths: 18
     fcMin: 20
     fcMax: 24
@@ -63,7 +58,6 @@ entities:
     price: 16
     fcr: 1.4
     stockCost: 1.8
-    heatFactor: 0.85
     growMonths: 15
     fcMin: 21
     fcMax: 24
@@ -76,7 +70,6 @@ entities:
     price: 22
     fcr: 1.3
     stockCost: 2.5
-    heatFactor: 0.9
     growMonths: 20
     fcMin: 22
     fcMax: 25
@@ -89,7 +82,6 @@ entities:
     price: 17
     fcr: 1.1
     stockCost: 1.5
-    heatFactor: 0.55
     growMonths: 16
     fcMin: 10
     fcMax: 14
@@ -102,7 +94,6 @@ entities:
     price: 14
     fcr: 1.2
     stockCost: 3.0
-    heatFactor: 0.7
     growMonths: 24
     fcMin: 16
     fcMax: 20
@@ -115,7 +106,6 @@ entities:
     price: 25
     fcr: 1.6
     stockCost: 3.0
-    heatFactor: 1.2
     growMonths: 10
     fcMin: 25
     fcMax: 28
@@ -128,7 +118,6 @@ entities:
     price: 28
     fcr: 2.0
     stockCost: 3.5
-    heatFactor: 1.25
     growMonths: 7
     fcMin: 27
     fcMax: 30
@@ -141,7 +130,6 @@ entities:
     price: 35
     fcr: 1.8
     stockCost: 4.0
-    heatFactor: 0.65
     growMonths: 30
     fcMin: 16
     fcMax: 19

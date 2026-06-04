@@ -46,11 +46,3 @@ export function formatGrowOut(months: number): string {
 export function formatCycleDays(days: number): string {
   return `${days} d`;
 }
-
-/** Suitability word from suitability class — used in display */
-export function heatWord(heatFactor: number): string {
-  if (heatFactor >= 1.1) return 'High';
-  if (heatFactor >= 0.9) return 'Moderate';
-  if (heatFactor >= 0.7) return 'Low–mod';
-  return 'Low';
-}

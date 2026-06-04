@@ -11,8 +11,29 @@ import {
   type CalcInputs,
   type Toggles,
 } from '../src/core';
+import {
+  deriveHeatDemand,
+  deriveSuitability,
+  deriveMonthlyHeatDemand,
+  deriveEffectiveGrowMonths,
+} from '../src/core/derive';
 
-/** Build CalcInputs exactly the way the UI seeds them from the presets. */
+// ── Shared Berlin region constants ────────────────────────────────────────────
+
+/** Berlin/Brandenburg region for all derive tests and makeInputs. */
+const BERLIN_REGION = {
+  annualMeanAmbientC: 10.075, // mean of monthlyAmbientC
+  monthlyAmbientC: [0.3, 1.2, 5.2, 9.7, 15.1, 18.2, 20.1, 19.8, 15.3, 9.8, 4.7, 1.5],
+};
+const BERLIN_ENCLOSURE = { heatLossFactor: 0.35 };
+
+// ── makeInputs helper ─────────────────────────────────────────────────────────
+
+/**
+ * Build CalcInputs exactly the way the UI seeds them from the presets.
+ * heatDemand now uses deriveHeatDemand (spec-03: heatFactor removed from data).
+ * Calibrated so catfish/small → 55000 kWh (= old baseHeat × 1.0, within 0.01%).
+ */
 function makeInputs(scale: keyof typeof SCALES, fish: keyof typeof FISH, crop: keyof typeof CROPS): CalcInputs {
   const s = SCALES[scale];
   const f = FISH[fish];
@@ -21,7 +42,8 @@ function makeInputs(scale: keyof typeof SCALES, fish: keyof typeof FISH, crop: k
     fishKg: s.fishKg, fishPrice: f.price, fcr: f.fcr, feedPrice: ENERGY.feedPrice,
     stockCost: f.stockCost, growMonths: f.growMonths,
     growArea: s.growArea, yieldM2: c.yld, plantPrice: c.price, seedCost: c.seedCost, cycleDays: c.cycleDays,
-    sysKwh: s.sysKwh, heatDemand: Math.round(s.baseHeat * f.heatFactor),
+    sysKwh: s.sysKwh,
+    heatDemand: Math.round(deriveHeatDemand(f, BERLIN_REGION, BERLIN_ENCLOSURE, s)),
     cop: ENERGY.cop, pvKwp: s.pvKwp, pvYield: ENERGY.pvYield, scRate: ENERGY.scRate,
     gridPrice: ENERGY.gridPrice, feedIn: ENERGY.feedIn, gasPrice: ENERGY.gasPrice, omSolar: ENERGY.omSolar,
     pvCostPerKwp: ENERGY.pvCostPerKwp, hpCostPerKw: ENERGY.hpCostPerKw, hpFullLoadHours: ENERGY.hpFullLoadHours,
@@ -34,6 +56,8 @@ function makeInputs(scale: keyof typeof SCALES, fish: keyof typeof FISH, crop: k
 
 const BOTH_ON: Toggles = { solar: true, heatpump: true };
 const BOTH_OFF: Toggles = { solar: false, heatpump: false };
+
+// ── Original 14 golden tests ─────────────────────────────────────────────────
 
 describe('golden: default scenario (small / catfish / greens_mix, solar+HP on)', () => {
   const i = makeInputs('small', 'catfish', 'greens_mix');
@@ -111,7 +135,9 @@ describe('ramp simulation & break-even', () => {
     const L = computeScenario('lease', i, BOTH_ON);
     const withLag = simulateMonthly(L, i, i.horizon);
     const noLag = simulateMonthly(L, { growMonths: 0, cycleDays: i.cycleDays }, i.horizon);
-    expect(withLag.breakEven).toBeCloseTo(6.871, 2); // golden value
+    // golden re-pinned for spec-03: heatDemand now uses deriveHeatDemand (physics-based)
+    // noblecray loopTemp=17.5, ΔT=7.425, deriveHeatDemand/small ≈ 24863 (was 35750 with heatFactor=0.65)
+    expect(withLag.breakEven).toBeCloseTo(6.731, 2); // re-pinned golden (spec-03): heatDemand uses deriveHeatDemand (physics)
     expect(noLag.breakEven).not.toBeNull();
     expect(withLag.breakEven! - noLag.breakEven!).toBeGreaterThan(2.5); // 30-mo lag + deeper valley
   });
@@ -163,5 +189,88 @@ describe('index scores', () => {
     expect(indexScore(2, [1, 2, 3])).toBe(50);
     expect(indexScore(99, [1, 2, 3])).toBe(100);
     expect(indexScore(5, [5, 5])).toBe(50); // degenerate set
+  });
+});
+
+// ── Spec-03: derive.ts tests ─────────────────────────────────────────────────
+
+describe('deriveHeatDemand — calibration', () => {
+  it('catfish/small reproduces old baseHeat×heatFactor (55000 kWh) within 5%', () => {
+    // loopTemp = (25+28)/2 = 26.5°C; ΔT = 26.5-10.075 = 16.425°C
+    // formula: 16.425/20 × 0.35 × 400 × 54.608 × 8760/1000 = 55000 kWh
+    const result = deriveHeatDemand(FISH.catfish, BERLIN_REGION, BERLIN_ENCLOSURE, SCALES.small);
+    expect(result).toBeCloseTo(55000, -2); // within ±100 kWh (0.2%)
+    expect(Math.abs(result - 55000) / 55000).toBeLessThan(0.05);
+  });
+
+  it('trout/small returns a value proportional to its lower ΔT vs catfish', () => {
+    // trout loopTemp = (12+16)/2 = 14°C; ΔT = 14-10.075 = 3.925°C
+    // expected ≈ 55000 × (3.925/16.425) = 13143 kWh (physics-based, not old heatFactor)
+    const result = deriveHeatDemand(FISH.trout, BERLIN_REGION, BERLIN_ENCLOSURE, SCALES.small);
+    const expected = 55000 * (3.925 / 16.425);
+    expect(result).toBeCloseTo(expected, -1);
+  });
+
+  it('returns 0 for a species where loopTemp ≤ annualMean', () => {
+    // Hypothetical cold fish with loopTemp=8°C in Berlin (mean=10.075)
+    const coldFish = { fcMin: 6, fcMax: 10 }; // loopTemp=8
+    const result = deriveHeatDemand(coldFish, BERLIN_REGION, BERLIN_ENCLOSURE, SCALES.small);
+    expect(result).toBe(0);
+  });
+});
+
+describe('deriveSuitability — Berlin region', () => {
+  it('catfish → costly (loopTemp=26.5, ΔT=16.425 > 15)', () => {
+    // ΔT = 26.5 - 10.075 = 16.425 > 15 → costly
+    expect(deriveSuitability(FISH.catfish, BERLIN_REGION)).toBe('costly');
+  });
+
+  it('trout → native (loopTemp=14, ΔT=3.925 < 5)', () => {
+    // ΔT = 14 - 10.075 = 3.925 < 5 → native
+    // Note: spec draft said 'workable' but correct formula gives 'native'
+    expect(deriveSuitability(FISH.trout, BERLIN_REGION)).toBe('native');
+  });
+
+  it('noblecray → workable (loopTemp=17.5, ΔT=7.425 in 5–15 range)', () => {
+    // ΔT = 17.5 - 10.075 = 7.425; 5 < 7.425 < 15 → workable
+    expect(deriveSuitability(FISH.noblecray, BERLIN_REGION)).toBe('workable');
+  });
+});
+
+describe('deriveMonthlyHeatDemand — seasonal', () => {
+  it('returns 12-element array', () => {
+    const monthly = deriveMonthlyHeatDemand(FISH.catfish, BERLIN_REGION, BERLIN_ENCLOSURE, SCALES.small);
+    expect(monthly).toHaveLength(12);
+  });
+
+  it('sum matches annual deriveHeatDemand within ±2%', () => {
+    const monthly = deriveMonthlyHeatDemand(FISH.catfish, BERLIN_REGION, BERLIN_ENCLOSURE, SCALES.small);
+    const annual = deriveHeatDemand(FISH.catfish, BERLIN_REGION, BERLIN_ENCLOSURE, SCALES.small);
+    const sum = monthly.reduce((a: number, b: number) => a + b, 0);
+    expect(Math.abs(sum - annual) / annual).toBeLessThan(0.02);
+  });
+
+  it('summer months have zero heat demand for cold-water trout', () => {
+    // trout loopTemp=14°C; in July/Aug ambient=20.1/19.8°C > 14 → 0 heat
+    const monthly = deriveMonthlyHeatDemand(FISH.trout, BERLIN_REGION, BERLIN_ENCLOSURE, SCALES.small);
+    expect(monthly[6]).toBe(0); // July
+    expect(monthly[7]).toBe(0); // August
+  });
+});
+
+describe('deriveEffectiveGrowMonths — winter gating', () => {
+  it('catfish (fcMin=25): all 12 Berlin months below 25°C → adds 12 cold months', () => {
+    // Berlin monthlyAmbientC max = 20.1°C < 25 → all 12 months are cold
+    // effectiveGrowMonths = 7 (catfish growMonths) + 12 = 19
+    const result = deriveEffectiveGrowMonths(FISH.catfish, BERLIN_REGION);
+    expect(result).toBe(FISH.catfish.growMonths + 12);
+  });
+
+  it('trout (fcMin=12): counts months with ambient < 12°C', () => {
+    // Berlin monthly: [0.3,1.2,5.2,9.7,15.1,18.2,20.1,19.8,15.3,9.8,4.7,1.5]
+    // months < 12°C: Jan(0.3), Feb(1.2), Mar(5.2), Apr(9.7), Oct(9.8), Nov(4.7), Dec(1.5) = 7 months
+    const coldMonths = BERLIN_REGION.monthlyAmbientC.filter((t: number) => t < FISH.trout.fcMin).length;
+    const result = deriveEffectiveGrowMonths(FISH.trout, BERLIN_REGION);
+    expect(result).toBe(FISH.trout.growMonths + coldMonths);
   });
 });

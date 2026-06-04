@@ -12,3 +12,13 @@ export {
 } from './simulate';
 export { loopTemp, pairFishPlant, type PairClass, type Pairing } from './pairing';
 export { cropValue, fishValue, indexScore } from './indices';
+export {
+  deriveHeatDemand,
+  deriveSuitability,
+  deriveMonthlyHeatDemand,
+  deriveEffectiveGrowMonths,
+  type DeriveEnclosure,
+  type DeriveRegion,
+  type DeriveScale,
+  type DeriveSpecies,
+} from './derive';

@@ -29,7 +29,6 @@ const FishSpeciesSchema = z.object({
   price: z.number({ error: 'price must be a number in €/kg' }),
   fcr: z.number({ error: 'fcr must be a number in kg/kg' }),
   stockCost: z.number({ error: 'stockCost must be a number in €/kg' }),
-  heatFactor: z.number({ error: 'heatFactor must be a number (multiplier)' }),
   growMonths: z.number({ error: 'growMonths must be a number in months' }),
   fcMin: z.number({ error: 'fcMin must be a number in °C' }),
   fcMax: z.number({ error: 'fcMax must be a number in °C' }),

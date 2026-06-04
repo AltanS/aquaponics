@@ -16,18 +16,12 @@ export interface FishSpecies {
   fcr: number;
   /** €/kg produced — bought-in juveniles (the model does NOT breed) */
   stockCost: number;
-  /** multiplier on a scale's base heat demand (removed in spec-03) */
-  heatFactor: number;
   /** grow-out to market size, months — first-revenue lag */
   growMonths: number;
   /** comfort water-temp band °C (min) — band midpoint sets the loop temperature */
   fcMin: number;
   /** comfort water-temp band °C (max) */
   fcMax: number;
-  /** display string, e.g. "25–28°C" — removed in spec-02 (derived in format.ts) */
-  temp?: string;
-  /** display string, e.g. "6–9 mo" — removed in spec-02 (derived in format.ts) */
-  growout?: string;
   difficulty: Difficulty;
   notes: string;
 }
@@ -51,12 +45,6 @@ export interface Crop {
   caMin: number;
   /** tolerable root-zone °C (max) */
   caMax: number;
-  /** display string, e.g. "15–22°C" — removed in spec-02 (derived in format.ts) */
-  temp?: string;
-  /** display string, e.g. "30–45 d" — removed in spec-02 (derived in format.ts) */
-  cycle?: string;
-  /** display string, e.g. "Raft (DWC)" — removed in spec-02 (derived in format.ts) */
-  system?: string;
   difficulty: Difficulty;
   notes: string;
 }
@@ -69,7 +57,7 @@ export interface Scale {
   growArea: number;
   /** systems electricity kWh/yr (pumps/air/lights/controls) */
   sysKwh: number;
-  /** base thermal demand kWh/yr (× fish.heatFactor) */
+  /** base thermal demand kWh/yr — used in old heatFactor formula; kept for reference */
   baseHeat: number;
   /** default PV array size, kWp */
   pvKwp: number;

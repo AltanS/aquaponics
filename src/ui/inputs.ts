@@ -1,7 +1,23 @@
 import { CROPS, ENERGY, FINANCE, FISH, PROPERTY, SCALES } from '../data';
+import { deriveHeatDemand } from '../core/derive';
 import type { CalcInputs } from '../core';
 import { num, setVal } from './dom';
 import type { AppState } from './state';
+
+/**
+ * Berlin/Brandenburg default region for heat derivation.
+ * Hard-coded until T7 connects the region selector.
+ * monthlyAmbientC: Jan–Dec °C, Brandenburg (Potsdam/DWD).
+ */
+const BERLIN_REGION = {
+  annualMeanAmbientC: 10.075, // mean of monthlyAmbientC array
+  monthlyAmbientC: [0.3, 1.2, 5.2, 9.7, 15.1, 18.2, 20.1, 19.8, 15.3, 9.8, 4.7, 1.5],
+};
+
+/** Default insulated-greenhouse enclosure spec for Berlin. */
+const BERLIN_ENCLOSURE = {
+  heatLossFactor: 0.35,
+};
 
 /** Seed the fish-related inputs from the selected species (preset behaviour). */
 export function applyFishPreset(state: AppState): void {
@@ -11,7 +27,8 @@ export function applyFishPreset(state: AppState): void {
   setVal('fcr', f.fcr);
   setVal('stockCost', f.stockCost);
   setVal('growMonths', f.growMonths);
-  setVal('heatDemand', Math.round(s.baseHeat * f.heatFactor));
+  const heat = Math.round(deriveHeatDemand(f, BERLIN_REGION, BERLIN_ENCLOSURE, s));
+  setVal('heatDemand', heat);
 }
 
 /** Seed the crop-related inputs from the selected crop. */

@@ -41,6 +41,12 @@ export interface CalcInputs {
   // finance
   deprYears: number;
   horizon: number;
+  /**
+   * Optional monthly heat opex (12-element array, €/month).
+   * When provided, simulateMonthly uses per-month heat costs instead of
+   * the flat annual heatDemand. Absent → existing behaviour unchanged.
+   */
+  monthlyHeatOpex?: number[];
 }
 
 export interface Toggles {

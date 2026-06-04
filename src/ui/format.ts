@@ -28,6 +28,26 @@ export function diffClass(d: Difficulty): string {
   return d === 'Hard' ? 'd-hard' : d === 'Easy' ? 'd-easy' : 'd-med';
 }
 
+/** Format temp range for display, e.g. "25–28°C" */
+export function formatTempRange(min: number, max: number): string {
+  return `${min}–${max}°C`;
+}
+
+/** Format grow-out duration, e.g. "5 mo" or "24 mo (2 yr)" for ≥ 24 months */
+export function formatGrowOut(months: number): string {
+  if (months >= 24) {
+    const yrs = Math.round(months / 12);
+    return `${months} mo (${yrs} yr)`;
+  }
+  return `${months} mo`;
+}
+
+/** Format cycle days, e.g. "38 d" */
+export function formatCycleDays(days: number): string {
+  return `${days} d`;
+}
+
+/** Suitability word from suitability class — used in display */
 export function heatWord(heatFactor: number): string {
   if (heatFactor >= 1.1) return 'High';
   if (heatFactor >= 0.9) return 'Moderate';

@@ -1,7 +1,7 @@
-export { FISH, type FishId } from './fish';
-export { CROPS, type CropId } from './crops';
-export { SCALES, type ScaleId } from './scales';
-export { ENERGY, PROPERTY, FINANCE } from './economics';
+export { FISH, type FishId } from './generated';
+export { CROPS, type CropId } from './generated';
+export { SCALES, type ScaleId } from './generated';
+export { ENERGY, PROPERTY, FINANCE } from './generated';
 export type {
   Crop,
   Difficulty,

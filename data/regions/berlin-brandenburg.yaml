@@ -1,0 +1,67 @@
+meta:
+  schemaVersion: "1.0"
+  region: berlin-brandon
+  lastUpdated: "2026-06-04"
+  notes: "Berlin/Brandenburg regional data — 2026 figures. Climate: cold-continental. Economics from HANDOFF.md §7."
+
+# Climate block — populated fully in spec-02
+climate:
+  climateZone: cold-continental
+  monthlyAmbientC: [0.3, 1.2, 5.2, 9.7, 15.1, 18.2, 20.1, 19.8, 15.3, 9.8, 4.7, 1.5]  # Jan–Dec °C
+  supplementalLight: [true, true, false, false, false, false, false, false, false, false, true, true]  # by month
+
+# Enclosure spec — populated fully in spec-02
+enclosure:
+  type: insulated-greenhouse
+  heatLossFactor: 0.35  # W per m² per °C differential
+
+# Economics
+economics:
+  # Energy constants (ENERGY object) — BDEW/Bundesnetzagentur 2026, Fraunhofer ISE PV
+  feedPrice: 1.6      # €/kg feed
+  cop: 3.0            # heat-pump seasonal COP
+  pvYield: 950        # kWh/kWp/yr (Brandenburg)
+  scRate: 55          # % PV self-consumed
+  gridPrice: 0.25     # €/kWh import
+  feedIn: 0.07        # €/kWh export (EEG 2026)
+  gasPrice: 0.11      # €/kWh thermal (gas boiler fallback)
+  omSolar: 0.015      # €/kWh self-used (PV O&M)
+  pvCostPerKwp: 1200  # € installed per kWp
+  hpCostPerKw: 1100   # €/kW thermal
+  hpFullLoadHours: 2000  # h/yr, for HP sizing
+
+  # Property (PROPERTY object) — Amt für Statistik Berlin-Brandenburg
+  rentPerM2Month: 4.5  # €/m²/month (rent scenario)
+
+  # Finance (FINANCE object) — statutory minimum wage 2026
+  wage: 17          # €/h loaded
+  deprYears: 12
+  horizonYears: 15
+
+  # Regional price maps — fish prices by species id
+  fishPrices:
+    catfish: 9        # €/kg direct-sale
+    tilapia: 11
+    trout: 14
+    carp: 7
+    perch: 16
+    pikeperch: 22
+    archar: 17
+    sturgeon: 14
+    redclaw: 25
+    prawn: 28
+    noblecray: 35
+
+  # Regional price maps — crop prices by crop id
+  cropPrices:
+    greens_mix: 4.5   # €/kg direct-sale
+    lettuce_head: 4.0
+    lettuce_leaf: 6.0
+    rocket: 11
+    basil: 14
+    spinach: 7
+    chard: 5
+    pakchoi: 6
+    feldsalat: 13
+    herbs: 12
+    microgreens: 40

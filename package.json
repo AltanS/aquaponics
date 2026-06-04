@@ -6,6 +6,9 @@
   "packageManager": "pnpm@11.4.0",
   "scripts": {
     "dev": "vite",
+    "build:data": "tsx scripts/build-data.ts",
+    "prebuild": "pnpm run build:data",
+    "pretest": "pnpm run build:data",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "test": "vitest run",
@@ -13,8 +16,12 @@
     "prepare": "git config core.hooksPath .githooks || true"
   },
   "devDependencies": {
+    "@types/node": "^25.9.1",
+    "tsx": "^4.22.4",
     "typescript": "^5.8.0",
     "vite": "^7.0.0",
-    "vitest": "^3.0.0"
+    "vitest": "^3.0.0",
+    "yaml": "^2.9.0",
+    "zod": "^4.4.3"
   }
 }

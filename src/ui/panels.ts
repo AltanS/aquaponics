@@ -1,7 +1,7 @@
 import { CROPS, FISH, type CropId } from '../data';
 import { loopTemp, pairFishPlant, type PairClass } from '../core';
 import { el } from './dom';
-import { chip, diffClass, heatWord } from './format';
+import { chip, diffClass, formatCycleDays, formatGrowOut, formatTempRange, heatWord } from './format';
 import type { AppState } from './state';
 
 export function renderFishPanel(state: AppState): void {
@@ -10,9 +10,9 @@ export function renderFishPanel(state: AppState): void {
     `${f.label} <span class="badge ${diffClass(f.difficulty)}">${f.difficulty}</span>`;
   el('fish-attrs').innerHTML =
     chip('Type', f.type) +
-    chip('Water', f.temp) +
+    chip('Water', formatTempRange(f.fcMin, f.fcMax)) +
     chip('Loop ≈', `${Math.round(loopTemp(f))}°C`) +
-    chip('Grow-out', f.growout) +
+    chip('Grow-out', formatGrowOut(f.growMonths)) +
     chip('Heating', heatWord(f.heatFactor));
   el('fish-note').textContent = f.notes;
 }
@@ -22,7 +22,9 @@ export function renderCropPanel(state: AppState): void {
   el('crop-ttl').innerHTML =
     `${c.label} <span class="badge ${diffClass(c.difficulty)}">${c.difficulty}</span>`;
   el('crop-attrs').innerHTML =
-    chip('Category', c.cat) + chip('Root temp', c.temp) + chip('Cycle', c.cycle) + chip('System', c.system);
+    chip('Category', c.cat) +
+    chip('Root temp', formatTempRange(c.cMin, c.cMax)) +
+    chip('Cycle', formatCycleDays(c.cycleDays));
   el('crop-note').textContent = c.notes;
 }
 

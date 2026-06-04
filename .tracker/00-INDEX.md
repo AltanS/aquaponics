@@ -15,7 +15,7 @@ Implementation progress overview for the Project project.
 
 | Milestone | Name | Progress | Verified | Status |
 |-----------|------|----------|----------|--------|
-| M1 | Climate-aware data layer (YAML migration + region model + derived core) | ██░░░░░░░░ 20% | 11/53 | In Progress |
+| M1 | Climate-aware data layer (YAML migration + region model + derived core) | ███░░░░░░░ 30% | 18/53 | In Progress |
 
 ## Current Focus
 
@@ -24,16 +24,16 @@ Implementation progress overview for the Project project.
 | Spec | Verified | Status |
 |------|----------|--------|
 | 01-yaml-files-zod-schemas-build-data-codegen.md | 11/11 | Complete |
-| 02-region-entity-and-data-taxonomy-split.md | 0/7 | Not Started |
-| 03-core-derive-ts-heat-demand-and-suitability.md | 0/7 | Waiting (waiting on: 02-region-entity-and-data-taxonomy-split.md) |
+| 02-region-entity-and-data-taxonomy-split.md | 7/7 | Complete |
+| 03-core-derive-ts-heat-demand-and-suitability.md | 0/7 | Not Started |
 | 04-research-corrections-and-re-pin-goldens.md | 0/8 | Waiting (waiting on: 03-core-derive-ts-heat-demand-and-suitability.md) |
 | 05-seasonal-heating-and-winter-gated-grow-out.md | 0/6 | Waiting (waiting on: 04-research-corrections-and-re-pin-goldens.md) |
 | 06-ui-additions-region-selector-vintage-banner-suitability-badges.md | 0/7 | Waiting (waiting on: 05-seasonal-heating-and-winter-gated-grow-out.md) |
 | 07-docs-readme-and-handoff-addendum.md | 0/7 | Waiting (waiting on: 06-ui-additions-region-selector-vintage-banner-suitability-badges.md) |
 
 ### Next Action
-**Spec:** `02-region-entity-and-data-taxonomy-split.md` — Region entity and data taxonomy split
-**Task:** `src/data/index.ts` re-exports from `./generated`; fish.ts/crops.ts/scales.ts/economics.ts deleted
+**Spec:** `03-core-derive-ts-heat-demand-and-suitability.md` — core/derive.ts heat demand and suitability
+**Task:** `src/core/derive.ts` exists with `deriveHeatDemand` and `deriveSuitability` exports
 **Status:** Pending
 
 ## Blockers

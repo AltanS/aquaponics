@@ -17,15 +17,7 @@ import {
   deriveMonthlyHeatDemand,
   deriveEffectiveGrowMonths,
 } from '../src/core/derive';
-
-// ── Shared Berlin region constants ────────────────────────────────────────────
-
-/** Berlin/Brandenburg region for all derive tests and makeInputs. */
-const BERLIN_REGION = {
-  annualMeanAmbientC: 10.075, // mean of monthlyAmbientC
-  monthlyAmbientC: [0.3, 1.2, 5.2, 9.7, 15.1, 18.2, 20.1, 19.8, 15.3, 9.8, 4.7, 1.5],
-};
-const BERLIN_ENCLOSURE = { heatLossFactor: 0.35 };
+import { BERLIN_REGION, BERLIN_ENCLOSURE } from '../src/data/berlin-defaults';
 
 // ── makeInputs helper ─────────────────────────────────────────────────────────
 
@@ -281,21 +273,27 @@ describe('deriveEffectiveGrowMonths — winter gating', () => {
 describe('simulateMonthly with monthlyHeatOpex (seasonal mode)', () => {
   it('produces valid monthly rows when monthlyHeatOpex is provided', () => {
     const i = makeInputs('small', 'catfish', 'greens_mix');
-    // Compute monthly heat opex: 12-element array
+    // Compute monthly heat opex: 12-element array (catfish: all 12 months heated)
     const monthlyHeat = deriveMonthlyHeatDemand(FISH.catfish, BERLIN_REGION, BERLIN_ENCLOSURE, SCALES.small);
-    const monthlyHeatOpex = monthlyHeat.map(kwhHeat => (kwhHeat / ENERGY.cop) * ENERGY.gridPrice);
+    const monthlyHeatOpex = monthlyHeat.map((kwhHeat: number) => (kwhHeat / ENERGY.cop) * ENERGY.gridPrice);
 
     const L = computeScenario('lease', i, BOTH_ON);
     // Simulate WITH monthly heat opex
     const withMonthly = simulateMonthly(L, { ...i, monthlyHeatOpex }, i.horizon);
-    // Simulate WITHOUT (baseline)
+    // Simulate WITHOUT (baseline — flat heat distribution)
     const withFlat = simulateMonthly(L, i, i.horizon);
 
-    // Both should produce the same number of points
+    // Both produce the same number of points
     expect(withMonthly.pts).toHaveLength(withFlat.pts.length);
-    // Monthly mode should produce different (seasonal) breakeven compared to flat
-    // Both are non-regression checks — we just verify the simulation runs and produces plausible results
+    // Start point is identical (capex outflow)
     expect(withMonthly.pts[0]).toEqual({ x: 0, y: -L.capex });
-    expect(withMonthly.pts[withMonthly.pts.length - 1]).toBeDefined();
+    // Seasonal mode must diverge from flat mode (different monthly heat distribution)
+    // catfish has full-year heating, so the curves differ by calendar-month variance
+    expect(withMonthly.pts).not.toEqual(withFlat.pts);
+    // Annual sum of monthlyHeatOpex should approximately equal the flat-annual heat cost
+    const annualMonthly = monthlyHeatOpex.reduce((a: number, b: number) => a + b, 0);
+    // flat heat cost: heatDemand kWh / cop * gridPrice (but heatDemand is rounded, so close enough)
+    const flatAnnual = (i.heatDemand / ENERGY.cop) * ENERGY.gridPrice;
+    expect(Math.abs(annualMonthly - flatAnnual) / flatAnnual).toBeLessThan(0.02);
   });
 });

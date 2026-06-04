@@ -13,3 +13,5 @@ Agent selected: typescript:typescript-expert — YAML/zod/codegen work. Delegati
 Spec-01 delegation starting. typescript-expert agent assigned.
 ### 2026-06-04T12:04:23.490Z [note]
 data/fish.yaml\ndata/crops.yaml\ndata/scales.yaml\ndata/regions/berlin-brandon.yaml\nscripts/build-data.ts\nsrc/data/generated.ts\nsrc/data/index.ts\nsrc/data/types.ts\nsrc/ui/format.ts\nsrc/ui/panels.ts\ntest/schema.test.ts\npackage.json\ntsconfig.json
+### 2026-06-04T12:33:21.963Z [note]
+Review: milestone pass — code review surfaced 1 critical (readInputs missing state arg in render.ts — seasonal mode was dead in UI) + 5 warnings (BERLIN_REGION duplication, duplicate YAML file, heatpump toggle not respected in monthlyHeatOpex, loopTempFromBand duplication, annualMean dead export). All fixed. 33/33 tests pass, build clean.

@@ -1,23 +1,9 @@
 import { CROPS, ENERGY, FINANCE, FISH, PROPERTY, SCALES } from '../data';
+import { BERLIN_REGION, BERLIN_ENCLOSURE } from '../data/berlin-defaults';
 import { deriveHeatDemand, deriveMonthlyHeatDemand } from '../core/derive';
 import type { CalcInputs } from '../core';
 import { num, setVal } from './dom';
 import type { AppState } from './state';
-
-/**
- * Berlin/Brandenburg default region for heat derivation.
- * Hard-coded until T7 connects the region selector.
- * monthlyAmbientC: Jan–Dec °C, Brandenburg (Potsdam/DWD).
- */
-const BERLIN_REGION = {
-  annualMeanAmbientC: 10.075, // mean of monthlyAmbientC array
-  monthlyAmbientC: [0.3, 1.2, 5.2, 9.7, 15.1, 18.2, 20.1, 19.8, 15.3, 9.8, 4.7, 1.5],
-};
-
-/** Default insulated-greenhouse enclosure spec for Berlin. */
-const BERLIN_ENCLOSURE = {
-  heatLossFactor: 0.35,
-};
 
 /** Seed the fish-related inputs from the selected species (preset behaviour). */
 export function applyFishPreset(state: AppState): void {
@@ -122,9 +108,12 @@ export function readInputs(state?: AppState): CalcInputs {
     const scale = SCALES[state.scale];
     const gridPrice = base.gridPrice;
     const cop = base.cop;
-    // Monthly heat demand → monthly opex: heat pump uses electricity at gridPrice/COP
+    const gasPrice = base.gasPrice;
     const monthlyHeat = deriveMonthlyHeatDemand(fish, BERLIN_REGION, BERLIN_ENCLOSURE, scale);
-    base.monthlyHeatOpex = monthlyHeat.map((kwhHeat) => (kwhHeat / cop) * gridPrice);
+    // Heat pump on → electricity at gridPrice/COP; heat pump off → gas at gasPrice per kWh thermal
+    base.monthlyHeatOpex = state.heatpump
+      ? monthlyHeat.map((kwhHeat) => (kwhHeat / cop) * gridPrice)
+      : monthlyHeat.map((kwhHeat) => kwhHeat * gasPrice);
   }
 
   return base;

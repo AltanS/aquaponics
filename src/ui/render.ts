@@ -116,7 +116,7 @@ export function render(state: AppState): void {
   // Update vintage banner (ensures DOM text matches source constant)
   const bannerEl = document.getElementById('vintage-banner');
   if (bannerEl) bannerEl.textContent = VINTAGE_BANNER_TEXT;
-  const i = readInputs();
+  const i = readInputs(state);
   const t: Toggles = { solar: state.solar, heatpump: state.heatpump };
 
   const L = computeScenario('lease', i, t);

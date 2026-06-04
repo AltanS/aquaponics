@@ -20,7 +20,7 @@ export interface DeriveSpecies {
 /** Minimal region shape needed for derivation. */
 export interface DeriveRegion {
   annualMeanAmbientC: number;
-  monthlyAmbientC: number[];
+  monthlyAmbientC: readonly number[] | number[];
 }
 
 /** Minimal enclosure shape. */
@@ -56,14 +56,12 @@ const HOURS_PER_YEAR = 8760;
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
-/** Fish comfort-band midpoint — the target loop temperature °C. */
-export function loopTempFromBand(species: DeriveSpecies): number {
+/**
+ * Fish comfort-band midpoint — the target loop temperature °C.
+ * Delegates to the same computation as `loopTemp` in pairing.ts.
+ */
+function loopTempFromBand(species: DeriveSpecies): number {
   return (species.fcMin + species.fcMax) / 2;
-}
-
-/** Berlin annual mean from the 12-element monthly array. */
-export function annualMean(monthlyC: number[]): number {
-  return monthlyC.reduce((a, b) => a + b, 0) / monthlyC.length;
 }
 
 // ── Public functions ─────────────────────────────────────────────────────────

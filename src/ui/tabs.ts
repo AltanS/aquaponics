@@ -1,12 +1,7 @@
 import { el } from './dom';
+import { BERLIN_REGION } from '../data/berlin-defaults';
 import { deriveSuitability } from '../core/derive';
 import { FISH, type FishId } from '../data';
-
-/** Berlin/Brandenburg region for suitability badge derivation. */
-const BERLIN_REGION = {
-  annualMeanAmbientC: 10.075,
-  monthlyAmbientC: [0.3, 1.2, 5.2, 9.7, 15.1, 18.2, 20.1, 19.8, 15.3, 9.8, 4.7, 1.5],
-};
 
 /** Build a row of pill tabs from a keyed record; `withDot` adds the pairing dot. */
 export function buildTabs<K extends string>(

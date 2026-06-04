@@ -1,15 +1,10 @@
 import { CROPS, FISH, type CropId } from '../data';
+import { BERLIN_REGION } from '../data/berlin-defaults';
 import { loopTemp, pairFishPlant, type PairClass } from '../core';
 import { deriveSuitability } from '../core/derive';
 import { el } from './dom';
 import { chip, diffClass, formatCycleDays, formatGrowOut, formatTempRange } from './format';
 import type { AppState } from './state';
-
-/** Berlin/Brandenburg region for suitability derivation in the UI. */
-const BERLIN_REGION = {
-  annualMeanAmbientC: 10.075,
-  monthlyAmbientC: [0.3, 1.2, 5.2, 9.7, 15.1, 18.2, 20.1, 19.8, 15.3, 9.8, 4.7, 1.5],
-};
 
 const SUITABILITY_LABEL: Record<'native' | 'workable' | 'costly', string> = {
   native: 'Low heating',

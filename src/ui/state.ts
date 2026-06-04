@@ -1,6 +1,9 @@
 import type { CropId, FishId, ScaleId } from '../data';
 import type { ScenarioKey } from '../core';
 
+/** Available region IDs */
+export type RegionId = 'berlin-brandon';
+
 export interface AppState {
   scale: ScaleId;
   species: FishId;
@@ -9,6 +12,8 @@ export interface AppState {
   heatpump: boolean;
   /** which scenario the year table & breakdown follow */
   focus: ScenarioKey;
+  /** active region (defaults to Berlin/Brandenburg) */
+  region: RegionId;
 }
 
 export const state: AppState = {
@@ -18,4 +23,5 @@ export const state: AppState = {
   solar: true,
   heatpump: true,
   focus: 'lease',
+  region: 'berlin-brandon',
 };

@@ -126,3 +126,11 @@ table.yt tr.y0 td{color:var(--ink-2)}
 .foot{color:var(--ink-2);font-size:12.5px;margin-top:24px;max-width:90ch}
 .foot code{font-family:"IBM Plex Mono";background:var(--surface-2);padding:1px 5px;border-radius:4px}
 @media (max-width:900px){.cols{grid-template-columns:1fr}.skstats{margin-left:0}}
+
+/* ── Spec-06: Suitability badges, vintage banner, region selector ─────────── */
+.badge-native{display:inline-block;font-size:10px;font-weight:600;padding:1px 6px;border-radius:4px;background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good);margin-left:4px;vertical-align:middle;letter-spacing:.02em}
+.badge-workable{display:inline-block;font-size:10px;font-weight:600;padding:1px 6px;border-radius:4px;background:color-mix(in srgb,var(--amber) 18%,transparent);color:var(--amber);margin-left:4px;vertical-align:middle;letter-spacing:.02em}
+.badge-costly{display:inline-block;font-size:10px;font-weight:600;padding:1px 6px;border-radius:4px;background:color-mix(in srgb,var(--bad) 18%,transparent);color:var(--bad);margin-left:4px;vertical-align:middle;letter-spacing:.02em}
+.vintage-banner{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-s);padding:8px 14px;font-size:12.5px;color:var(--ink-2);margin-bottom:12px}
+.region-label{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-2);margin-left:12px}
+.region-select{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-s);padding:4px 8px;font-size:13px;color:var(--ink);cursor:pointer}

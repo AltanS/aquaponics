@@ -15,7 +15,7 @@ Implementation progress overview for the Project project.
 
 | Milestone | Name | Progress | Verified | Status |
 |-----------|------|----------|----------|--------|
-| M1 | Climate-aware data layer (YAML migration + region model + derived core) | ███████░░░ 70% | 39/53 | In Progress |
+| M1 | Climate-aware data layer (YAML migration + region model + derived core) | █████████░ 90% | 46/53 | In Progress |
 
 ## Current Focus
 
@@ -28,12 +28,12 @@ Implementation progress overview for the Project project.
 | 03-core-derive-ts-heat-demand-and-suitability.md | 7/7 | Complete |
 | 04-research-corrections-and-re-pin-goldens.md | 8/8 | Complete |
 | 05-seasonal-heating-and-winter-gated-grow-out.md | 6/6 | Complete |
-| 06-ui-additions-region-selector-vintage-banner-suitability-badges.md | 0/7 | Not Started |
-| 07-docs-readme-and-handoff-addendum.md | 0/7 | Waiting (waiting on: 06-ui-additions-region-selector-vintage-banner-suitability-badges.md) |
+| 06-ui-additions-region-selector-vintage-banner-suitability-badges.md | 7/7 | Complete |
+| 07-docs-readme-and-handoff-addendum.md | 0/7 | Not Started |
 
 ### Next Action
-**Spec:** `06-ui-additions-region-selector-vintage-banner-suitability-badges.md` — UI additions: region selector, vintage banner, suitability badges, derived display strings
-**Task:** Region selector element present in rendered HTML (id or data-attribute)
+**Spec:** `07-docs-readme-and-handoff-addendum.md` — Docs: README and HANDOFF addendum
+**Task:** README.md contains "Data pipeline" section
 **Status:** Pending
 
 ## Blockers

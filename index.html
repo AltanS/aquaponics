@@ -20,6 +20,11 @@
   <div class="toggles">
     <button class="tg on" id="tg-solar"><span class="led"></span>Solar PV</button>
     <button class="tg on" id="tg-hp"><span class="led"></span>Heat pump</button>
+    <label class="region-label">Region
+      <select id="region-select" class="region-select" data-testid="region-selector">
+        <option value="berlin-brandon">Berlin / Brandenburg</option>
+      </select>
+    </label>
   </div>
   <div class="skstats">
     <div class="sk"><div class="k">Lease · steady net/yr</div><div class="v" id="sk-lnet">–</div></div>
@@ -141,6 +146,8 @@
 
   <!-- RIGHT -->
   <div>
+    <div class="vintage-banner" id="vintage-banner">Berlin/Brandenburg figures, compiled 2026-06 — prices drift</div>
+
     <div class="card">
       <h2>Lease vs. rent</h2>
       <div class="scen2">

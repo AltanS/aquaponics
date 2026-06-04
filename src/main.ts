@@ -6,7 +6,7 @@ import { applyCropPreset, applyFishPreset, fillAll } from './ui/inputs';
 import { renderCropPanel, renderFishPanel } from './ui/panels';
 import { buildTabs } from './ui/tabs';
 import { render } from './ui/render';
-import { state } from './ui/state';
+import { state, type RegionId } from './ui/state';
 
 buildTabs('scale-set', SCALES, state.scale, (key) => {
   state.scale = key;
@@ -33,6 +33,14 @@ buildTabs(
   },
   true,
 );
+
+// Region selector
+el<HTMLSelectElement>('region-select').addEventListener('change', function () {
+  state.region = this.value as RegionId;
+  applyFishPreset(state);
+  fillAll(state);
+  render(state);
+});
 
 // Lease/rent focus for the year table & breakdown
 el('focus-set').addEventListener('click', (e) => {

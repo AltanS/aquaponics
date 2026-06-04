@@ -18,6 +18,9 @@ import { renderTable } from './table';
 import { renderPairs, updateCropDots } from './panels';
 import type { AppState } from './state';
 
+/** Data-vintage banner text — always visible near results per spec-06. */
+const VINTAGE_BANNER_TEXT = 'Berlin/Brandenburg figures, compiled 2026-06 — prices drift';
+
 function beText(be: number | null, ebitda: number, horizon: number): string {
   if (be !== null) return `${be.toFixed(1)} yr`;
   return ebitda > 0 ? `> ${horizon} yr` : 'never';
@@ -110,6 +113,9 @@ function renderVerdict(
 
 /** Recompute everything from the form and repaint all outputs. */
 export function render(state: AppState): void {
+  // Update vintage banner (ensures DOM text matches source constant)
+  const bannerEl = document.getElementById('vintage-banner');
+  if (bannerEl) bannerEl.textContent = VINTAGE_BANNER_TEXT;
   const i = readInputs();
   const t: Toggles = { solar: state.solar, heatpump: state.heatpump };
 

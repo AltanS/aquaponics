@@ -1,6 +1,7 @@
 ## 01KT97WTAC9CK761WFBY-m1-climate-data-layer — M1-climate-data-layer
 <!-- opened: 2026-06-04T11:56:58.572Z -->
 <!-- spec: .tracker/M1-M1-climate-data-layer/01-yaml-files-zod-schemas-build-data-codegen.md -->
+<!-- closed: 2026-06-04T12:34:02.463Z status: done -->
 ### 2026-06-04T11:56:58.573Z [note]
 Starting spec-01 through spec-07 implementation. All planning complete. Executing directly.
 ### 2026-06-04T11:57:07.613Z [note]
@@ -9,6 +10,7 @@ Agent selected: typescript:typescript-expert — YAML/zod/codegen work. Delegati
 ## 01KT97YREHC8F7WENT8Z-m1-climate-data-layer — M1-climate-data-layer
 <!-- opened: 2026-06-04T11:58:02.193Z -->
 <!-- spec: .tracker/M1-M1-climate-data-layer/01-yaml-files-zod-schemas-build-data-codegen.md -->
+<!-- closed: 2026-06-04T12:34:02.595Z status: done -->
 ### 2026-06-04T11:58:02.193Z [note]
 Spec-01 delegation starting. typescript-expert agent assigned.
 ### 2026-06-04T12:04:23.490Z [note]

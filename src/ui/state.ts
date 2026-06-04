@@ -2,7 +2,7 @@ import type { CropId, FishId, ScaleId } from '../data';
 import type { ScenarioKey } from '../core';
 
 /** Available region IDs */
-export type RegionId = 'berlin-brandon';
+export type RegionId = 'berlin-brandenburg';
 
 export interface AppState {
   scale: ScaleId;
@@ -23,5 +23,5 @@ export const state: AppState = {
   solar: true,
   heatpump: true,
   focus: 'lease',
-  region: 'berlin-brandon',
+  region: 'berlin-brandenburg',
 };

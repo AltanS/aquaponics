@@ -6,10 +6,23 @@
  * spawning a subprocess, so the test runs fast and works from any cwd.
  */
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { generate } from '../scripts/build-data';
 
-const DATA_DIR = resolve(import.meta.dirname ?? new URL('.', import.meta.url).pathname, '../data');
+const ROOT = resolve(import.meta.dirname ?? new URL('.', import.meta.url).pathname, '..');
+const DATA_DIR = resolve(ROOT, 'data');
+
+describe('generated.ts staleness', () => {
+  it('checked-in src/data/generated.ts matches a fresh generation from /data/*.yaml', () => {
+    const fresh = generate(DATA_DIR);
+    const checkedIn = readFileSync(resolve(ROOT, 'src/data/generated.ts'), 'utf-8').replace(/\r\n/g, '\n');
+    expect(
+      checkedIn === fresh,
+      'src/data/generated.ts is stale — run `pnpm build:data` and commit the result',
+    ).toBe(true);
+  });
+});
 
 describe('YAML schema validation', () => {
   it('generate() succeeds and returns non-empty output', () => {

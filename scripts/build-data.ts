@@ -127,7 +127,7 @@ function parseRegionFile(filePath: string): z.infer<typeof EconomicsSchema> {
   const parsed = parseYaml(raw) as { economics?: unknown };
 
   if (!parsed || typeof parsed !== 'object' || !parsed.economics) {
-    throw new Error(`berlin-brandon.yaml → missing "economics:" block`);
+    throw new Error(`berlin-brandenburg.yaml → missing "economics:" block`);
   }
 
   const validation = EconomicsSchema.safeParse(parsed.economics);
@@ -135,7 +135,7 @@ function parseRegionFile(filePath: string): z.infer<typeof EconomicsSchema> {
     const issues = validation.error.issues
       .map((i) => `  ${i.path.join('.')}: ${i.message}`)
       .join('\n');
-    throw new Error(`berlin-brandon.yaml/economics validation failed:\n${issues}`);
+    throw new Error(`berlin-brandenburg.yaml/economics validation failed:\n${issues}`);
   }
   return validation.data;
 }
@@ -182,7 +182,7 @@ function buildEntityBlock<T extends object>(
 
 /**
  * Pure generate function — accepts dataDir so it works from any cwd.
- * The dataDir should contain fish.yaml, crops.yaml, scales.yaml, and regions/berlin-brandon.yaml.
+ * The dataDir should contain fish.yaml, crops.yaml, scales.yaml, and regions/berlin-brandenburg.yaml.
  */
 export function generate(dataDir: string): string {
   const fish = parseAndValidateFile(
@@ -200,7 +200,7 @@ export function generate(dataDir: string): string {
     'scales/yaml',
     ScaleSchema,
   );
-  const economics = parseRegionFile(join(dataDir, 'regions/berlin-brandon.yaml'));
+  const economics = parseRegionFile(join(dataDir, 'regions/berlin-brandenburg.yaml'));
 
   const fishIds = Object.keys(fish).sort();
   const cropIds = Object.keys(crops).sort();

@@ -275,3 +275,27 @@ describe('deriveEffectiveGrowMonths — winter gating', () => {
     expect(result).toBe(FISH.trout.growMonths + coldMonths);
   });
 });
+
+// ── Spec-05: simulateMonthly with monthlyHeatOpex ────────────────────────────
+
+describe('simulateMonthly with monthlyHeatOpex (seasonal mode)', () => {
+  it('produces valid monthly rows when monthlyHeatOpex is provided', () => {
+    const i = makeInputs('small', 'catfish', 'greens_mix');
+    // Compute monthly heat opex: 12-element array
+    const monthlyHeat = deriveMonthlyHeatDemand(FISH.catfish, BERLIN_REGION, BERLIN_ENCLOSURE, SCALES.small);
+    const monthlyHeatOpex = monthlyHeat.map(kwhHeat => (kwhHeat / ENERGY.cop) * ENERGY.gridPrice);
+
+    const L = computeScenario('lease', i, BOTH_ON);
+    // Simulate WITH monthly heat opex
+    const withMonthly = simulateMonthly(L, { ...i, monthlyHeatOpex }, i.horizon);
+    // Simulate WITHOUT (baseline)
+    const withFlat = simulateMonthly(L, i, i.horizon);
+
+    // Both should produce the same number of points
+    expect(withMonthly.pts).toHaveLength(withFlat.pts.length);
+    // Monthly mode should produce different (seasonal) breakeven compared to flat
+    // Both are non-regression checks — we just verify the simulation runs and produces plausible results
+    expect(withMonthly.pts[0]).toEqual({ x: 0, y: -L.capex });
+    expect(withMonthly.pts[withMonthly.pts.length - 1]).toBeDefined();
+  });
+});

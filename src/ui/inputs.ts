@@ -1,5 +1,5 @@
 import { CROPS, ENERGY, FINANCE, FISH, PROPERTY, SCALES } from '../data';
-import { deriveHeatDemand } from '../core/derive';
+import { deriveHeatDemand, deriveMonthlyHeatDemand } from '../core/derive';
 import type { CalcInputs } from '../core';
 import { num, setVal } from './dom';
 import type { AppState } from './state';
@@ -77,8 +77,8 @@ export function fillAll(state: AppState): void {
 }
 
 /** Read every editable assumption from the form. */
-export function readInputs(): CalcInputs {
-  return {
+export function readInputs(state?: AppState): CalcInputs {
+  const base: CalcInputs = {
     fishKg: num('fishKg'),
     fishPrice: num('fishPrice'),
     fcr: num('fcr'),
@@ -115,4 +115,17 @@ export function readInputs(): CalcInputs {
     deprYears: Math.max(1, num('deprYears')),
     horizon: Math.max(3, num('horizonYears')),
   };
+
+  // Compute monthly heat opex when region is available (used by simulateMonthly for seasonal mode)
+  if (state) {
+    const fish = FISH[state.species];
+    const scale = SCALES[state.scale];
+    const gridPrice = base.gridPrice;
+    const cop = base.cop;
+    // Monthly heat demand → monthly opex: heat pump uses electricity at gridPrice/COP
+    const monthlyHeat = deriveMonthlyHeatDemand(fish, BERLIN_REGION, BERLIN_ENCLOSURE, scale);
+    base.monthlyHeatOpex = monthlyHeat.map((kwhHeat) => (kwhHeat / cop) * gridPrice);
+  }
+
+  return base;
 }

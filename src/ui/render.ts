@@ -15,7 +15,7 @@ import { ct, eur, kwh } from './format';
 import { INPUT_IDS, readInputs } from './inputs';
 import { renderChart } from './chart';
 import { renderTable } from './table';
-import { renderPairs, updateCropDots } from './panels';
+import { renderPairs, updatePairings } from './panels';
 import { renderSelection, renderTotals } from './totals';
 import { snapshot } from './persist';
 import type { AppState } from './state';
@@ -157,7 +157,7 @@ export function render(state: AppState): void {
 
   renderIndices(i);
   renderSelection(state);
-  updateCropDots(state);
+  updatePairings(state);
   renderPairs(state);
   renderBreakdown(s);
   renderVerdict(L, R, Ls.breakEven, Rs.breakEven, s, i.horizon);

@@ -67,9 +67,15 @@ input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 
 .tab:hover{border-color:var(--accent)}
 .tab.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 30%,transparent)}
 @media (prefers-color-scheme:dark){.tab.on{color:#0e1311}}
-/* badges & dots inside an active (accent-filled) pill: re-ink on currentColor so they stay legible */
-.tab.on .badge-native,.tab.on .badge-workable,.tab.on .badge-costly{background:color-mix(in srgb,currentColor 16%,transparent);color:inherit}
-.tab.on .cdot{background:currentColor;opacity:1}
+/* Pairing colour applied directly to non-selected pills (fish ⇄ crop). */
+.tab.pair-good:not(.on){border-color:color-mix(in srgb,var(--teal) 62%,var(--line-2));background:color-mix(in srgb,var(--teal) 13%,var(--surface))}
+.tab.pair-work:not(.on){border-color:color-mix(in srgb,var(--amber) 62%,var(--line-2));background:color-mix(in srgb,var(--amber) 13%,var(--surface))}
+.tab.pair-poor:not(.on){opacity:.5}
+.tab.pair-poor:not(.on):hover{opacity:.85}
+.swatch{display:inline-block;width:10px;height:10px;border-radius:3px;border:1px solid var(--line-2);vertical-align:middle;margin-right:1px}
+.sw-good{background:color-mix(in srgb,var(--teal) 40%,var(--surface));border-color:color-mix(in srgb,var(--teal) 62%,var(--line-2))}
+.sw-work{background:color-mix(in srgb,var(--amber) 40%,var(--surface));border-color:color-mix(in srgb,var(--amber) 62%,var(--line-2))}
+.sw-poor{background:var(--surface);opacity:.5}
 .cdot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;flex:0 0 auto;background:var(--gray)}
 .c-good{background:var(--teal)} .c-work{background:var(--amber)} .c-poor{background:var(--gray);opacity:.55}
 .panel{background:var(--surface-2);border-radius:var(--r-s);padding:14px 15px;margin-bottom:14px}

@@ -1,4 +1,4 @@
-import { CROPS, FISH, type CropId } from '../data';
+import { CROPS, FISH, type CropId, type FishId } from '../data';
 import { BERLIN_REGION } from '../data/berlin-defaults';
 import { loopTemp, pairFishPlant, type PairClass } from '../core';
 import { deriveSuitability } from '../core/derive';
@@ -37,24 +37,44 @@ export function renderCropPanel(state: AppState): void {
   el('crop-note').textContent = c.notes;
 }
 
-const DOT_CLASS: Record<PairClass, string> = { good: 'c-good', work: 'c-work', poor: 'c-poor' };
-const DOT_TITLE: Record<PairClass, string> = {
+const PAIR_CLASS: Record<PairClass, string> = {
+  good: 'pair-good',
+  work: 'pair-work',
+  poor: 'pair-poor',
+};
+const PAIR_TITLE: Record<PairClass, string> = {
   good: 'Good pairing',
   work: 'Workable pairing',
-  poor: 'Poor pairing',
+  poor: 'Poor pairing — implies a decoupled loop',
 };
 
-/** Recolour the crop-tab dots for the currently selected fish. */
-export function updateCropDots(state: AppState): void {
+function tintPill(btn: HTMLButtonElement, cls: PairClass, withLabel: string): void {
+  btn.classList.remove('pair-good', 'pair-work', 'pair-poor');
+  btn.classList.add(PAIR_CLASS[cls]);
+  btn.title = `${PAIR_TITLE[cls]} with ${withLabel}`;
+}
+
+/**
+ * Colour each pill by how it pairs with the *other* side's current selection —
+ * crops shaded against the chosen fish, fish shaded against the chosen crop.
+ * Selections are never blocked; the colour is just guidance.
+ */
+export function updatePairings(state: AppState): void {
   const fish = FISH[state.species];
+  const crop = CROPS[state.crop];
+
   el('crop-tabs')
     .querySelectorAll<HTMLButtonElement>('.tab')
     .forEach((btn) => {
-      const key = btn.dataset.key as CropId;
-      const p = pairFishPlant(fish, CROPS[key]);
-      const dot = btn.querySelector('.cdot');
-      if (dot) dot.className = `cdot ${DOT_CLASS[p.cls]}`;
-      btn.title = `${DOT_TITLE[p.cls]} with ${fish.label}`;
+      const p = pairFishPlant(fish, CROPS[btn.dataset.key as CropId]);
+      tintPill(btn, p.cls, fish.label);
+    });
+
+  el('fish-tabs')
+    .querySelectorAll<HTMLButtonElement>('.tab')
+    .forEach((btn) => {
+      const p = pairFishPlant(FISH[btn.dataset.key as FishId], crop);
+      tintPill(btn, p.cls, crop.label);
     });
 }
 

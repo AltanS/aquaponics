@@ -116,18 +116,12 @@ function wire(): void {
     render(state);
   });
 
-  buildTabs(
-    'crop-tabs',
-    CROPS,
-    state.crop,
-    (key) => {
-      state.crop = key;
-      applyCropPreset(state);
-      renderCropPanel(state);
-      render(state);
-    },
-    true,
-  );
+  buildTabs('crop-tabs', CROPS, state.crop, (key) => {
+    state.crop = key;
+    applyCropPreset(state);
+    renderCropPanel(state);
+    render(state);
+  });
 
   // Main tabs
   el('main-tabs').addEventListener('click', (e) => {

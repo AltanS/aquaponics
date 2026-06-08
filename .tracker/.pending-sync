@@ -9,3 +9,5 @@ src/style.css
 src/data/types.ts
 src/core/index.ts
 src/data/index.ts
+src/ui/tabs.ts
+src/ui/panels.ts

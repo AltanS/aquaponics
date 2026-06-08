@@ -4,7 +4,7 @@
 //
 // Zero runtime dependencies — zod and yaml are devDeps only.
 
-import type { Crop, EnergyDefaults, FinanceDefaults, FishSpecies, ModelAssumptions, PropertyDefaults, Scale } from './types';
+import type { Crop, EnergyDefaults, FinanceDefaults, FishSpecies, ModelAssumptions, PropertyDefaults, Scale, Subsidy } from './types';
 
 export const FISH = {
   catfish: {
@@ -322,7 +322,7 @@ export const SCALES = {
     baseHeat: 8000,
     constructionPerM2: 90,
     distrib: 400,
-    equipmentCapex: 9000,
+    equipmentCapex: 3000,
     fishKg: 150,
     growArea: 40,
     label: "Hobby / DIY · 40 m²",
@@ -416,3 +416,28 @@ export const MODEL: ModelAssumptions = {
   laborShareFish: 0.35,
   laborSharePlants: 0.45,
 };
+
+export const SUBSIDIES = {
+  bb_aquaculture: {
+    basis: "eligibleCapex",
+    capEligible: 200000,
+    commercialOnly: true,
+    description: "EMFAF-funded Zuschuss (MLEUV/LELF) for building and equipping inland aquaculture production. Applies to construction + equipment; not available to a non-commercial hobby/DIY setup.",
+    label: "Brandenburg aquaculture investment grant",
+    note: "Requires a registered aquaculture/fisheries enterprise; rate up to 40% (some measures higher), €200k eligible-cost cap, project approval before start.",
+    rate: 0.4,
+    source: "https://mleuv.brandenburg.de/mleuv/de/service/foerderung/fischerei/foerderung-der-aquakultur-und-binnenfischerei/",
+    sourceLabel: "MLEUV Brandenburg — Förderung der Aquakultur und Binnenfischerei",
+  },
+  kfw_beg_heatpump: {
+    basis: "heatpump",
+    description: "Bundesförderung für effiziente Gebäude — Einzelmaßnahme. A capital grant on the heat-pump install; only relevant when a heat pump is actually fitted.",
+    label: "BEG heat-pump grant (KfW/BAFA)",
+    note: "30% base rate; bonuses (Klimageschwindigkeit, income) can raise it up to 70%. Applies to the heat-pump capital cost only.",
+    rate: 0.3,
+    requiresHeatpump: true,
+    source: "https://www.kfw.de/inlandsfoerderung/Privatpersonen/Bestehende-Immobilie/Heizung-erneuern/",
+    sourceLabel: "KfW — Heizungsförderung (BEG EM)",
+  },
+} as const satisfies Record<string, Subsidy>;
+

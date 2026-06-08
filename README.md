@@ -87,9 +87,11 @@ A build-time codegen script validates them and emits a typed TypeScript artifact
 
 ```
 data/
-  fish.yaml                   # universal biology — 11 species (fcr, temp band, growMonths, …)
-  crops.yaml                  # universal biology — 11 crops (yld, cycleDays, temp ranges, …)
-  scales.yaml                 # 4 scale tiers (hobby → mid; harvest targets, build standards, …)
+  fish.yaml                   # universal biology — 11 species (fcr, temp band, growMonths, marketWeightKg, …)
+  crops.yaml                  # universal biology — 11 crops (yld, cycleDays, temp ranges, unit weights, …)
+  scales.yaml                 # 4 scale tiers (hobby → mid; harvest, build standards, total + owner labour hrs)
+  model.yaml                  # model assumptions — labour/energy attribution shares, cropAreaFraction (canopy ÷ footprint)
+  subsidies.yaml              # regional capital grants — rate, cost basis, caps, eligibility gates, sources
   regions/
     berlin-brandenburg.yaml   # Berlin/Brandenburg region: climate block + all economics + prices
 ```

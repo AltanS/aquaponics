@@ -13,6 +13,14 @@ export {
 export { loopTemp, pairFishPlant, type PairClass, type Pairing } from './pairing';
 export { cropValue, fishValue, indexScore } from './indices';
 export {
+  computeSubsidies,
+  type CapexBreakdown,
+  type SubsidyContext,
+  type AppliedSubsidy,
+  type IneligibleSubsidy,
+  type SubsidyResult,
+} from './subsidies';
+export {
   enterpriseContribution,
   type AttributionShares,
   type ContributionResult,

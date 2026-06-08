@@ -23,8 +23,14 @@ export interface ScenarioResult {
   capex: number;
   /** construction share of CAPEX (lease scenario only) */
   construction: number;
+  /** equipment share of CAPEX (RAS/tanks/beds/pumps) */
+  equipment: number;
   /** PV + heat-pump share of CAPEX */
   energyCapex: number;
+  /** PV share of CAPEX */
+  pvCapex: number;
+  /** heat-pump share of CAPEX */
+  hpCapex: number;
   depr: number;
   /** EBITDA − depreciation */
   net: number;
@@ -68,7 +74,8 @@ export function computeScenario(key: ScenarioKey, i: CalcInputs, t: Toggles): Sc
 
   return {
     rev, fishRev, plantRev, inputs, energy: E.opex, labor, ownerLabor, rent, over,
-    opex, ebitda, capex, construction, energyCapex: EC.pv + EC.hp,
+    opex, ebitda, capex, construction, equipment: i.equipmentCapex,
+    energyCapex: EC.pv + EC.hp, pvCapex: EC.pv, hpCapex: EC.hp,
     depr, net: ebitda - depr, E,
   };
 }

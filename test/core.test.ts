@@ -353,3 +353,50 @@ describe('enterprise contribution', () => {
     expect(c.fish.energy + c.plants.energy).toBeCloseTo(1000, 6);
   });
 });
+
+// ── Subsidies / grants eligibility ──────────────────────────────────────────
+
+import { computeSubsidies } from '../src/core';
+import { SUBSIDIES } from '../src/data';
+
+describe('subsidies — eligibility-gated grants', () => {
+  // small/lease CAPEX components (from the golden): construction 140000,
+  // equipment 110000, PV 60000, HP 30250, total 340250.
+  const smallLease = { construction: 140000, equipment: 110000, pv: 60000, hp: 30250, total: 340250 };
+
+  it('applies both grants to a commercial lease with a heat pump', () => {
+    const r = computeSubsidies({ scaleTier: 'small', capex: smallLease, heatpump: true, solar: true }, SUBSIDIES);
+    const byId = Object.fromEntries(r.applied.map((a) => [a.id, a]));
+    // Brandenburg aquaculture: 40% of min(250000, 200000 cap) = 80000
+    expect(byId['bb_aquaculture']!.amount).toBeCloseTo(80000, 6);
+    expect(byId['bb_aquaculture']!.eligibleBase).toBe(200000); // capped
+    // KfW heat pump: 30% of 30250 = 9075
+    expect(byId['kfw_beg_heatpump']!.amount).toBeCloseTo(9075, 6);
+    expect(r.total).toBeCloseTo(89075, 6);
+    expect(r.ineligible).toHaveLength(0);
+  });
+
+  it('excludes the aquaculture grant for a hobby setup, with a reason', () => {
+    const r = computeSubsidies({ scaleTier: 'hobby', capex: smallLease, heatpump: true, solar: true }, SUBSIDIES);
+    expect(r.applied.map((a) => a.id)).not.toContain('bb_aquaculture');
+    const why = r.ineligible.find((x) => x.id === 'bb_aquaculture');
+    expect(why?.reason).toMatch(/commercial/i);
+    // heat-pump grant still applies regardless of tier
+    expect(r.applied.map((a) => a.id)).toContain('kfw_beg_heatpump');
+  });
+
+  it('excludes the heat-pump grant when no heat pump is installed', () => {
+    const r = computeSubsidies({ scaleTier: 'small', capex: smallLease, heatpump: false, solar: true }, SUBSIDIES);
+    expect(r.applied.map((a) => a.id)).not.toContain('kfw_beg_heatpump');
+    expect(r.ineligible.find((x) => x.id === 'kfw_beg_heatpump')?.reason).toMatch(/heat pump/i);
+  });
+
+  it('shrinks the aquaculture base to equipment-only when renting (no construction)', () => {
+    const rentCapex = { ...smallLease, construction: 0, total: 200250 };
+    const r = computeSubsidies({ scaleTier: 'small', capex: rentCapex, heatpump: true, solar: true }, SUBSIDIES);
+    const bb = r.applied.find((a) => a.id === 'bb_aquaculture');
+    // base = equipment 110000 only (< 200000 cap) → 40% = 44000
+    expect(bb?.eligibleBase).toBe(110000);
+    expect(bb?.amount).toBeCloseTo(44000, 6);
+  });
+});

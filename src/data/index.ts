@@ -1,7 +1,7 @@
 export { FISH, type FishId } from './generated';
 export { CROPS, type CropId } from './generated';
 export { SCALES, type ScaleId } from './generated';
-export { ENERGY, PROPERTY, FINANCE, MODEL } from './generated';
+export { ENERGY, PROPERTY, FINANCE, MODEL, SUBSIDIES } from './generated';
 export type {
   Crop,
   Difficulty,
@@ -11,4 +11,6 @@ export type {
   ModelAssumptions,
   PropertyDefaults,
   Scale,
+  Subsidy,
+  SubsidyBasis,
 } from './types';

@@ -13,3 +13,4 @@ src/ui/tabs.ts
 src/ui/panels.ts
 src/core/types.ts
 test/core.test.ts
+data/scales.yaml

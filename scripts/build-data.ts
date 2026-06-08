@@ -102,6 +102,22 @@ const ModelSchema = z
     message: 'laborShareFish + laborSharePlants must not exceed 1 (remainder = general labour)',
   });
 
+const SubsidySchema = z.object({
+  label: z.string(),
+  description: z.string(),
+  rate: z.number({ error: 'rate must be a fraction 0–1' }).gt(0).max(1),
+  basis: z.enum(['construction', 'equipment', 'eligibleCapex', 'heatpump', 'pv', 'totalCapex']),
+  capEligible: z.number().positive().optional(),
+  capGrant: z.number().positive().optional(),
+  commercialOnly: z.boolean().optional(),
+  requiresHeatpump: z.boolean().optional(),
+  requiresSolar: z.boolean().optional(),
+  minInvestment: z.number().nonnegative().optional(),
+  source: z.string().url(),
+  sourceLabel: z.string().optional(),
+  note: z.string().optional(),
+});
+
 const IdPattern = /^[a-z][a-z0-9_]*$/;
 
 function validateId(id: string, file: string): void {
@@ -217,6 +233,11 @@ export function generate(dataDir: string): string {
     'scales/yaml',
     ScaleSchema,
   );
+  const subsidies = parseAndValidateFile(
+    join(dataDir, 'subsidies.yaml'),
+    'subsidies/yaml',
+    SubsidySchema,
+  );
   const economics = parseRegionFile(join(dataDir, 'regions/berlin-brandenburg.yaml'));
 
   const modelRaw = parseYaml(readFileSync(join(dataDir, 'model.yaml'), 'utf-8')) as { model?: unknown };
@@ -247,7 +268,7 @@ export function generate(dataDir: string): string {
     '//',
     '// Zero runtime dependencies — zod and yaml are devDeps only.',
     '',
-    "import type { Crop, EnergyDefaults, FinanceDefaults, FishSpecies, ModelAssumptions, PropertyDefaults, Scale } from './types';",
+    "import type { Crop, EnergyDefaults, FinanceDefaults, FishSpecies, ModelAssumptions, PropertyDefaults, Scale, Subsidy } from './types';",
     '',
     buildEntityBlock('FISH', 'FishSpecies', fish),
     `export type FishId = ${fishIds.map((id) => JSON.stringify(id)).join(' | ')};`,
@@ -265,6 +286,8 @@ export function generate(dataDir: string): string {
     `export const FINANCE: FinanceDefaults = ${toTsLiteral(finance)};`,
     '',
     `export const MODEL: ModelAssumptions = ${toTsLiteral(model)};`,
+    '',
+    buildEntityBlock('SUBSIDIES', 'Subsidy', subsidies),
     '',
   ];
 

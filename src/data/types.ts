@@ -127,6 +127,40 @@ export interface FinanceDefaults {
  * Attribution assumptions for per-enterprise (fish vs plants) breakdowns —
  * sourced from data/model.yaml. Coarse planning shares, not measurements.
  */
+/** The cost base a subsidy's rate applies to. */
+export type SubsidyBasis = 'construction' | 'equipment' | 'eligibleCapex' | 'heatpump' | 'pv' | 'totalCapex';
+
+/**
+ * A one-off capital grant (not a loan), with the eligibility gates that decide
+ * whether a given scenario can claim it. Sourced from data/subsidies.yaml.
+ */
+export interface Subsidy {
+  label: string;
+  description: string;
+  /** fraction of the eligible cost base (0–1) */
+  rate: number;
+  /** which CAPEX component the rate applies to */
+  basis: SubsidyBasis;
+  /** € cap on the eligible cost base */
+  capEligible?: number;
+  /** € cap on the grant amount itself */
+  capGrant?: number;
+  /** excludes the hobby/DIY tier (needs a registered commercial enterprise) */
+  commercialOnly?: boolean;
+  /** only applies when a heat pump is installed */
+  requiresHeatpump?: boolean;
+  /** only applies when PV is installed */
+  requiresSolar?: boolean;
+  /** minimum total CAPEX (€) to qualify */
+  minInvestment?: number;
+  /** source URL */
+  source: string;
+  /** short human citation */
+  sourceLabel?: string;
+  /** caveat shown with the grant */
+  note?: string;
+}
+
 export interface ModelAssumptions {
   /** share of weekly labour spent directly on fish husbandry (0–1) */
   laborShareFish: number;

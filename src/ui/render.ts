@@ -1,6 +1,7 @@
-import { CROPS, FISH } from '../data';
+import { CROPS, FISH, SUBSIDIES } from '../data';
 import {
   computeScenario,
+  computeSubsidies,
   cropValue,
   fishValue,
   indexScore,
@@ -8,6 +9,7 @@ import {
   yearRows,
   type CalcInputs,
   type ScenarioResult,
+  type SubsidyResult,
   type Toggles,
 } from '../core';
 import { el } from './dom';
@@ -17,8 +19,27 @@ import { renderChart } from './chart';
 import { renderTable } from './table';
 import { renderPairs, updatePairings } from './panels';
 import { renderSelection, renderTotals } from './totals';
+import { renderSubsidies } from './subsidies';
 import { snapshot } from './persist';
 import type { AppState } from './state';
+
+/** Grant a scenario its eligible subsidies and return a CAPEX-reduced clone. */
+function applyGrants(
+  s: ScenarioResult, scaleTier: string, t: Toggles, deprYears: number,
+): { sub: SubsidyResult; adj: ScenarioResult } {
+  const sub = computeSubsidies(
+    {
+      scaleTier,
+      capex: { construction: s.construction, equipment: s.equipment, pv: s.pvCapex, hp: s.hpCapex, total: s.capex },
+      heatpump: t.heatpump,
+      solar: t.solar,
+    },
+    SUBSIDIES,
+  );
+  const netCapex = Math.max(0, s.capex - sub.total);
+  const depr = netCapex / deprYears;
+  return { sub, adj: { ...s, capex: netCapex, depr, net: s.ebitda - depr } };
+}
 
 /** Data-vintage banner text — always visible near results per spec-06. */
 const VINTAGE_BANNER_TEXT = 'Berlin/Brandenburg figures, compiled 2026-06 — prices drift';
@@ -28,10 +49,17 @@ function beText(be: number | null, ebitda: number, horizon: number): string {
   return ebitda > 0 ? `> ${horizon} yr` : 'never';
 }
 
-function setScenarioCard(prefix: 'L' | 'R', s: ScenarioResult, be: number | null, horizon: number): void {
-  el(`${prefix}-capex`).textContent = eur(s.capex);
+function setScenarioCard(
+  prefix: 'L' | 'R', s: ScenarioResult, adj: ScenarioResult, sub: SubsidyResult,
+  be: number | null, horizon: number,
+): void {
+  el(`${prefix}-capex`).textContent = eur(s.capex); // gross
   el(`${prefix}-con`).textContent = eur(s.construction);
   el(`${prefix}-eq`).textContent = eur(s.energyCapex);
+  const grant = el(`${prefix}-grant`);
+  grant.textContent = sub.total > 0 ? `−${eur(sub.total)}` : '€0';
+  grant.style.color = sub.total > 0 ? 'var(--good)' : '';
+  el(`${prefix}-netcapex`).textContent = eur(adj.capex); // after grants
   el(`${prefix}-rent`).textContent = eur(s.rent);
   const ebitda = el(`${prefix}-ebitda`);
   ebitda.textContent = eur(s.ebitda);
@@ -42,8 +70,8 @@ function setScenarioCard(prefix: 'L' | 'R', s: ScenarioResult, be: number | null
   econ.textContent = eur(econProfit);
   econ.style.color = econProfit >= 0 ? 'var(--good)' : 'var(--bad)';
   const net = el(`${prefix}-net`);
-  net.textContent = eur(s.net);
-  net.style.color = s.net >= 0 ? 'var(--good)' : 'var(--bad)';
+  net.textContent = eur(adj.net); // depreciation on net-of-grant CAPEX
+  net.style.color = adj.net >= 0 ? 'var(--good)' : 'var(--bad)';
   el(`${prefix}-be`).textContent = beText(be, s.ebitda, horizon);
 }
 
@@ -128,11 +156,15 @@ export function render(state: AppState): void {
 
   const L = computeScenario('lease', i, t);
   const R = computeScenario('rent', i, t);
-  const Ls = simulateMonthly(L, i, i.horizon);
-  const Rs = simulateMonthly(R, i, i.horizon);
+  // Eligible grants reduce the CAPEX base → shallower cash valley & lower
+  // depreciation. Break-even and net are computed on the grant-adjusted clone.
+  const { sub: subL, adj: adjL } = applyGrants(L, state.scale, t, i.deprYears);
+  const { sub: subR, adj: adjR } = applyGrants(R, state.scale, t, i.deprYears);
+  const Ls = simulateMonthly(adjL, i, i.horizon);
+  const Rs = simulateMonthly(adjR, i, i.horizon);
 
-  setScenarioCard('L', L, Ls.breakEven, i.horizon);
-  setScenarioCard('R', R, Rs.breakEven, i.horizon);
+  setScenarioCard('L', L, adjL, subL, Ls.breakEven, i.horizon);
+  setScenarioCard('R', R, adjR, subR, Rs.breakEven, i.horizon);
 
   const profitMo = (id: string, ebitda: number): void => {
     const e = el(id);
@@ -151,8 +183,9 @@ export function render(state: AppState): void {
   el('e-imp').textContent = kwh(L.E.imp);
   el('e-eff').textContent = `${ct(L.E.eff)}/kWh`;
   renderTotals(state, i, L.E);
+  renderSubsidies(state.focus === 'lease' ? subL : subR, state.focus);
 
-  const s = state.focus === 'lease' ? L : R;
+  const s = state.focus === 'lease' ? adjL : adjR;
   renderTable(yearRows(s, i, i.horizon));
   const firstFishYr = Math.max(1, Math.ceil(i.growMonths / 12));
   el('ramp-note').innerHTML =

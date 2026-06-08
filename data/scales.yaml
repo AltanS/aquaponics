@@ -17,7 +17,7 @@ entities:
     waterNut: 300         # €/yr
     distrib: 400          # €/yr
     maint: 500            # €/yr
-    equipmentCapex: 9000  # € RAS/tanks/beds/pumps
+    equipmentCapex: 3000  # € realistic DIY build (IBC totes ~€200-500 each + pump/beds), not a scaled-down commercial rig
     constructionPerM2: 90 # €/m² (polytunnel)
     landLeaseYear: 600    # €/yr
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CROPS, ENERGY, FINANCE, FISH, PROPERTY, SCALES } from '../src/data';
+import { CROPS, ENERGY, FINANCE, FISH, MODEL, PROPERTY, SCALES } from '../src/data';
 import {
   computeEnergy,
   computeScenario,
@@ -33,7 +33,8 @@ function makeInputs(scale: keyof typeof SCALES, fish: keyof typeof FISH, crop: k
   return {
     fishKg: s.fishKg, fishPrice: f.price, fcr: f.fcr, feedPrice: ENERGY.feedPrice,
     stockCost: f.stockCost, growMonths: f.growMonths,
-    growArea: s.growArea, yieldM2: c.yld, plantPrice: c.price, seedCost: c.seedCost, cycleDays: c.cycleDays,
+    growArea: s.growArea, cropAreaFraction: MODEL.cropAreaFraction,
+    yieldM2: c.yld, plantPrice: c.price, seedCost: c.seedCost, cycleDays: c.cycleDays,
     sysKwh: s.sysKwh,
     heatDemand: Math.round(deriveHeatDemand(f, BERLIN_REGION, BERLIN_ENCLOSURE, s)),
     cop: ENERGY.cop, pvKwp: s.pvKwp, pvYield: ENERGY.pvYield, scRate: ENERGY.scRate,
@@ -65,22 +66,23 @@ describe('golden: default scenario (small / catfish / greens_mix, solar+HP on)',
 
   it('matches the prototype lease scenario', () => {
     const L = computeScenario('lease', i, BOTH_ON);
-    expect(L.rev).toBe(77400); // 3000×9 + 400×28×4.5
-    expect(L.inputs).toBeCloseTo(11280, 6); // feed 5280 + stock 2400 + seed 3600
+    // canopy = 400 m² × 0.6 = 240 m²; greens_mix yld 28→20 (conservative)
+    expect(L.rev).toBe(48600); // fish 3000×9=27000 + plants 240×20×4.5=21600
+    expect(L.inputs).toBeCloseTo(9840, 6); // feed 5280 + stock 2400 + seed 240×9=2160
     expect(L.labor).toBe(26520); // 30×52×17
-    expect(L.opex).toBeCloseTo(57247.708, 2);
-    expect(L.ebitda).toBeCloseTo(20152.292, 2);
-    expect(L.construction).toBe(140000); // 350 €/m² × 400 m²
+    expect(L.opex).toBeCloseTo(55807.708, 2);
+    expect(L.ebitda).toBeCloseTo(-7207.708, 2); // conservative plant model → EBITDA-negative at this (poor) pairing
+    expect(L.construction).toBe(140000); // 350 €/m² × 400 m² footprint (unchanged)
     expect(L.capex).toBe(340250); // 110000 + 140000 + 60000 PV + 30250 HP
-    expect(L.net).toBeCloseTo(-8201.875, 2);
+    expect(L.net).toBeCloseTo(-35561.875, 2);
   });
 
   it('matches the prototype rent scenario', () => {
     const R = computeScenario('rent', i, BOTH_ON);
     expect(R.construction).toBe(0);
     expect(R.capex).toBe(200250);
-    expect(R.rent).toBe(21600); // 4.5 × 400 × 12
-    expect(R.ebitda).toBeCloseTo(1552.292, 2);
+    expect(R.rent).toBe(21600); // 4.5 × 400 m² footprint × 12 (unchanged)
+    expect(R.ebitda).toBeCloseTo(-25807.708, 2); // rev 48600 − opex 74407.708
   });
 });
 
@@ -127,20 +129,22 @@ describe('ramp simulation & break-even', () => {
     const L = computeScenario('lease', i, BOTH_ON);
     const withLag = simulateMonthly(L, i, i.horizon);
     const noLag = simulateMonthly(L, { growMonths: 0, cycleDays: i.cycleDays }, i.horizon);
-    // golden re-pinned for spec-04: noblecray growMonths corrected 30→48 (docs/research/fish-noblecray.md)
-    // Also spec-03: heatDemand uses deriveHeatDemand (physics-based, ΔT=7.425)
-    // formula: 48-month grow lag + lower heat cost → breakEven shifts out further
-    expect(withLag.breakEven).toBeCloseTo(8.527, 2); // re-pinned golden (spec-04)
+    // golden re-pinned: noblecray growMonths 48 (spec-04) + conservative plant
+    // model (canopy = 60% of footprint, greens yld 28→20) cuts plant revenue,
+    // pushing break-even out from 8.527 → 12.354 yr.
+    expect(withLag.breakEven).toBeCloseTo(12.354, 2); // re-pinned golden (canopy + conservative yields)
     expect(noLag.breakEven).not.toBeNull();
     expect(withLag.breakEven! - noLag.breakEven!).toBeGreaterThan(2.5); // 48-mo lag + deeper valley
   });
 
-  it('default catfish lease does not pay back within the 15-yr horizon (despite positive EBITDA)', () => {
+  it('default catfish/greens (a poor, warm-vs-cool pairing) is EBITDA-negative under the conservative plant model and never pays back', () => {
     const i = makeInputs('small', 'catfish', 'greens_mix');
     const L = computeScenario('lease', i, BOTH_ON);
     const r = simulateMonthly(L, i, i.horizon);
-    expect(L.ebitda).toBeGreaterThan(0);
-    expect(r.breakEven).toBeNull(); // the UI shows "> 15 yr"
+    // Conservative canopy (60% of footprint) + lower yields tip this default
+    // (catfish runs too warm for greens anyway) into operating loss → no payback.
+    expect(L.ebitda).toBeLessThan(0);
+    expect(r.breakEven).toBeNull(); // the UI shows "never"
   });
 
   it('year table aggregates the same monthly stream', () => {
@@ -307,7 +311,7 @@ describe('enterprise contribution', () => {
   const i = {
     ...makeInputs('small', 'catfish', 'greens_mix'),
     fishKg: 1000, fishPrice: 10, fcr: 1, feedPrice: 1, stockCost: 1,
-    growArea: 100, yieldM2: 20, plantPrice: 5, seedCost: 10,
+    growArea: 100, cropAreaFraction: 1, yieldM2: 20, plantPrice: 5, seedCost: 10,
     laborHrs: 10, wage: 20,
   };
   const shares = { laborShareFish: 0.35, laborSharePlants: 0.45, energyShareFish: 0.7 };
@@ -341,7 +345,7 @@ describe('enterprise contribution', () => {
 
   it('enterprise totals sum to the venture-level lines (rev, inputs, labour, energy)', () => {
     const c = enterpriseContribution(i, 1000, shares, 0.5, 0.4);
-    expect(c.fish.revenue + c.plants.revenue).toBeCloseTo(i.fishKg * i.fishPrice + i.growArea * i.yieldM2 * i.plantPrice, 6);
+    expect(c.fish.revenue + c.plants.revenue).toBeCloseTo(i.fishKg * i.fishPrice + i.growArea * i.cropAreaFraction * i.yieldM2 * i.plantPrice, 6);
     expect(c.fish.labor + c.plants.labor).toBeCloseTo(i.laborHrs * 52 * i.wage, 6);
     expect(c.fish.energy + c.plants.energy).toBeCloseTo(1000, 6);
   });

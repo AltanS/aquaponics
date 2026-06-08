@@ -35,11 +35,15 @@ export interface ScenarioResult {
  * the building.
  */
 export function computeScenario(key: ScenarioKey, i: CalcInputs, t: Toggles): ScenarioResult {
+  // Productive canopy is a fraction of the heated footprint; tanks, sump,
+  // filtration, nursery and aisles take the rest. Plant output & seed cost
+  // scale with canopy, while construction/heat/rent use the full footprint.
+  const canopy = i.growArea * i.cropAreaFraction;
   const fishRev = i.fishKg * i.fishPrice;
-  const plantRev = i.growArea * i.yieldM2 * i.plantPrice;
+  const plantRev = canopy * i.yieldM2 * i.plantPrice;
   const rev = fishRev + plantRev;
 
-  const inputs = i.fishKg * i.fcr * i.feedPrice + i.fishKg * i.stockCost + i.growArea * i.seedCost;
+  const inputs = i.fishKg * i.fcr * i.feedPrice + i.fishKg * i.stockCost + canopy * i.seedCost;
 
   const E = computeEnergy(i, t);
   const labor = i.laborHrs * 52 * i.wage;

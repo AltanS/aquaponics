@@ -167,7 +167,7 @@ export const CROPS = {
     notes: "A forgiving staple blend with steady year-round turnover under supplementary light.",
     price: 4.5,
     seedCost: 9,
-    yld: 28,
+    yld: 20,
   },
   lettuce_head: {
     caMax: 24,
@@ -183,7 +183,7 @@ export const CROPS = {
     seedCost: 8,
     unitLabel: "head",
     unitWeightKg: 0.35,
-    yld: 30,
+    yld: 22,
   },
   lettuce_leaf: {
     caMax: 24,
@@ -197,7 +197,7 @@ export const CROPS = {
     notes: "Fast cut-and-come-again leaf with a high cycle count and good margins.",
     price: 6,
     seedCost: 10,
-    yld: 25,
+    yld: 18,
   },
   rocket: {
     caMax: 26,
@@ -211,7 +211,7 @@ export const CROPS = {
     notes: "Peppery, fast and premium-priced; several cuts per sowing.",
     price: 11,
     seedCost: 9,
-    yld: 22,
+    yld: 16,
   },
   basil: {
     caMax: 31,
@@ -225,7 +225,7 @@ export const CROPS = {
     notes: "Top €/kg herb that loves warmth but is prone to cold damage and root rot.",
     price: 14,
     seedCost: 12,
-    yld: 18,
+    yld: 13,
   },
   spinach: {
     caMax: 22,
@@ -239,7 +239,7 @@ export const CROPS = {
     notes: "Cool-season crop that struggles and gets root disease in warm water.",
     price: 7,
     seedCost: 8,
-    yld: 24,
+    yld: 16,
   },
   chard: {
     caMax: 28,
@@ -253,7 +253,7 @@ export const CROPS = {
     notes: "Robust, high-biomass, with a long continuous harvest window.",
     price: 5,
     seedCost: 7,
-    yld: 22,
+    yld: 16,
   },
   pakchoi: {
     caMax: 26,
@@ -269,7 +269,7 @@ export const CROPS = {
     seedCost: 8,
     unitLabel: "head",
     unitWeightKg: 0.3,
-    yld: 18,
+    yld: 13,
   },
   feldsalat: {
     caMax: 20,
@@ -283,7 +283,7 @@ export const CROPS = {
     notes: "Cold-hardy winter premium — slow and low-yielding but high-priced.",
     price: 13,
     seedCost: 10,
-    yld: 8,
+    yld: 7,
   },
   herbs: {
     caMax: 28,
@@ -297,7 +297,7 @@ export const CROPS = {
     notes: "Mint, parsley and coriander mix; high value with steady demand from chefs.",
     price: 12,
     seedCost: 12,
-    yld: 20,
+    yld: 14,
   },
   microgreens: {
     caMax: 30,
@@ -311,7 +311,7 @@ export const CROPS = {
     notes: "Extremely high €/kg and very fast cycles, but labour-heavy with a short shelf life.",
     price: 40,
     seedCost: 25,
-    yld: 20,
+    yld: 16,
   },
 } as const satisfies Record<string, Crop>;
 
@@ -407,6 +407,7 @@ export const FINANCE: FinanceDefaults = {
 };
 
 export const MODEL: ModelAssumptions = {
+  cropAreaFraction: 0.6,
   energyShareFish: 0.7,
   laborShareFish: 0.35,
   laborSharePlants: 0.45,

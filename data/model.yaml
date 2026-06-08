@@ -21,3 +21,10 @@ model:
   # energy OPEX and the fish set the loop temperature; pumps/aeration also
   # serve the fish side. The remainder (lights, climate) goes to plants.
   energyShareFish: 0.70
+
+  # Productive plant canopy as a fraction of the heated FOOTPRINT. The scale
+  # "growArea" is the whole enclosed floor (it drives construction, heat and
+  # rent); only part of it is raft/bed canopy — the rest is fish tanks, sump,
+  # biofilter, nursery, packing and walkways. Real coupled layouts run roughly
+  # 0.5–0.7. Plant harvest, revenue and seed cost scale with canopy, not floor.
+  cropAreaFraction: 0.60

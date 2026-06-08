@@ -132,4 +132,7 @@ export interface ModelAssumptions {
   laborSharePlants: number;
   /** share of net energy cost attributed to the fish loop (0–1) */
   energyShareFish: number;
+  /** productive plant canopy as a fraction of the heated footprint (0–1);
+   * plant harvest/revenue/seed cost scale with canopy, build/heat/rent with footprint */
+  cropAreaFraction: number;
 }

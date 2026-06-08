@@ -8,7 +8,11 @@ export interface CalcInputs {
   stockCost: number;
   growMonths: number;
   // crop
+  /** total heated footprint (m²) — drives construction, heat & rent */
   growArea: number;
+  /** productive plant canopy as a fraction of the footprint (0–1);
+   * harvest, plant revenue & seed cost scale with canopy = growArea × this */
+  cropAreaFraction: number;
   yieldM2: number;
   plantPrice: number;
   seedCost: number;

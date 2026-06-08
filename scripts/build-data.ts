@@ -95,6 +95,7 @@ const ModelSchema = z
     laborShareFish: z.number({ error: 'laborShareFish must be a share 0–1' }).min(0).max(1),
     laborSharePlants: z.number({ error: 'laborSharePlants must be a share 0–1' }).min(0).max(1),
     energyShareFish: z.number({ error: 'energyShareFish must be a share 0–1' }).min(0).max(1),
+    cropAreaFraction: z.number({ error: 'cropAreaFraction must be a fraction 0–1' }).gt(0).max(1),
   })
   .refine((m) => m.laborShareFish + m.laborSharePlants <= 1, {
     message: 'laborShareFish + laborSharePlants must not exceed 1 (remainder = general labour)',

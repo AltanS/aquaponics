@@ -8,7 +8,7 @@ entities:
   greens_mix:
     label: "Mixed leafy greens"
     cat: Leafy
-    yld: 28          # kg/m²/yr
+    yld: 20          # kg/m²/yr — conservative coupled-system end (docs/research/crop-greens_mix.md: 28 was best-case)
     price: 4.5       # €/kg direct-sale
     seedCost: 9      # €/m²/yr
     cycleDays: 38    # days to first harvest
@@ -22,7 +22,7 @@ entities:
   lettuce_head:
     label: "Head lettuce"
     cat: Leafy
-    yld: 30
+    yld: 22          # kg/m²/yr — conservative (docs/research/crop-lettuce_head.md: 30 achievable, not a floor)
     price: 4.0
     seedCost: 8
     unitWeightKg: 0.35  # ≈325 g/head (IGB Berlin; docs/research/crop-lettuce_head.md)
@@ -38,7 +38,7 @@ entities:
   lettuce_leaf:
     label: "Baby leaf"
     cat: Leafy
-    yld: 25
+    yld: 18          # kg/m²/yr — conservative multi-cut estimate
     price: 6.0
     seedCost: 10
     cycleDays: 25
@@ -52,7 +52,7 @@ entities:
   rocket:
     label: "Rocket / Rucola"
     cat: Leafy
-    yld: 22
+    yld: 16          # kg/m²/yr — conservative multi-cut estimate
     price: 11
     seedCost: 9
     cycleDays: 25
@@ -66,7 +66,7 @@ entities:
   basil:
     label: "Basil"
     cat: Herb
-    yld: 18
+    yld: 13          # kg/m²/yr — conservative (warmth-limited in Berlin)
     price: 14
     seedCost: 12
     cycleDays: 40
@@ -80,7 +80,7 @@ entities:
   spinach:
     label: "Spinach"
     cat: Leafy
-    yld: 24
+    yld: 16          # kg/m²/yr — conservative cool-season estimate
     price: 7
     seedCost: 8
     cycleDays: 35
@@ -94,7 +94,7 @@ entities:
   chard:
     label: "Swiss chard"
     cat: Leafy
-    yld: 22  # corrected: 22 per research (docs/research/crop-chard.md)
+    yld: 16          # kg/m²/yr — conservative (docs/research/crop-chard.md: 15-25 safer; ~5.3 kg/m²/cycle)
     price: 5
     seedCost: 7
     cycleDays: 48
@@ -108,7 +108,7 @@ entities:
   pakchoi:
     label: "Pak choi"
     cat: Leafy
-    yld: 18  # corrected: 18 per research (docs/research/crop-pakchoi.md)
+    yld: 13          # kg/m²/yr — conservative (docs/research/crop-pakchoi.md)
     price: 6
     seedCost: 8
     unitWeightKg: 0.3  # ≈300 g/head
@@ -124,7 +124,7 @@ entities:
   feldsalat:
     label: "Lamb's lettuce"
     cat: Leafy
-    yld: 8  # corrected: 8 per research (docs/research/crop-feldsalat.md)
+    yld: 7          # kg/m²/yr — conservative low-yield winter premium (docs/research/crop-feldsalat.md)
     price: 13
     seedCost: 10
     cycleDays: 50
@@ -138,7 +138,7 @@ entities:
   herbs:
     label: "Cutting herbs"
     cat: Herb
-    yld: 20
+    yld: 14          # kg/m²/yr — conservative cutting-herb estimate
     price: 12
     seedCost: 12
     cycleDays: 45
@@ -152,7 +152,7 @@ entities:
   microgreens:
     label: "Microgreens"
     cat: Microgreen
-    yld: 20
+    yld: 16          # kg/m²/yr — conservative tray-throughput estimate
     price: 40
     seedCost: 25
     cycleDays: 14

@@ -4,9 +4,11 @@ import type { ScenarioKey } from '../core';
 /** Available region IDs */
 export type RegionId = 'berlin-brandenburg';
 
-/** Main content tabs — sticky header stays visible while tabbing around. */
-export type TabId = 'results' | 'setup' | 'fish' | 'plants' | 'energy';
-export const TAB_IDS: readonly TabId[] = ['results', 'setup', 'fish', 'plants', 'energy'];
+/** Main content tabs — sticky header stays visible while tabbing around.
+ * Fish & plants share one "production" pane: in a coupled system they are
+ * inseparable, so they're tuned and compared side by side. */
+export type TabId = 'results' | 'setup' | 'production' | 'energy';
+export const TAB_IDS: readonly TabId[] = ['results', 'setup', 'production', 'energy'];
 
 export interface AppState {
   scale: ScaleId;

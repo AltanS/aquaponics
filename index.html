@@ -17,30 +17,32 @@
 </header>
 
 <div class="sticky">
-  <div class="sticky-in">
-    <div class="toggles">
-      <button class="tg on" id="tg-solar"><span class="led"></span>Solar PV</button>
-      <button class="tg on" id="tg-hp"><span class="led"></span>Heat pump</button>
-      <label class="region-label">Region
-        <select id="region-select" class="region-select" data-testid="region-selector">
-          <option value="berlin-brandenburg">Berlin / Brandenburg</option>
-        </select>
-      </label>
+  <div class="overview">
+    <div class="ov-top">
+      <div class="toggles">
+        <button class="tg on" id="tg-solar"><span class="led"></span>Solar PV</button>
+        <button class="tg on" id="tg-hp"><span class="led"></span>Heat pump</button>
+        <label class="region-label">Region
+          <select id="region-select" class="region-select" data-testid="region-selector">
+            <option value="berlin-brandenburg">Berlin / Brandenburg</option>
+          </select>
+        </label>
+      </div>
+      <div class="selection" id="selection" title="Current fish × crop pairing — set on the Fish &amp; plants tab"></div>
     </div>
     <div class="skstats">
       <div class="sk"><div class="k">Lease · steady net/yr</div><div class="v" id="sk-lnet">–</div></div>
       <div class="sk"><div class="k">Lease · break-even</div><div class="v" id="sk-lbe">–</div></div>
       <div class="sk"><div class="k">Rent · steady net/yr</div><div class="v" id="sk-rnet">–</div></div>
       <div class="sk"><div class="k">Rent · break-even</div><div class="v" id="sk-rbe">–</div></div>
+      <div class="spark" id="spark" title="Cumulative cash flow — teal: lease &amp; build, blue: rent existing"></div>
     </div>
   </div>
   <div class="maintabs" id="main-tabs">
     <button class="mtab on" data-tab="results">Results</button>
     <button class="mtab" data-tab="setup">Scale &amp; costs</button>
-    <button class="mtab" data-tab="fish">Fish</button>
-    <button class="mtab" data-tab="plants">Plants</button>
+    <button class="mtab" data-tab="production">Fish &amp; plants</button>
     <button class="mtab" data-tab="energy">Energy</button>
-    <div class="spark" id="spark" title="Cumulative cash flow — teal: lease &amp; build, blue: rent existing"></div>
     <button class="mtab reset" id="reset-btn" title="Clear the locally saved session and restore defaults">Reset</button>
   </div>
 </div>
@@ -173,8 +175,14 @@
   </div>
 </section>
 
-<!-- FISH -->
-<section class="pane" id="pane-fish">
+<!-- FISH & PLANTS (coupled — tuned and compared side by side) -->
+<section class="pane" id="pane-production">
+  <div class="card">
+    <h2>Production totals <span class="h2note">fish &amp; plants, per year &amp; per month, down to the unit</span></h2>
+    <p class="note">Steady-state contribution of each enterprise broken to a comparable unit — labour and energy attributed per <code>data/model.yaml</code>; before rent, other overheads &amp; depreciation.</p>
+    <div id="prod-totals"></div>
+  </div>
+
   <div class="cols">
     <div>
       <div class="card">
@@ -193,13 +201,6 @@
           <div class="row" style="margin-top:8px"><span>Gross margin</span><span class="raw" id="fish-raw">–</span></div>
         </div>
       </div>
-    </div>
-    <div>
-      <div class="card">
-        <h2>Fish totals</h2>
-        <p class="note">Steady-state contribution of the fish enterprise — labour and energy attributed per <code>data/model.yaml</code>; before rent, other overheads &amp; depreciation.</p>
-        <div id="fish-totals"></div>
-      </div>
       <div class="card">
         <h2>Fish economics</h2>
         <div class="grid2">
@@ -212,12 +213,7 @@
         </div>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- PLANTS -->
-<section class="pane" id="pane-plants">
-  <div class="cols">
     <div>
       <div class="card">
         <h2><span class="dot" style="background:#639922"></span>Plants</h2>
@@ -234,13 +230,6 @@
           <div class="track"><div class="fill" id="crop-fill"></div></div>
           <div class="row" style="margin-top:8px"><span>Revenue density</span><span class="raw" id="crop-raw">–</span></div>
         </div>
-      </div>
-    </div>
-    <div>
-      <div class="card">
-        <h2>Plant totals</h2>
-        <p class="note">Steady-state contribution of the plant enterprise — labour and energy attributed per <code>data/model.yaml</code>; before rent, other overheads &amp; depreciation.</p>
-        <div id="plant-totals"></div>
       </div>
       <div class="card">
         <h2>Crop economics</h2>

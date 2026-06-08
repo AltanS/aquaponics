@@ -17,7 +17,7 @@ import { renderChart } from './chart';
 import { renderSpark } from './spark';
 import { renderTable } from './table';
 import { renderPairs, updateCropDots } from './panels';
-import { renderTotals } from './totals';
+import { renderSelection, renderTotals } from './totals';
 import { snapshot } from './persist';
 import type { AppState } from './state';
 
@@ -157,6 +157,7 @@ export function render(state: AppState): void {
     `~<b>${Math.round(i.cycleDays)} days</b>. Costs run from month 1. Highlighted row = payback.`;
 
   renderIndices(i);
+  renderSelection(state);
   updateCropDots(state);
   renderPairs(state);
   renderBreakdown(s);

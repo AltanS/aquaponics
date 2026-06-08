@@ -13,6 +13,9 @@ export interface CalcInputs {
   /** productive plant canopy as a fraction of the footprint (0–1);
    * harvest, plant revenue & seed cost scale with canopy = growArea × this */
   cropAreaFraction: number;
+  /** vertical layers / multiplier on plant output per footprint (1 = single layer;
+   * towers & multi-tier raise effective yield 2–2.5×). Scales plant revenue & seed cost. */
+  stackFactor: number;
   yieldM2: number;
   plantPrice: number;
   seedCost: number;

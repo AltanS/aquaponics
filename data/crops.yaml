@@ -19,6 +19,20 @@ entities:
     difficulty: Easy
     notes: "A forgiving staple blend with steady year-round turnover under supplementary light."
 
+  premium_mix:
+    label: "Premium herb & salad mix"
+    cat: Mixed
+    yld: 15          # kg/m²/yr — blended; herbs/microgreens yield less but carry the value
+    price: 13        # €/kg — weighted blend of rocket €11, cutting herbs €12, basil €14, premium salad (docs/research)
+    seedCost: 14
+    cycleDays: 30
+    cMin: 14         # moderate band — a cool-to-temperate blend; warm items (basil) compromise
+    cMax: 22
+    caMin: 9
+    caMax: 28
+    difficulty: Medium
+    notes: "A realistic market-garden blend (rocket, cutting herbs, basil, premium salad) — what small operators actually grow to clear the labour wall. Higher €/m² than a single staple; manage the mixed temperature needs."
+
   lettuce_head:
     label: "Head lettuce"
     cat: Leafy

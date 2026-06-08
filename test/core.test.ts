@@ -3,6 +3,7 @@ import { CROPS, ENERGY, FINANCE, FISH, MODEL, PROPERTY, SCALES } from '../src/da
 import {
   computeEnergy,
   computeScenario,
+  cropValue,
   loopTemp,
   pairFishPlant,
   indexScore,
@@ -33,7 +34,7 @@ function makeInputs(scale: keyof typeof SCALES, fish: keyof typeof FISH, crop: k
   return {
     fishKg: s.fishKg, fishPrice: f.price, fcr: f.fcr, feedPrice: ENERGY.feedPrice,
     stockCost: f.stockCost, growMonths: f.growMonths,
-    growArea: s.growArea, cropAreaFraction: MODEL.cropAreaFraction,
+    growArea: s.growArea, cropAreaFraction: MODEL.cropAreaFraction, stackFactor: 1,
     yieldM2: c.yld, plantPrice: c.price, seedCost: c.seedCost, cycleDays: c.cycleDays,
     sysKwh: s.sysKwh,
     heatDemand: Math.round(deriveHeatDemand(f, BERLIN_REGION, BERLIN_ENCLOSURE, s)),
@@ -100,6 +101,23 @@ describe('golden: toggles off remove CAPEX and shift the energy bill', () => {
     expect(off.energy).toBeCloseTo(16050, 6); // 40000×0.25 grid + 55000×0.11 gas
     expect(off.energy).toBeGreaterThan(on.energy);
     expect(off.capex).toBeLessThan(on.capex);
+  });
+});
+
+describe('plant-area levers: canopy fraction & vertical stacking', () => {
+  it('vertical stacking scales plant revenue & seed cost linearly', () => {
+    const base = makeInputs('small', 'catfish', 'greens_mix');
+    const flat = computeScenario('lease', base, BOTH_ON);
+    const stacked = computeScenario('lease', { ...base, stackFactor: 2 }, BOTH_ON);
+    expect(stacked.plantRev).toBeCloseTo(flat.plantRev * 2, 6);
+    // fish revenue is untouched by stacking
+    expect(stacked.fishRev).toBe(flat.fishRev);
+  });
+
+  it('premium mix carries a higher revenue density than the staple greens mix', () => {
+    expect(cropValue(CROPS.premium_mix.yld, CROPS.premium_mix.price)).toBeGreaterThan(
+      cropValue(CROPS.greens_mix.yld, CROPS.greens_mix.price),
+    );
   });
 });
 

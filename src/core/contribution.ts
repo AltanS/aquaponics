@@ -54,9 +54,9 @@ export function enterpriseContribution(
   fishMarketWeightKg: number,
   cropUnitWeightKg: number | null,
 ): ContributionResult {
-  const canopy = i.growArea * i.cropAreaFraction;
+  const plantArea = i.growArea * i.cropAreaFraction * i.stackFactor;
   const fishRev = i.fishKg * i.fishPrice;
-  const plantKg = canopy * i.yieldM2;
+  const plantKg = plantArea * i.yieldM2;
   const plantRev = plantKg * i.plantPrice;
   const rev = fishRev + plantRev;
   const revShareFish = rev > 0 ? fishRev / rev : 0.5;
@@ -72,7 +72,7 @@ export function enterpriseContribution(
   const energyPlants = energyOpex - energyFish;
 
   const directFish = i.fishKg * i.fcr * i.feedPrice + i.fishKg * i.stockCost;
-  const directPlants = canopy * i.seedCost;
+  const directPlants = plantArea * i.seedCost;
 
   const make = (
     kgPerYear: number,

@@ -14,3 +14,4 @@ src/ui/panels.ts
 src/core/types.ts
 test/core.test.ts
 data/scales.yaml
+data/crops.yaml

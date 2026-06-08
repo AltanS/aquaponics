@@ -30,7 +30,7 @@ export interface FishSpecies {
 
 export interface Crop {
   label: string;
-  cat: 'Leafy' | 'Herb' | 'Microgreen';
+  cat: 'Leafy' | 'Herb' | 'Microgreen' | 'Mixed';
   /** kg / m² / yr (named `yld` — "yield" is reserved-ish) */
   yld: number;
   /** €/kg, direct-sale */

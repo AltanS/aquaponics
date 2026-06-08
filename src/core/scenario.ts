@@ -47,12 +47,14 @@ export function computeScenario(key: ScenarioKey, i: CalcInputs, t: Toggles): Sc
   // Productive canopy is a fraction of the heated footprint; tanks, sump,
   // filtration, nursery and aisles take the rest. Plant output & seed cost
   // scale with canopy, while construction/heat/rent use the full footprint.
-  const canopy = i.growArea * i.cropAreaFraction;
+  // Vertical stacking multiplies output per footprint without enlarging the
+  // building (heat/rent/construction stay on the footprint).
+  const plantArea = i.growArea * i.cropAreaFraction * i.stackFactor;
   const fishRev = i.fishKg * i.fishPrice;
-  const plantRev = canopy * i.yieldM2 * i.plantPrice;
+  const plantRev = plantArea * i.yieldM2 * i.plantPrice;
   const rev = fishRev + plantRev;
 
-  const inputs = i.fishKg * i.fcr * i.feedPrice + i.fishKg * i.stockCost + canopy * i.seedCost;
+  const inputs = i.fishKg * i.fcr * i.feedPrice + i.fishKg * i.stockCost + plantArea * i.seedCost;
 
   const E = computeEnergy(i, t);
   // Only HIRED labour is a cash cost in EBITDA. Owner-operator hours are unpaid

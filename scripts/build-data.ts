@@ -39,7 +39,7 @@ const FishSpeciesSchema = z.object({
 
 const CropSchema = z.object({
   label: z.string(),
-  cat: z.enum(['Leafy', 'Herb', 'Microgreen']),
+  cat: z.enum(['Leafy', 'Herb', 'Microgreen', 'Mixed']),
   yld: z.number({ error: 'yld must be a number in kg/m²/yr' }),
   price: z.number({ error: 'price must be a number in €/kg' }),
   seedCost: z.number({ error: 'seedCost must be a number in €/m²/yr' }),

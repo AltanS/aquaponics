@@ -8,7 +8,7 @@ import type { AppState } from './state';
 /** Every editable numeric input id — drives reading, and the persisted snapshot. */
 export const INPUT_IDS = [
   'fishKg', 'fishPrice', 'fcr', 'feedPrice', 'stockCost', 'growMonths',
-  'growArea', 'canopyPct', 'yieldM2', 'plantPrice', 'seedCost', 'cycleDays',
+  'growArea', 'canopyPct', 'stackFactor', 'yieldM2', 'plantPrice', 'seedCost', 'cycleDays',
   'sysKwh', 'heatDemand', 'cop', 'pvKwp', 'pvYield', 'scRate',
   'gridPrice', 'feedIn', 'gasPrice', 'omSolar',
   'pvCostPerKwp', 'hpCostPerKw', 'hpFullLoadHours',
@@ -81,6 +81,7 @@ export function fillAll(state: AppState): void {
   setVal('hpFullLoadHours', ENERGY.hpFullLoadHours);
 
   setVal('canopyPct', Math.round(MODEL.cropAreaFraction * 100));
+  setVal('stackFactor', 1);
   setVal('rentPerM2Month', PROPERTY.rentPerM2Month);
   setVal('wage', FINANCE.wage);
   setVal('deprYears', FINANCE.deprYears);
@@ -98,6 +99,7 @@ export function readInputs(state?: AppState): CalcInputs {
     growMonths: Math.max(0, num('growMonths')),
     growArea: num('growArea'),
     cropAreaFraction: Math.min(1, Math.max(0.05, num('canopyPct') / 100)),
+    stackFactor: Math.max(1, num('stackFactor')),
     yieldM2: num('yieldM2'),
     plantPrice: num('plantPrice'),
     seedCost: num('seedCost'),

@@ -169,6 +169,20 @@ export const CROPS = {
     seedCost: 9,
     yld: 20,
   },
+  premium_mix: {
+    caMax: 28,
+    caMin: 9,
+    cat: "Mixed",
+    cMax: 22,
+    cMin: 14,
+    cycleDays: 30,
+    difficulty: "Medium",
+    label: "Premium herb & salad mix",
+    notes: "A realistic market-garden blend (rocket, cutting herbs, basil, premium salad) — what small operators actually grow to clear the labour wall. Higher €/m² than a single staple; manage the mixed temperature needs.",
+    price: 13,
+    seedCost: 14,
+    yld: 15,
+  },
   lettuce_head: {
     caMax: 24,
     caMin: 8,
@@ -315,7 +329,7 @@ export const CROPS = {
   },
 } as const satisfies Record<string, Crop>;
 
-export type CropId = "greens_mix" | "lettuce_head" | "lettuce_leaf" | "rocket" | "basil" | "spinach" | "chard" | "pakchoi" | "feldsalat" | "herbs" | "microgreens";
+export type CropId = "greens_mix" | "premium_mix" | "lettuce_head" | "lettuce_leaf" | "rocket" | "basil" | "spinach" | "chard" | "pakchoi" | "feldsalat" | "herbs" | "microgreens";
 
 export const SCALES = {
   hobby: {

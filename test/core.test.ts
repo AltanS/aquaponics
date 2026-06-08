@@ -42,7 +42,7 @@ function makeInputs(scale: keyof typeof SCALES, fish: keyof typeof FISH, crop: k
     pvCostPerKwp: ENERGY.pvCostPerKwp, hpCostPerKw: ENERGY.hpCostPerKw, hpFullLoadHours: ENERGY.hpFullLoadHours,
     constructionPerM2: s.constructionPerM2, rentPerM2Month: PROPERTY.rentPerM2Month,
     landLeaseYear: s.landLeaseYear, equipmentCapex: s.equipmentCapex,
-    laborHrs: s.laborHrs, wage: FINANCE.wage, waterNut: s.waterNut, distrib: s.distrib, maint: s.maint,
+    laborHrs: s.laborHrs, ownerHrs: s.ownerHrs, wage: FINANCE.wage, waterNut: s.waterNut, distrib: s.distrib, maint: s.maint,
     deprYears: FINANCE.deprYears, horizon: FINANCE.horizonYears,
   };
 }
@@ -69,12 +69,15 @@ describe('golden: default scenario (small / catfish / greens_mix, solar+HP on)',
     // canopy = 400 m² × 0.6 = 240 m²; greens_mix yld 28→20 (conservative)
     expect(L.rev).toBe(48600); // fish 3000×9=27000 + plants 240×20×4.5=21600
     expect(L.inputs).toBeCloseTo(9840, 6); // feed 5280 + stock 2400 + seed 240×9=2160
-    expect(L.labor).toBe(26520); // 30×52×17
-    expect(L.opex).toBeCloseTo(55807.708, 2);
-    expect(L.ebitda).toBeCloseTo(-7207.708, 2); // conservative plant model → EBITDA-negative at this (poor) pairing
+    // small tier is owner-run (ownerHrs 30 = laborHrs 30) → hired labour = €0 cash
+    expect(L.labor).toBe(0);
+    expect(L.ownerLabor).toBe(26520); // 30×52×17 owner opportunity cost (memo, below EBITDA)
+    expect(L.opex).toBeCloseTo(29287.708, 2);
+    expect(L.ebitda).toBeCloseTo(19312.292, 2); // cash EBITDA (owner unpaid)
+    expect(L.ebitda - L.ownerLabor).toBeCloseTo(-7207.708, 2); // economic profit if owner paid market wage
     expect(L.construction).toBe(140000); // 350 €/m² × 400 m² footprint (unchanged)
     expect(L.capex).toBe(340250); // 110000 + 140000 + 60000 PV + 30250 HP
-    expect(L.net).toBeCloseTo(-35561.875, 2);
+    expect(L.net).toBeCloseTo(-9041.875, 2); // cash EBITDA − depreciation
   });
 
   it('matches the prototype rent scenario', () => {
@@ -82,7 +85,7 @@ describe('golden: default scenario (small / catfish / greens_mix, solar+HP on)',
     expect(R.construction).toBe(0);
     expect(R.capex).toBe(200250);
     expect(R.rent).toBe(21600); // 4.5 × 400 m² footprint × 12 (unchanged)
-    expect(R.ebitda).toBeCloseTo(-25807.708, 2); // rev 48600 − opex 74407.708
+    expect(R.ebitda).toBeCloseTo(712.292, 2); // cash EBITDA (owner unpaid): rev 48600 − opex 47887.708
   });
 });
 
@@ -129,22 +132,22 @@ describe('ramp simulation & break-even', () => {
     const L = computeScenario('lease', i, BOTH_ON);
     const withLag = simulateMonthly(L, i, i.horizon);
     const noLag = simulateMonthly(L, { growMonths: 0, cycleDays: i.cycleDays }, i.horizon);
-    // golden re-pinned: noblecray growMonths 48 (spec-04) + conservative plant
-    // model (canopy = 60% of footprint, greens yld 28→20) cuts plant revenue,
-    // pushing break-even out from 8.527 → 12.354 yr.
-    expect(withLag.breakEven).toBeCloseTo(12.354, 2); // re-pinned golden (canopy + conservative yields)
+    // golden re-pinned: conservative plant model pushed break-even out, but the
+    // owner-labour split (small is owner-run → €0 hired labour in opex) pulls it
+    // back in to 8.582 yr.
+    expect(withLag.breakEven).toBeCloseTo(8.582, 2); // re-pinned golden (canopy + conservative yields + owner-labour)
     expect(noLag.breakEven).not.toBeNull();
     expect(withLag.breakEven! - noLag.breakEven!).toBeGreaterThan(2.5); // 48-mo lag + deeper valley
   });
 
-  it('default catfish/greens (a poor, warm-vs-cool pairing) is EBITDA-negative under the conservative plant model and never pays back', () => {
+  it('default catfish/greens has positive cash EBITDA (owner unpaid) but still does not pay back the CAPEX within the horizon', () => {
     const i = makeInputs('small', 'catfish', 'greens_mix');
     const L = computeScenario('lease', i, BOTH_ON);
     const r = simulateMonthly(L, i, i.horizon);
-    // Conservative canopy (60% of footprint) + lower yields tip this default
-    // (catfish runs too warm for greens anyway) into operating loss → no payback.
-    expect(L.ebitda).toBeLessThan(0);
-    expect(r.breakEven).toBeNull(); // the UI shows "never"
+    // Owner-run → cash EBITDA positive, but it's too thin against €340k CAPEX
+    // (and the grow-out ramp) to break even inside the horizon.
+    expect(L.ebitda).toBeGreaterThan(0);
+    expect(r.breakEven).toBeNull();
   });
 
   it('year table aggregates the same monthly stream', () => {

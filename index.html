@@ -60,7 +60,9 @@
             <div class="line"><span class="lab">— of which construction</span><span class="val" id="L-con">–</span></div>
             <div class="line"><span class="lab">— solar + heat pump</span><span class="val" id="L-eq">–</span></div>
             <div class="line"><span class="lab">Land lease /yr</span><span class="val" id="L-rent">–</span></div>
-            <div class="line big"><span class="lab">Steady profit /yr</span><span class="val" id="L-ebitda">–</span></div>
+            <div class="line big"><span class="lab">Cash profit /yr <small>owner unpaid</small></span><span class="val" id="L-ebitda">–</span></div>
+            <div class="line"><span class="lab">— your labour (unpaid)</span><span class="val" id="L-owner">–</span></div>
+            <div class="line"><span class="lab">Profit after your wage /yr</span><span class="val" id="L-econ">–</span></div>
             <div class="line"><span class="lab">Steady net (after deprec.)</span><span class="val" id="L-net">–</span></div>
             <div class="line"><span class="lab">Break-even (with ramp)</span><span class="val" id="L-be">–</span></div>
           </div>
@@ -71,7 +73,9 @@
             <div class="line"><span class="lab">— of which construction</span><span class="val" id="R-con">–</span></div>
             <div class="line"><span class="lab">— solar + heat pump</span><span class="val" id="R-eq">–</span></div>
             <div class="line"><span class="lab">Structure rent /yr</span><span class="val" id="R-rent">–</span></div>
-            <div class="line big"><span class="lab">Steady profit /yr</span><span class="val" id="R-ebitda">–</span></div>
+            <div class="line big"><span class="lab">Cash profit /yr <small>owner unpaid</small></span><span class="val" id="R-ebitda">–</span></div>
+            <div class="line"><span class="lab">— your labour (unpaid)</span><span class="val" id="R-owner">–</span></div>
+            <div class="line"><span class="lab">Profit after your wage /yr</span><span class="val" id="R-econ">–</span></div>
             <div class="line"><span class="lab">Steady net (after deprec.)</span><span class="val" id="R-net">–</span></div>
             <div class="line"><span class="lab">Break-even (with ramp)</span><span class="val" id="R-be">–</span></div>
           </div>
@@ -140,8 +144,9 @@
       <div class="card">
         <h2><span class="dot" style="background:var(--purple)"></span>Labour &amp; overheads</h2>
         <div class="grid2">
-          <div class="f"><label>Labour <span class="unit">hours / week</span></label><input type="number" id="laborHrs" step="1" min="0"></div>
-          <div class="f"><label>Loaded wage <span class="unit">€/h</span></label><input type="number" id="wage" step="0.5" min="0"></div>
+          <div class="f"><label>Labour total <span class="unit">hours / week</span></label><input type="number" id="laborHrs" step="1" min="0"></div>
+          <div class="f"><label>— your own, unpaid <span class="unit">h/wk (sweat equity, not cash)</span></label><input type="number" id="ownerHrs" step="1" min="0"></div>
+          <div class="f"><label>Loaded wage <span class="unit">€/h (hired + your time value)</span></label><input type="number" id="wage" step="0.5" min="0"></div>
           <div class="f"><label>Water + nutrients <span class="unit">€/yr</span></label><input type="number" id="waterNut" step="250" min="0"></div>
           <div class="f"><label>Packaging + distribution <span class="unit">€/yr</span></label><input type="number" id="distrib" step="250" min="0"></div>
           <div class="f"><label>Maintenance + insurance <span class="unit">€/yr</span></label><input type="number" id="maint" step="250" min="0"></div>

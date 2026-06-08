@@ -37,7 +37,10 @@ export interface CalcInputs {
   landLeaseYear: number;
   equipmentCapex: number;
   // labour & overheads
+  /** total labour hours/week */
   laborHrs: number;
+  /** of which owner-worked & unpaid (opportunity cost); hired (cash) = laborHrs − ownerHrs */
+  ownerHrs: number;
   wage: number;
   waterNut: number;
   distrib: number;

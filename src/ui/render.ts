@@ -36,6 +36,11 @@ function setScenarioCard(prefix: 'L' | 'R', s: ScenarioResult, be: number | null
   const ebitda = el(`${prefix}-ebitda`);
   ebitda.textContent = eur(s.ebitda);
   ebitda.style.color = s.ebitda >= 0 ? 'var(--good)' : 'var(--bad)';
+  el(`${prefix}-owner`).textContent = s.ownerLabor > 0 ? `−${eur(s.ownerLabor)}` : '€0';
+  const econ = el(`${prefix}-econ`);
+  const econProfit = s.ebitda - s.ownerLabor;
+  econ.textContent = eur(econProfit);
+  econ.style.color = econProfit >= 0 ? 'var(--good)' : 'var(--bad)';
   const net = el(`${prefix}-net`);
   net.textContent = eur(s.net);
   net.style.color = s.net >= 0 ? 'var(--good)' : 'var(--bad)';

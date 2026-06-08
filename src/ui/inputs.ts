@@ -13,7 +13,7 @@ export const INPUT_IDS = [
   'gridPrice', 'feedIn', 'gasPrice', 'omSolar',
   'pvCostPerKwp', 'hpCostPerKw', 'hpFullLoadHours',
   'constructionPerM2', 'rentPerM2Month', 'landLeaseYear', 'equipmentCapex',
-  'laborHrs', 'wage', 'waterNut', 'distrib', 'maint',
+  'laborHrs', 'ownerHrs', 'wage', 'waterNut', 'distrib', 'maint',
   'deprYears', 'horizonYears',
 ] as const;
 
@@ -52,6 +52,7 @@ export function applyScalePreset(state: AppState): void {
   setVal('sysKwh', s.sysKwh);
   setVal('pvKwp', s.pvKwp);
   setVal('laborHrs', s.laborHrs);
+  setVal('ownerHrs', s.ownerHrs);
   setVal('waterNut', s.waterNut);
   setVal('distrib', s.distrib);
   setVal('maint', s.maint);
@@ -119,6 +120,7 @@ export function readInputs(state?: AppState): CalcInputs {
     landLeaseYear: num('landLeaseYear'),
     equipmentCapex: num('equipmentCapex'),
     laborHrs: num('laborHrs'),
+    ownerHrs: Math.max(0, num('ownerHrs')),
     wage: num('wage'),
     waterNut: num('waterNut'),
     distrib: num('distrib'),

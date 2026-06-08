@@ -9,7 +9,10 @@ export interface ScenarioResult {
   inputs: number;
   /** net energy OPEX €/yr */
   energy: number;
+  /** hired labour, €/yr — the only labour that's a cash cost (inside EBITDA) */
   labor: number;
+  /** owner's own labour valued at wage, €/yr — opportunity cost, NOT in opex/EBITDA */
+  ownerLabor: number;
   /** land lease (lease) or structure rent (rent), €/yr */
   rent: number;
   /** water+nutrients, distribution, maintenance, €/yr */
@@ -46,7 +49,13 @@ export function computeScenario(key: ScenarioKey, i: CalcInputs, t: Toggles): Sc
   const inputs = i.fishKg * i.fcr * i.feedPrice + i.fishKg * i.stockCost + canopy * i.seedCost;
 
   const E = computeEnergy(i, t);
-  const labor = i.laborHrs * 52 * i.wage;
+  // Only HIRED labour is a cash cost in EBITDA. Owner-operator hours are unpaid
+  // sweat equity — booked as an opportunity cost below the line, not in opex
+  // (standard farm accounting; an owner doesn't draw a wage to pay themselves).
+  const ownerHrs = Math.min(Math.max(0, i.ownerHrs), i.laborHrs);
+  const hiredHrs = i.laborHrs - ownerHrs;
+  const labor = hiredHrs * 52 * i.wage;
+  const ownerLabor = ownerHrs * 52 * i.wage;
   const rent = key === 'lease' ? i.landLeaseYear : i.rentPerM2Month * i.growArea * 12;
   const over = i.waterNut + i.distrib + i.maint;
   const opex = inputs + E.opex + labor + rent + over;
@@ -58,7 +67,7 @@ export function computeScenario(key: ScenarioKey, i: CalcInputs, t: Toggles): Sc
   const depr = capex / i.deprYears;
 
   return {
-    rev, fishRev, plantRev, inputs, energy: E.opex, labor, rent, over,
+    rev, fishRev, plantRev, inputs, energy: E.opex, labor, ownerLabor, rent, over,
     opex, ebitda, capex, construction, energyCapex: EC.pv + EC.hp,
     depr, net: ebitda - depr, E,
   };

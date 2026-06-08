@@ -62,6 +62,7 @@ const ScaleSchema = z.object({
   baseHeat: z.number({ error: 'baseHeat must be a number in kWh/yr' }),
   pvKwp: z.number({ error: 'pvKwp must be a number in kWp' }),
   laborHrs: z.number({ error: 'laborHrs must be a number in h/week' }),
+  ownerHrs: z.number({ error: 'ownerHrs must be a number in h/week' }).min(0),
   waterNut: z.number({ error: 'waterNut must be a number in €/yr' }),
   distrib: z.number({ error: 'distrib must be a number in €/yr' }),
   maint: z.number({ error: 'maint must be a number in €/yr' }),

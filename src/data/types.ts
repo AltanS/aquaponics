@@ -67,8 +67,10 @@ export interface Scale {
   baseHeat: number;
   /** default PV array size, kWp */
   pvKwp: number;
-  /** hours/week */
+  /** total hours/week of labour */
   laborHrs: number;
+  /** of which worked by the owner unpaid (opportunity cost, not cash); hired = laborHrs − ownerHrs */
+  ownerHrs: number;
   /** €/yr */
   waterNut: number;
   /** €/yr */

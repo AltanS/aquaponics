@@ -13,6 +13,7 @@ entities:
     baseHeat: 8000        # kWh/yr base thermal demand
     pvKwp: 5              # kWp default PV
     laborHrs: 8           # h/week
+    ownerHrs: 8             # h/week worked by the owner (unpaid — opportunity cost, not cash)
     waterNut: 300         # €/yr
     distrib: 400          # €/yr
     maint: 500            # €/yr
@@ -28,6 +29,7 @@ entities:
     baseHeat: 18000
     pvKwp: 15
     laborHrs: 15
+    ownerHrs: 15             # h/week worked by the owner (unpaid — opportunity cost, not cash)
     waterNut: 800
     distrib: 1500
     maint: 1500
@@ -43,6 +45,7 @@ entities:
     baseHeat: 55000
     pvKwp: 50
     laborHrs: 30
+    ownerHrs: 30             # h/week worked by the owner (unpaid — opportunity cost, not cash)
     waterNut: 2000
     distrib: 3500
     maint: 4000
@@ -58,6 +61,7 @@ entities:
     baseHeat: 180000
     pvKwp: 180
     laborHrs: 80
+    ownerHrs: 40             # h/week worked by the owner (unpaid — opportunity cost, not cash)
     waterNut: 7000
     distrib: 14000
     maint: 12000

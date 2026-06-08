@@ -14,7 +14,6 @@ import { el } from './dom';
 import { ct, eur, kwh } from './format';
 import { INPUT_IDS, readInputs } from './inputs';
 import { renderChart } from './chart';
-import { renderSpark } from './spark';
 import { renderTable } from './table';
 import { renderPairs, updateCropDots } from './panels';
 import { renderSelection, renderTotals } from './totals';
@@ -130,17 +129,17 @@ export function render(state: AppState): void {
   setScenarioCard('L', L, Ls.breakEven, i.horizon);
   setScenarioCard('R', R, Rs.breakEven, i.horizon);
 
-  const skLnet = el('sk-lnet');
-  skLnet.textContent = eur(L.net);
-  skLnet.style.color = L.net >= 0 ? 'var(--good)' : 'var(--bad)';
-  const skRnet = el('sk-rnet');
-  skRnet.textContent = eur(R.net);
-  skRnet.style.color = R.net >= 0 ? 'var(--good)' : 'var(--bad)';
+  const profitMo = (id: string, ebitda: number): void => {
+    const e = el(id);
+    e.textContent = eur(ebitda / 12);
+    e.style.color = ebitda >= 0 ? 'var(--good)' : 'var(--bad)';
+  };
+  profitMo('sk-lprofit', L.ebitda);
+  profitMo('sk-rprofit', R.ebitda);
   el('sk-lbe').textContent = beText(Ls.breakEven, L.ebitda, i.horizon);
   el('sk-rbe').textContent = beText(Rs.breakEven, R.ebitda, i.horizon);
 
   renderChart(Ls, Rs, i.horizon);
-  renderSpark(Ls, Rs, i.horizon);
   renderCompare(L, R);
 
   el('e-gen').textContent = kwh(L.E.gen);

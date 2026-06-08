@@ -1,5 +1,5 @@
 import './style.css';
-import { CROPS, FISH, SCALES } from './data';
+import { CROPS, FISH, SCALES, type ScaleId } from './data';
 import type { ScenarioKey } from './core';
 import { el } from './ui/dom';
 import { applyCropPreset, applyFishPreset, applyScalePreset, fillAll, INPUT_IDS } from './ui/inputs';
@@ -19,6 +19,36 @@ function setTab(tab: TabId): void {
   for (const id of TAB_IDS) {
     el(`pane-${id}`).classList.toggle('on', id === tab);
   }
+}
+
+// ── Scale (controlled from both the overview dropdown and the Setup pills) ───
+
+/** Fill the overview scale dropdown from the data (labels carry the area). */
+function populateScaleSelect(): void {
+  const sel = el<HTMLSelectElement>('scale-select');
+  sel.innerHTML = '';
+  for (const key of Object.keys(SCALES) as ScaleId[]) {
+    const o = document.createElement('option');
+    o.value = key;
+    o.textContent = SCALES[key].label;
+    sel.appendChild(o);
+  }
+}
+
+/** Keep the dropdown and the Setup pills reflecting the active scale. */
+function syncScaleWidgets(): void {
+  el<HTMLSelectElement>('scale-select').value = state.scale;
+  el('scale-set')
+    .querySelectorAll<HTMLButtonElement>('.tab')
+    .forEach((b) => b.classList.toggle('on', b.dataset.key === state.scale));
+}
+
+/** Single entry point for a scale change from any widget. */
+function selectScale(key: ScaleId): void {
+  state.scale = key;
+  applyScalePreset(state); // scale-owned fields only — keeps user price tweaks
+  syncScaleWidgets();
+  render(state);
 }
 
 // ── Persistence hydration ──────────────────────────────────────────────────
@@ -61,6 +91,7 @@ function syncWidgets(): void {
   hp.classList.toggle('on', state.heatpump);
   hp.classList.toggle('off', !state.heatpump);
   el<HTMLSelectElement>('region-select').value = state.region;
+  syncScaleWidgets();
   el('focus-set')
     .querySelectorAll<HTMLButtonElement>('.pbtn')
     .forEach((b) => b.classList.toggle('on', b.dataset.focus === state.focus));
@@ -70,10 +101,12 @@ function syncWidgets(): void {
 // ── Wiring ─────────────────────────────────────────────────────────────────
 
 function wire(): void {
-  buildTabs('scale-set', SCALES, state.scale, (key) => {
-    state.scale = key;
-    applyScalePreset(state); // scale-owned fields only — keeps user price tweaks
-    render(state);
+  populateScaleSelect();
+  buildTabs('scale-set', SCALES, state.scale, (key) => selectScale(key));
+
+  // Scale dropdown in the overview mirrors the Setup pills
+  el<HTMLSelectElement>('scale-select').addEventListener('change', function () {
+    selectScale(this.value as ScaleId);
   });
 
   buildTabs('fish-tabs', FISH, state.species, (key) => {

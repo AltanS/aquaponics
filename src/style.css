@@ -26,6 +26,7 @@ h1{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(28px,4vw,44px);l
 .overview{background:var(--surface);border:1px solid var(--line-2);border-radius:var(--r);padding:15px 18px;box-shadow:0 8px 24px -14px rgba(0,0,0,.4)}
 .ov-top{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center;margin-bottom:13px}
 .toggles{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.enr-toggles{margin:0 0 14px}
 .tg{display:flex;align-items:center;gap:8px;font:500 13px/1 "IBM Plex Sans";color:var(--ink);background:var(--surface);border:1px solid var(--line-2);border-radius:999px;padding:8px 14px 8px 12px;cursor:pointer;transition:all .15s}
 .tg .led{width:9px;height:9px;border-radius:50%;background:var(--ink-2);transition:background .15s}
 .tg.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--surface));font-weight:600}
@@ -36,7 +37,9 @@ h1{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(28px,4vw,44px);l
 .selitem small{color:var(--ink-2);font-size:11.5px;font-family:"IBM Plex Mono"}
 .selx{color:var(--ink-2);font-weight:500;font-size:15px}
 .skstats{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center}
-.sk{min-width:96px}
+.sk{min-width:104px}
+.sk-sep{padding-left:22px;border-left:1px solid var(--line)}
+@media (max-width:560px){.sk-sep{padding-left:0;border-left:none}}
 .sk .k{font:500 10px/1.2 "IBM Plex Mono";letter-spacing:.07em;text-transform:uppercase;color:var(--ink-2)}
 .sk .v{font-family:"IBM Plex Mono";font-weight:500;font-size:19px;margin-top:4px} .sk .v small{font-size:.62em;color:var(--ink-2)}
 
@@ -149,7 +152,7 @@ table.yt tr.y0 td{color:var(--ink-2)}
 .region-label{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-2);margin-left:12px}
 .region-select{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-s);padding:4px 8px;font-size:13px;color:var(--ink);cursor:pointer}
 
-/* ── Main tabs, panes, sparkline ─────────────────────────────────────────── */
+/* ── Main tabs & panes ───────────────────────────────────────────────────── */
 .maintabs{display:flex;flex-wrap:wrap;gap:8px;padding-top:14px;align-items:center}
 .mtab{font:500 13.5px/1 "IBM Plex Sans";color:var(--ink);background:var(--surface);border:1px solid var(--line-2);border-radius:999px;padding:9px 16px;cursor:pointer;transition:all .15s}
 .mtab:hover{border-color:var(--accent)}
@@ -160,10 +163,6 @@ table.yt tr.y0 td{color:var(--ink-2)}
 .pane{display:none}
 .pane.on{display:block;animation:panein .18s ease}
 @keyframes panein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-.spark{display:flex;align-items:center;margin-left:auto;height:32px}
-.spark svg{display:block;height:32px;width:auto}
-.spark .zero{stroke:var(--line-2);stroke-width:1}
-@media (max-width:900px){.spark{display:none}}
 
 /* ── Totals tables (fish/plants/energy per-year + per-month) ─────────────── */
 table.tt{width:100%;border-collapse:collapse;font-size:13px}

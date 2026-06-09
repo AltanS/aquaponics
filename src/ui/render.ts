@@ -140,9 +140,12 @@ function renderVerdict(
     : beL !== null ? 'Lease'
     : beR !== null ? 'Rent'
     : null;
-  let v = `<b>${winner ? `${winner} breaks even first</b>` : `Neither pays back within ${horizon} years</b>`}. `;
-  v += `Lease ties up <b>${eur(L.capex)}</b> upfront; renting needs ${eur(R.capex)} but ${eur(R.rent)}/yr in rent. `;
-  v += `Plants carry <b>${Math.round((s.plantRev / Math.max(1, s.rev)) * 100)}%</b> of steady revenue.`;
+  const head = winner
+    ? `${winner} breaks even first`
+    : `Neither pays back within <span class="n">${horizon}</span> years`;
+  let v = `<b>${head}</b>. `;
+  v += `Lease ties up <b class="n">${eur(L.capex)}</b> upfront; renting needs <span class="n">${eur(R.capex)}</span> but <span class="n">${eur(R.rent)}</span>/yr in rent. `;
+  v += `Plants carry <b class="n">${Math.round((s.plantRev / Math.max(1, s.rev)) * 100)}%</b> of steady revenue.`;
   el('verdict').innerHTML = v;
 }
 
@@ -189,9 +192,9 @@ export function render(state: AppState): void {
   renderTable(yearRows(s, i, i.horizon));
   const firstFishYr = Math.max(1, Math.ceil(i.growMonths / 12));
   el('ramp-note').innerHTML =
-    `Fish reach market size after <b>${Math.round(i.growMonths)} months</b> ` +
-    `(first meaningful fish income ~year ${firstFishYr}); crops sell after ` +
-    `~<b>${Math.round(i.cycleDays)} days</b>. Costs run from month 1. Highlighted row = payback.`;
+    `Fish reach market size after <b class="n">${Math.round(i.growMonths)}</b> months ` +
+    `(first meaningful fish income ~year <span class="n">${firstFishYr}</span>); crops sell after ` +
+    `~<b class="n">${Math.round(i.cycleDays)}</b> days. Costs run from month <span class="n">1</span>. Highlighted row = payback.`;
 
   renderIndices(i);
   renderSelection(state);

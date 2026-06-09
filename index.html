@@ -6,7 +6,7 @@
 <title>Aquaponics profitability · Berlin / Brandenburg</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <div class="wrap">
@@ -120,12 +120,12 @@
         <h2>Steady-state breakdown</h2>
         <p class="note">Once fully ramped (follows the Lease / Rent view above).</p>
         <p class="plabel">Revenue mix</p>
-        <div class="bar"><i id="s-fish" style="background:var(--teal)"></i><i id="s-plant" style="background:#639922"></i></div>
-        <div class="legend"><span><span class="dot" style="background:var(--teal)"></span>Fish <b id="v-fish">–</b></span><span><span class="dot" style="background:#639922"></span>Plants <b id="v-plant">–</b></span></div>
+        <div class="bar"><i id="s-fish" style="background:var(--teal)"></i><i id="s-plant" style="background:var(--blue)"></i></div>
+        <div class="legend"><span><span class="dot" style="background:var(--teal)"></span>Fish <b id="v-fish">–</b></span><span><span class="dot" style="background:var(--blue)"></span>Plants <b id="v-plant">–</b></span></div>
         <p class="plabel" style="margin-top:16px">Operating costs</p>
-        <div class="bar"><i id="s-inp" style="background:#639922"></i><i id="s-energy" style="background:var(--amber)"></i><i id="s-lab" style="background:var(--purple)"></i><i id="s-rent" style="background:var(--blue)"></i><i id="s-over" style="background:var(--gray)"></i></div>
+        <div class="bar"><i id="s-inp" style="background:var(--teal)"></i><i id="s-energy" style="background:var(--amber)"></i><i id="s-lab" style="background:var(--purple)"></i><i id="s-rent" style="background:var(--blue)"></i><i id="s-over" style="background:var(--gray)"></i></div>
         <div class="legend">
-          <span><span class="dot" style="background:#639922"></span>Inputs <b id="v-inp">–</b></span>
+          <span><span class="dot" style="background:var(--teal)"></span>Inputs <b id="v-inp">–</b></span>
           <span><span class="dot" style="background:var(--amber)"></span>Energy <b id="v-energy">–</b></span>
           <span><span class="dot" style="background:var(--purple)"></span>Labour <b id="v-lab">–</b></span>
           <span><span class="dot" style="background:var(--blue)"></span>Rent/lease <b id="v-rent">–</b></span>
@@ -229,7 +229,7 @@
 
     <div>
       <div class="card">
-        <h2><span class="dot" style="background:#639922"></span>Plants</h2>
+        <h2><span class="dot" style="background:var(--blue)"></span>Plants</h2>
         <p class="note">Each crop is shaded by how it pairs with the selected fish's loop — <span class="swatch sw-good"></span> good · <span class="swatch sw-work"></span> workable · <span class="swatch sw-poor"></span> poor. Nothing's blocked: a poor pair just means a decoupled loop.</p>
         <div class="tabs" id="crop-tabs"></div>
         <div class="panel">

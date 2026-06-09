@@ -47,7 +47,7 @@ function prodTable(rows: Trow[]): string {
     '<table class="tt tt3"><thead><tr>' +
     '<th></th>' +
     '<th><span class="hdot" style="background:var(--teal)"></span>Fish</th>' +
-    '<th><span class="hdot" style="background:#639922"></span>Plants</th>' +
+    '<th><span class="hdot" style="background:var(--blue)"></span>Plants</th>' +
     '<th>Together</th>' +
     '</tr></thead><tbody>';
   for (const r of rows) {
@@ -104,7 +104,7 @@ export function renderTotals(state: AppState, i: CalcInputs, E: EnergyResult): v
     { label: 'Revenue / yr', fish: money(F.revenue), plant: money(P.revenue), both: money(bothRev), sep: true },
     { label: '− Direct inputs', fish: money(F.direct, true), plant: money(P.direct, true), both: money(bothDirect, true) },
     {
-      label: `− Labour (${Math.round(F.laborHours)} / ${Math.round(P.laborHours)} h)`,
+      label: `− Labour (<span class="n">${Math.round(F.laborHours)}</span> / <span class="n">${Math.round(P.laborHours)}</span> h)`,
       fish: money(F.labor, true),
       plant: money(P.labor, true),
       both: money(bothLabor, true),
@@ -125,7 +125,7 @@ export function renderTotals(state: AppState, i: CalcInputs, E: EnergyResult): v
   ];
 
   const generalShare = Math.max(0, 1 - MODEL.laborShareFish - MODEL.laborSharePlants);
-  const pct = (v: number): string => `${Math.round(v * 100)}%`;
+  const pct = (v: number): string => `<span class="n">${Math.round(v * 100)}%</span>`;
 
   el('prod-totals').innerHTML =
     prodTable(rows) +

@@ -165,6 +165,38 @@ export interface Subsidy {
   note?: string;
 }
 
+/** The heated structure the system lives in (climate-dependent). */
+export interface RegionEnclosure {
+  /** e.g. "insulated-greenhouse" */
+  type: string;
+  /** heat loss, W per m² per °C differential */
+  heatLossFactor: number;
+}
+
+/**
+ * A region bundles the climate + enclosure the model assumes, plus display
+ * metadata. Sourced from data/regions/<id>.yaml (the economics half of that
+ * file feeds ENERGY/PROPERTY/FINANCE separately). annualMeanAmbientC is
+ * derived from monthlyAmbientC at build time, never authored by hand.
+ */
+export interface Region {
+  /** region id, e.g. "berlin-brandenburg" */
+  id: string;
+  /** display label, e.g. "Berlin / Brandenburg" */
+  label: string;
+  /** ISO date the figures were compiled, e.g. "2026-06-04" */
+  dataVintage: string;
+  /** e.g. "cold-continental" */
+  climateZone: string;
+  /** mean of monthlyAmbientC, °C (build-derived) */
+  annualMeanAmbientC: number;
+  /** Jan–Dec mean ambient air temperature, °C */
+  monthlyAmbientC: number[];
+  /** Jan–Dec: does the month need supplemental grow-light? */
+  supplementalLight: boolean[];
+  enclosure: RegionEnclosure;
+}
+
 export interface ModelAssumptions {
   /** share of weekly labour spent directly on fish husbandry (0–1) */
   laborShareFish: number;

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Aquaponics profitability · Berlin / Brandenburg</title>
+<title>Aquaponics profitability</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -11,7 +11,7 @@
 <body>
 <div class="wrap">
 <header class="top">
-  <p class="eyebrow">Aquaponics · Berlin / Brandenburg · 2026 figures</p>
+  <p class="eyebrow">Aquaponics profitability model</p>
   <h1>Profitability &amp; break-even</h1>
   <p class="sub">In a coupled system the fish set the water-loop temperature and the plants must live with it. Pick a fish and the crop tabs light up by how well they pair. Tab around the inputs — the scale, your fish × crop pick and the key numbers stay pinned up top. All assumptions live in <code>data/*.yaml</code>; your edits persist locally in the browser.</p>
 </header>
@@ -23,9 +23,7 @@
         <select id="scale-select" class="region-select" data-testid="scale-selector"></select>
       </label>
       <label class="region-label">Region
-        <select id="region-select" class="region-select" data-testid="region-selector">
-          <option value="berlin-brandenburg">Berlin / Brandenburg</option>
-        </select>
+        <select id="region-select" class="region-select" data-testid="region-selector"></select>
       </label>
       <div class="selection" id="selection" title="Current fish × crop pairing — set on the Fish &amp; plants tab"></div>
     </div>
@@ -47,7 +45,7 @@
 
 <!-- RESULTS -->
 <section class="pane on" id="pane-results">
-  <div class="vintage-banner" id="vintage-banner">Berlin/Brandenburg figures, compiled 2026-06 — prices drift</div>
+  <div class="vintage-banner" id="vintage-banner">Regional figures — prices drift</div>
   <div class="cols">
     <div>
       <div class="card">
@@ -268,8 +266,8 @@
         <h2><span class="dot" style="background:var(--amber)"></span>Energy demand</h2>
         <p class="note">Heat runs on the heat pump when enabled, otherwise a gas boiler. Solar offsets the 24/7 baseload. Heat demand is derived from the species' temperature band, the region's monthly climate, and the enclosure.</p>
         <div class="toggles enr-toggles">
-          <button class="tg on" id="tg-solar"><span class="led"></span>Solar PV</button>
-          <button class="tg on" id="tg-hp"><span class="led"></span>Heat pump</button>
+          <button class="tg on" id="tg-solar">Solar PV</button>
+          <button class="tg on" id="tg-hp">Heat pump</button>
         </div>
         <div class="grid2">
           <div class="f"><label>Systems electricity <span class="unit">kWh/yr</span></label><input type="number" id="sysKwh" step="1000" min="0"></div>

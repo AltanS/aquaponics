@@ -4,7 +4,7 @@
 //
 // Zero runtime dependencies — zod and yaml are devDeps only.
 
-import type { Crop, EnergyDefaults, FinanceDefaults, FishSpecies, ModelAssumptions, PropertyDefaults, Scale, Subsidy } from './types';
+import type { Crop, EnergyDefaults, FinanceDefaults, FishSpecies, ModelAssumptions, PropertyDefaults, Region, Scale, Subsidy } from './types';
 
 export const FISH = {
   catfish: {
@@ -452,6 +452,20 @@ export const MODEL: ModelAssumptions = {
   energyShareFish: 0.7,
   laborShareFish: 0.35,
   laborSharePlants: 0.45,
+};
+
+export const REGION: Region = {
+  annualMeanAmbientC: 10.075,
+  climateZone: "cold-continental",
+  dataVintage: "2026-06-04",
+  enclosure: {
+    heatLossFactor: 0.35,
+    type: "insulated-greenhouse",
+  },
+  id: "berlin-brandenburg",
+  label: "Berlin / Brandenburg",
+  monthlyAmbientC: [0.3, 1.2, 5.2, 9.7, 15.1, 18.2, 20.1, 19.8, 15.3, 9.8, 4.7, 1.5],
+  supplementalLight: [true, true, false, false, false, false, false, false, false, false, true, true],
 };
 
 export const SUBSIDIES = {

@@ -1,5 +1,5 @@
 import './style.css';
-import { CROPS, FISH, SCALES, type ScaleId } from './data';
+import { CROPS, FISH, REGION, SCALES, type ScaleId } from './data';
 import type { ScenarioKey } from './core';
 import { el } from './ui/dom';
 import { applyCropPreset, applyFishPreset, applyScalePreset, fillAll, INPUT_IDS } from './ui/inputs';
@@ -33,6 +33,20 @@ function populateScaleSelect(): void {
     o.textContent = SCALES[key].label;
     sel.appendChild(o);
   }
+}
+
+/** Fill the region selector, eyebrow and page title from the region data. */
+function populateRegionChrome(): void {
+  const sel = el<HTMLSelectElement>('region-select');
+  sel.innerHTML = '';
+  const o = document.createElement('option');
+  o.value = REGION.id;
+  o.textContent = REGION.label;
+  sel.appendChild(o);
+
+  const eyebrow = document.querySelector('.eyebrow');
+  if (eyebrow) eyebrow.textContent = `Aquaponics · ${REGION.label} · ${REGION.dataVintage.slice(0, 4)} figures`;
+  document.title = `Aquaponics profitability · ${REGION.label}`;
 }
 
 /** Keep the dropdown and the Setup pills reflecting the active scale. */
@@ -101,6 +115,7 @@ function syncWidgets(): void {
 // ── Wiring ─────────────────────────────────────────────────────────────────
 
 function wire(): void {
+  populateRegionChrome();
   populateScaleSelect();
   buildTabs('scale-set', SCALES, state.scale, (key) => selectScale(key));
 

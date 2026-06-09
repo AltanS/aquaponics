@@ -1,16 +1,20 @@
 /**
- * Berlin/Brandenburg region defaults — shared across derive, UI, and tests.
- * Sourced from: DWD Potsdam station 30-year normals; zod-validated in build-data.ts.
+ * Berlin/Brandenburg region/enclosure extract — the minimal shapes the pure
+ * `derive.*` heat functions consume (DeriveRegion / DeriveEnclosure).
  *
- * Extract kept here (not in generated.ts) so the UI can import before code-split;
- * generated.ts has the full region YAML data for reference.
+ * These are NOT authored here: they project the single source of truth,
+ * `REGION` in generated.ts (built from data/regions/berlin-brandenburg.yaml).
+ * Kept as a tiny named adapter so callers read intent ("the Berlin region")
+ * and so the derive layer never imports the full generated data shape.
  */
 
+import { REGION } from './generated';
+
 export const BERLIN_REGION = {
-  annualMeanAmbientC: 10.075, // mean([0.3,1.2,5.2,9.7,15.1,18.2,20.1,19.8,15.3,9.8,4.7,1.5])
-  monthlyAmbientC: [0.3, 1.2, 5.2, 9.7, 15.1, 18.2, 20.1, 19.8, 15.3, 9.8, 4.7, 1.5] as const,
+  annualMeanAmbientC: REGION.annualMeanAmbientC,
+  monthlyAmbientC: REGION.monthlyAmbientC,
 } as const;
 
 export const BERLIN_ENCLOSURE = {
-  heatLossFactor: 0.35,
+  heatLossFactor: REGION.enclosure.heatLossFactor,
 } as const;

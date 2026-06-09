@@ -16,3 +16,4 @@ test/core.test.ts
 data/scales.yaml
 data/crops.yaml
 data/fish.yaml
+data/regions/berlin-brandenburg.yaml

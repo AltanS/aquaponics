@@ -1,4 +1,4 @@
-import { CROPS, FISH, SUBSIDIES } from '../data';
+import { CROPS, FISH, REGION, SUBSIDIES } from '../data';
 import {
   computeScenario,
   computeSubsidies,
@@ -41,8 +41,9 @@ function applyGrants(
   return { sub, adj: { ...s, capex: netCapex, depr, net: s.ebitda - depr } };
 }
 
-/** Data-vintage banner text — always visible near results per spec-06. */
-const VINTAGE_BANNER_TEXT = 'Berlin/Brandenburg figures, compiled 2026-06 — prices drift';
+/** Data-vintage banner text — built from the region metadata (spec-06). */
+const VINTAGE_BANNER_TEXT =
+  `${REGION.label} figures, compiled ${REGION.dataVintage.slice(0, 7)} — prices drift`;
 
 function beText(be: number | null, ebitda: number, horizon: number): string {
   if (be !== null) return `${be.toFixed(1)} yr`;

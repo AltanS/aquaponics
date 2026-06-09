@@ -8,6 +8,7 @@ entities:
   catfish:
     growMonths: 5     # months to market size — corrected: 5 mo avg (docs/research/fish-catfish.md)
     label: "African catfish"
+    wiki: "https://en.wikipedia.org/wiki/North_African_catfish"
     type: Fish
     price: 9          # €/kg direct-sale
     fcr: 1.1          # kg feed per kg live weight
@@ -21,6 +22,7 @@ entities:
   tilapia:
     growMonths: 9     # months — corrected: 9 mo per research (docs/research/fish-tilapia.md)
     label: "Tilapia"
+    wiki: "https://en.wikipedia.org/wiki/Tilapia"
     type: Fish
     price: 11
     fcr: 1.4
@@ -34,6 +36,7 @@ entities:
   trout:
     growMonths: 14
     label: "Trout"
+    wiki: "https://en.wikipedia.org/wiki/Rainbow_trout"
     type: Fish
     price: 14
     fcr: 1.1
@@ -47,6 +50,7 @@ entities:
   carp:
     growMonths: 18
     label: "Carp"
+    wiki: "https://en.wikipedia.org/wiki/Common_carp"
     type: Fish
     price: 7
     fcr: 1.5
@@ -60,6 +64,7 @@ entities:
   perch:
     growMonths: 15
     label: "European perch"
+    wiki: "https://en.wikipedia.org/wiki/European_perch"
     type: Fish
     price: 16
     fcr: 1.4
@@ -73,6 +78,7 @@ entities:
   pikeperch:
     growMonths: 16    # corrected: 16 mo per research (docs/research/fish-pikeperch.md)
     label: "Pikeperch (Zander)"
+    wiki: "https://en.wikipedia.org/wiki/Zander"
     type: Fish
     price: 22
     fcr: 1.1          # corrected: 1.1 per research (docs/research/fish-pikeperch.md)
@@ -86,6 +92,7 @@ entities:
   archar:
     growMonths: 16
     label: "Arctic char"
+    wiki: "https://en.wikipedia.org/wiki/Arctic_char"
     type: Fish
     price: 17
     fcr: 1.1
@@ -99,6 +106,7 @@ entities:
   sturgeon:
     growMonths: 24
     label: "Sturgeon"
+    wiki: "https://en.wikipedia.org/wiki/Sturgeon"
     type: Fish
     price: 14
     fcr: 1.2
@@ -112,6 +120,7 @@ entities:
   redclaw:
     growMonths: 10
     label: "Redclaw crayfish"
+    wiki: "https://en.wikipedia.org/wiki/Cherax_quadricarinatus"
     type: Crustacean
     price: 25
     fcr: 1.6
@@ -125,6 +134,7 @@ entities:
   prawn:
     growMonths: 7
     label: "Giant river prawn"
+    wiki: "https://en.wikipedia.org/wiki/Macrobrachium_rosenbergii"
     type: Crustacean
     price: 28
     fcr: 2.0
@@ -138,6 +148,7 @@ entities:
   noblecray:
     growMonths: 48    # corrected: 48 mo per research (docs/research/fish-noblecray.md)
     label: "Noble crayfish (Edelkrebs)"
+    wiki: "https://en.wikipedia.org/wiki/Astacus_astacus"
     type: Crustacean
     price: 35
     fcr: 1.8

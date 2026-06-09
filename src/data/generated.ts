@@ -19,6 +19,7 @@ export const FISH = {
     price: 9,
     stockCost: 0.8,
     type: "Fish",
+    wiki: "https://en.wikipedia.org/wiki/North_African_catfish",
   },
   tilapia: {
     difficulty: "Easy",
@@ -32,6 +33,7 @@ export const FISH = {
     price: 11,
     stockCost: 1,
     type: "Fish",
+    wiki: "https://en.wikipedia.org/wiki/Tilapia",
   },
   trout: {
     difficulty: "Medium",
@@ -45,6 +47,7 @@ export const FISH = {
     price: 14,
     stockCost: 1.2,
     type: "Fish",
+    wiki: "https://en.wikipedia.org/wiki/Rainbow_trout",
   },
   carp: {
     difficulty: "Easy",
@@ -58,6 +61,7 @@ export const FISH = {
     price: 7,
     stockCost: 0.6,
     type: "Fish",
+    wiki: "https://en.wikipedia.org/wiki/Common_carp",
   },
   perch: {
     difficulty: "Medium",
@@ -71,6 +75,7 @@ export const FISH = {
     price: 16,
     stockCost: 1.8,
     type: "Fish",
+    wiki: "https://en.wikipedia.org/wiki/European_perch",
   },
   pikeperch: {
     difficulty: "Hard",
@@ -84,6 +89,7 @@ export const FISH = {
     price: 22,
     stockCost: 2.5,
     type: "Fish",
+    wiki: "https://en.wikipedia.org/wiki/Zander",
   },
   archar: {
     difficulty: "Medium",
@@ -97,6 +103,7 @@ export const FISH = {
     price: 17,
     stockCost: 1.5,
     type: "Fish",
+    wiki: "https://en.wikipedia.org/wiki/Arctic_char",
   },
   sturgeon: {
     difficulty: "Hard",
@@ -110,6 +117,7 @@ export const FISH = {
     price: 14,
     stockCost: 3,
     type: "Fish",
+    wiki: "https://en.wikipedia.org/wiki/Sturgeon",
   },
   redclaw: {
     difficulty: "Medium",
@@ -123,6 +131,7 @@ export const FISH = {
     price: 25,
     stockCost: 3,
     type: "Crustacean",
+    wiki: "https://en.wikipedia.org/wiki/Cherax_quadricarinatus",
   },
   prawn: {
     difficulty: "Hard",
@@ -136,6 +145,7 @@ export const FISH = {
     price: 28,
     stockCost: 3.5,
     type: "Crustacean",
+    wiki: "https://en.wikipedia.org/wiki/Macrobrachium_rosenbergii",
   },
   noblecray: {
     difficulty: "Hard",
@@ -149,6 +159,7 @@ export const FISH = {
     price: 35,
     stockCost: 4,
     type: "Crustacean",
+    wiki: "https://en.wikipedia.org/wiki/Astacus_astacus",
   },
 } as const satisfies Record<string, FishSpecies>;
 
@@ -167,6 +178,7 @@ export const CROPS = {
     notes: "A forgiving staple blend with steady year-round turnover under supplementary light.",
     price: 4.5,
     seedCost: 9,
+    wiki: "https://en.wikipedia.org/wiki/Leaf_vegetable",
     yld: 20,
   },
   premium_mix: {
@@ -181,6 +193,7 @@ export const CROPS = {
     notes: "A realistic market-garden blend (rocket, cutting herbs, basil, premium salad) — what small operators actually grow to clear the labour wall. Higher €/m² than a single staple; manage the mixed temperature needs.",
     price: 13,
     seedCost: 14,
+    wiki: "https://en.wikipedia.org/wiki/Mesclun",
     yld: 15,
   },
   lettuce_head: {
@@ -197,6 +210,7 @@ export const CROPS = {
     seedCost: 8,
     unitLabel: "head",
     unitWeightKg: 0.35,
+    wiki: "https://en.wikipedia.org/wiki/Lettuce",
     yld: 22,
   },
   lettuce_leaf: {
@@ -211,6 +225,7 @@ export const CROPS = {
     notes: "Fast cut-and-come-again leaf with a high cycle count and good margins.",
     price: 6,
     seedCost: 10,
+    wiki: "https://en.wikipedia.org/wiki/Lettuce",
     yld: 18,
   },
   rocket: {
@@ -225,6 +240,7 @@ export const CROPS = {
     notes: "Peppery, fast and premium-priced; several cuts per sowing.",
     price: 11,
     seedCost: 9,
+    wiki: "https://en.wikipedia.org/wiki/Arugula",
     yld: 16,
   },
   basil: {
@@ -239,6 +255,7 @@ export const CROPS = {
     notes: "Top €/kg herb that loves warmth but is prone to cold damage and root rot.",
     price: 14,
     seedCost: 12,
+    wiki: "https://en.wikipedia.org/wiki/Basil",
     yld: 13,
   },
   spinach: {
@@ -253,6 +270,7 @@ export const CROPS = {
     notes: "Cool-season crop that struggles and gets root disease in warm water.",
     price: 7,
     seedCost: 8,
+    wiki: "https://en.wikipedia.org/wiki/Spinach",
     yld: 16,
   },
   chard: {
@@ -267,6 +285,7 @@ export const CROPS = {
     notes: "Robust, high-biomass, with a long continuous harvest window.",
     price: 5,
     seedCost: 7,
+    wiki: "https://en.wikipedia.org/wiki/Chard",
     yld: 16,
   },
   pakchoi: {
@@ -283,6 +302,7 @@ export const CROPS = {
     seedCost: 8,
     unitLabel: "head",
     unitWeightKg: 0.3,
+    wiki: "https://en.wikipedia.org/wiki/Bok_choy",
     yld: 13,
   },
   feldsalat: {
@@ -297,6 +317,7 @@ export const CROPS = {
     notes: "Cold-hardy winter premium — slow and low-yielding but high-priced.",
     price: 13,
     seedCost: 10,
+    wiki: "https://en.wikipedia.org/wiki/Valerianella_locusta",
     yld: 7,
   },
   herbs: {
@@ -311,6 +332,7 @@ export const CROPS = {
     notes: "Mint, parsley and coriander mix; high value with steady demand from chefs.",
     price: 12,
     seedCost: 12,
+    wiki: "https://en.wikipedia.org/wiki/Herb",
     yld: 14,
   },
   microgreens: {
@@ -325,6 +347,7 @@ export const CROPS = {
     notes: "Extremely high €/kg and very fast cycles, but labour-heavy with a short shelf life.",
     price: 40,
     seedCost: 25,
+    wiki: "https://en.wikipedia.org/wiki/Microgreen",
     yld: 16,
   },
 } as const satisfies Record<string, Crop>;

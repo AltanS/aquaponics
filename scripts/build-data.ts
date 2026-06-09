@@ -25,6 +25,7 @@ const Difficulty = z.enum(['Easy', 'Medium', 'Hard']);
 
 const FishSpeciesSchema = z.object({
   label: z.string(),
+  wiki: z.string().url(),
   type: z.enum(['Fish', 'Crustacean']),
   price: z.number({ error: 'price must be a number in €/kg' }),
   fcr: z.number({ error: 'fcr must be a number in kg/kg' }),
@@ -39,6 +40,7 @@ const FishSpeciesSchema = z.object({
 
 const CropSchema = z.object({
   label: z.string(),
+  wiki: z.string().url(),
   cat: z.enum(['Leafy', 'Herb', 'Microgreen', 'Mixed']),
   yld: z.number({ error: 'yld must be a number in kg/m²/yr' }),
   price: z.number({ error: 'price must be a number in €/kg' }),

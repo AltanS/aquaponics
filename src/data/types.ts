@@ -9,6 +9,8 @@ export type Difficulty = 'Easy' | 'Medium' | 'Hard';
 
 export interface FishSpecies {
   label: string;
+  /** Wikipedia article URL for the species */
+  wiki: string;
   type: 'Fish' | 'Crustacean';
   /** €/kg, direct-sale / restaurant channel */
   price: number;
@@ -30,6 +32,8 @@ export interface FishSpecies {
 
 export interface Crop {
   label: string;
+  /** Wikipedia article URL for the crop */
+  wiki: string;
   cat: 'Leafy' | 'Herb' | 'Microgreen' | 'Mixed';
   /** kg / m² / yr (named `yld` — "yield" is reserved-ish) */
   yld: number;

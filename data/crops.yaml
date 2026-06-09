@@ -7,6 +7,7 @@ meta:
 entities:
   greens_mix:
     label: "Mixed leafy greens"
+    wiki: "https://en.wikipedia.org/wiki/Leaf_vegetable"
     cat: Leafy
     yld: 20          # kg/m²/yr — conservative coupled-system end (docs/research/crop-greens_mix.md: 28 was best-case)
     price: 4.5       # €/kg direct-sale
@@ -21,6 +22,7 @@ entities:
 
   premium_mix:
     label: "Premium herb & salad mix"
+    wiki: "https://en.wikipedia.org/wiki/Mesclun"
     cat: Mixed
     yld: 15          # kg/m²/yr — blended; herbs/microgreens yield less but carry the value
     price: 13        # €/kg — weighted blend of rocket €11, cutting herbs €12, basil €14, premium salad (docs/research)
@@ -35,6 +37,7 @@ entities:
 
   lettuce_head:
     label: "Head lettuce"
+    wiki: "https://en.wikipedia.org/wiki/Lettuce"
     cat: Leafy
     yld: 22          # kg/m²/yr — conservative (docs/research/crop-lettuce_head.md: 30 achievable, not a floor)
     price: 4.0
@@ -51,6 +54,7 @@ entities:
 
   lettuce_leaf:
     label: "Baby leaf"
+    wiki: "https://en.wikipedia.org/wiki/Lettuce"
     cat: Leafy
     yld: 18          # kg/m²/yr — conservative multi-cut estimate
     price: 6.0
@@ -65,6 +69,7 @@ entities:
 
   rocket:
     label: "Rocket / Rucola"
+    wiki: "https://en.wikipedia.org/wiki/Arugula"
     cat: Leafy
     yld: 16          # kg/m²/yr — conservative multi-cut estimate
     price: 11
@@ -79,6 +84,7 @@ entities:
 
   basil:
     label: "Basil"
+    wiki: "https://en.wikipedia.org/wiki/Basil"
     cat: Herb
     yld: 13          # kg/m²/yr — conservative (warmth-limited in Berlin)
     price: 14
@@ -93,6 +99,7 @@ entities:
 
   spinach:
     label: "Spinach"
+    wiki: "https://en.wikipedia.org/wiki/Spinach"
     cat: Leafy
     yld: 16          # kg/m²/yr — conservative cool-season estimate
     price: 7
@@ -107,6 +114,7 @@ entities:
 
   chard:
     label: "Swiss chard"
+    wiki: "https://en.wikipedia.org/wiki/Chard"
     cat: Leafy
     yld: 16          # kg/m²/yr — conservative (docs/research/crop-chard.md: 15-25 safer; ~5.3 kg/m²/cycle)
     price: 5
@@ -121,6 +129,7 @@ entities:
 
   pakchoi:
     label: "Pak choi"
+    wiki: "https://en.wikipedia.org/wiki/Bok_choy"
     cat: Leafy
     yld: 13          # kg/m²/yr — conservative (docs/research/crop-pakchoi.md)
     price: 6
@@ -137,6 +146,7 @@ entities:
 
   feldsalat:
     label: "Lamb's lettuce"
+    wiki: "https://en.wikipedia.org/wiki/Valerianella_locusta"
     cat: Leafy
     yld: 7          # kg/m²/yr — conservative low-yield winter premium (docs/research/crop-feldsalat.md)
     price: 13
@@ -151,6 +161,7 @@ entities:
 
   herbs:
     label: "Cutting herbs"
+    wiki: "https://en.wikipedia.org/wiki/Herb"
     cat: Herb
     yld: 14          # kg/m²/yr — conservative cutting-herb estimate
     price: 12
@@ -165,6 +176,7 @@ entities:
 
   microgreens:
     label: "Microgreens"
+    wiki: "https://en.wikipedia.org/wiki/Microgreen"
     cat: Microgreen
     yld: 16          # kg/m²/yr — conservative tray-throughput estimate
     price: 40

@@ -6,6 +6,11 @@ import { el } from './dom';
 import { chip, diffClass, formatCycleDays, formatGrowOut, formatTempRange } from './format';
 import type { AppState } from './state';
 
+/** A small "Wikipedia ↗" link appended to a panel title. */
+function wikiLink(url: string, label: string): string {
+  return ` <a class="wiki" href="${url}" target="_blank" rel="noopener noreferrer" title="${label} on Wikipedia">Wikipedia ↗</a>`;
+}
+
 const SUITABILITY_LABEL: Record<'native' | 'workable' | 'costly', string> = {
   native: 'Low heating',
   workable: 'Moderate heating',
@@ -16,7 +21,7 @@ export function renderFishPanel(state: AppState): void {
   const f = FISH[state.species];
   const suitability = deriveSuitability(f, BERLIN_REGION);
   el('fish-ttl').innerHTML =
-    `${f.label} <span class="badge ${diffClass(f.difficulty)}">${f.difficulty}</span>`;
+    `${f.label}${wikiLink(f.wiki, f.label)} <span class="badge ${diffClass(f.difficulty)}">${f.difficulty}</span>`;
   el('fish-attrs').innerHTML =
     chip('Type', f.type) +
     chip('Water', formatTempRange(f.fcMin, f.fcMax)) +
@@ -29,7 +34,7 @@ export function renderFishPanel(state: AppState): void {
 export function renderCropPanel(state: AppState): void {
   const c = CROPS[state.crop];
   el('crop-ttl').innerHTML =
-    `${c.label} <span class="badge ${diffClass(c.difficulty)}">${c.difficulty}</span>`;
+    `${c.label}${wikiLink(c.wiki, c.label)} <span class="badge ${diffClass(c.difficulty)}">${c.difficulty}</span>`;
   el('crop-attrs').innerHTML =
     chip('Category', c.cat) +
     chip('Root temp', formatTempRange(c.cMin, c.cMax)) +

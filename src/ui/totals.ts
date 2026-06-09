@@ -8,7 +8,7 @@ import {
   type EnterpriseTotals,
 } from '../core';
 import { el } from './dom';
-import { eur } from './format';
+import { currencySymbol, eur, eur2 } from './format';
 import type { AppState } from './state';
 
 const nf = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 0 });
@@ -67,7 +67,7 @@ function unitsCell(t: EnterpriseTotals, label: string | null): Cell {
 }
 
 function perHourCell(t: EnterpriseTotals): Cell {
-  return t.profitPerHour !== null ? eur(t.profitPerHour) : '—';
+  return t.profitPerHour !== null ? eur2(t.profitPerHour) : '—';
 }
 
 /** Render the merged fish/plant production table and the energy cost table. */
@@ -114,12 +114,12 @@ export function renderTotals(state: AppState, i: CalcInputs, E: EnergyResult): v
     { label: 'Profit / yr', fish: money(F.profit), plant: money(P.profit), both: money(bothProfit), bold: true, cls: signClass(bothProfit), sep: true },
     { label: 'Profit / mo', fish: money(F.profit / 12), plant: money(P.profit / 12), both: money(bothProfit / 12), bold: true, cls: signClass(bothProfit) },
 
-    { label: '€ / kg sold', fish: eur(fEurKg), plant: eur(pEurKg), both: eur(bEurKg), sep: true },
+    { label: `${currencySymbol()} / kg sold`, fish: eur2(fEurKg), plant: eur2(pEurKg), both: eur2(bEurKg), sep: true },
     {
-      label: '€ / worked hour',
+      label: `${currencySymbol()} / worked hour`,
       fish: perHourCell(F),
       plant: perHourCell(P),
-      both: bPerHour !== null ? eur(bPerHour) : '—',
+      both: bPerHour !== null ? eur2(bPerHour) : '—',
       cls: bPerHour !== null && bPerHour < 0 ? 'cn' : '',
     },
   ];

@@ -173,17 +173,43 @@ export interface RegionEnclosure {
   heatLossFactor: number;
 }
 
+/** Display currency for a region — money values are authored in this currency. */
+export interface Currency {
+  /** ISO 4217 code, e.g. "EUR", "USD", "THB" */
+  code: string;
+  /** display symbol, e.g. "€", "$", "฿", "A$" */
+  symbol: string;
+  /** BCP-47 locale for number grouping, e.g. "de-DE", "en-US" */
+  locale: string;
+  /** EUR per 1 unit of local currency — a dated FX assumption, used only for
+   *  the comparison-only "≈ €" companion on headline metrics (1 for EUR). */
+  fxToEur: number;
+}
+
+/** The scalar economics of a region (energy + property + finance constants). */
+export interface RegionEconomics extends EnergyDefaults {
+  /** €(local)/m²/month, rent scenario */
+  rentPerM2Month: number;
+  /** loaded labour cost, local currency/h */
+  wage: number;
+  deprYears: number;
+  horizonYears: number;
+}
+
 /**
- * A region bundles the climate + enclosure the model assumes, plus display
- * metadata. Sourced from data/regions/<id>.yaml (the economics half of that
- * file feeds ENERGY/PROPERTY/FINANCE separately). annualMeanAmbientC is
- * derived from monthlyAmbientC at build time, never authored by hand.
+ * A region bundles everything that varies by place: climate, enclosure,
+ * economics (with per-species/-crop price overrides), the local currency, and
+ * its own capital-subsidy programs. Sourced from data/regions/<id>.yaml.
+ * annualMeanAmbientC is derived from monthlyAmbientC at build time, never
+ * authored by hand. fishPrices/cropPrices are partial overrides — a missing id
+ * falls back to the universal price in fish.yaml/crops.yaml.
  */
 export interface Region {
   /** region id, e.g. "berlin-brandenburg" */
   id: string;
   /** display label, e.g. "Berlin / Brandenburg" */
   label: string;
+  currency: Currency;
   /** ISO date the figures were compiled, e.g. "2026-06-04" */
   dataVintage: string;
   /** e.g. "cold-continental" */
@@ -195,6 +221,13 @@ export interface Region {
   /** Jan–Dec: does the month need supplemental grow-light? */
   supplementalLight: boolean[];
   enclosure: RegionEnclosure;
+  economics: RegionEconomics;
+  /** €(local)/kg fish-price overrides by species id (partial) */
+  fishPrices: Record<string, number>;
+  /** €(local)/kg crop-price overrides by crop id (partial) */
+  cropPrices: Record<string, number>;
+  /** region-scoped capital-subsidy programs by id */
+  subsidies: Record<string, Subsidy>;
 }
 
 export interface ModelAssumptions {

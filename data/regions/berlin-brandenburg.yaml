@@ -2,6 +2,7 @@ meta:
   schemaVersion: "1.0"
   region: berlin-brandenburg
   label: "Berlin / Brandenburg"
+  currency: { code: "EUR", symbol: "€", locale: "de-DE", fxToEur: 1 }
   lastUpdated: "2026-06-04"
   notes: "Berlin/Brandenburg regional data — 2026 figures. Climate: cold-continental. Economics from HANDOFF.md §7."
 
@@ -66,3 +67,29 @@ economics:
     feldsalat: 24     # corrected: 24 per research (docs/research/crop-feldsalat.md)
     herbs: 12
     microgreens: 40
+
+# Capital subsidies (one-off grants, not loans). Applied ONLY when the scenario
+# qualifies (commercial vs hobby, heat pump installed, eligible cost present,
+# minimum investment). They cut the depreciation base and the cash needed to
+# break even — NOT operating income. Rates/caps drift; verify before relying.
+subsidies:
+  bb_aquaculture:
+    label: "Brandenburg aquaculture investment grant"
+    description: "EMFAF-funded Zuschuss (MLEUV/LELF) for building and equipping inland aquaculture production. Applies to construction + equipment; not available to a non-commercial hobby/DIY setup."
+    rate: 0.40             # up to 40% of eligible cost (higher rates exist for some measures)
+    basis: eligibleCapex   # construction + equipment
+    capEligible: 200000    # € cap on the eligible cost base
+    commercialOnly: true   # excludes the hobby/DIY tier (no registered aquaculture enterprise)
+    source: "https://mleuv.brandenburg.de/mleuv/de/service/foerderung/fischerei/foerderung-der-aquakultur-und-binnenfischerei/"
+    sourceLabel: "MLEUV Brandenburg — Förderung der Aquakultur und Binnenfischerei"
+    note: "Requires a registered aquaculture/fisheries enterprise; rate up to 40% (some measures higher), €200k eligible-cost cap, project approval before start."
+
+  kfw_beg_heatpump:
+    label: "BEG heat-pump grant (KfW/BAFA)"
+    description: "Bundesförderung für effiziente Gebäude — Einzelmaßnahme. A capital grant on the heat-pump install; only relevant when a heat pump is actually fitted."
+    rate: 0.30             # 30% base (climate-speed + income bonuses can lift it toward 70%)
+    basis: heatpump        # applies to the heat-pump CAPEX only
+    requiresHeatpump: true
+    source: "https://www.kfw.de/inlandsfoerderung/Privatpersonen/Bestehende-Immobilie/Heizung-erneuern/"
+    sourceLabel: "KfW — Heizungsförderung (BEG EM)"
+    note: "30% base rate; bonuses (Klimageschwindigkeit, income) can raise it up to 70%. Applies to the heat-pump capital cost only."

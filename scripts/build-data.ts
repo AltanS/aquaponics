@@ -14,7 +14,7 @@
  * - no zod imports in generated.ts (zero runtime deps)
  */
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { parse as parseYaml } from 'yaml';
 import { z } from 'zod/v4';
@@ -104,9 +104,19 @@ const ModelSchema = z
     message: 'laborShareFish + laborSharePlants must not exceed 1 (remainder = general labour)',
   });
 
+const CurrencySchema = z.object({
+  code: z.string(),
+  symbol: z.string(),
+  locale: z.string(),
+  /** EUR per 1 unit of local currency — a dated FX assumption, used only for
+   *  the comparison-only "≈ €" companion shown on headline metrics. */
+  fxToEur: z.number().positive(),
+});
+
 const RegionMetaSchema = z.object({
   region: z.string(),
   label: z.string(),
+  currency: CurrencySchema,
   lastUpdated: z.string(),
   schemaVersion: z.string().optional(),
   notes: z.string().optional(),
@@ -179,34 +189,79 @@ interface ParsedRegion {
   climate: z.infer<typeof ClimateSchema>;
   enclosure: z.infer<typeof EnclosureSchema>;
   economics: z.infer<typeof EconomicsSchema>;
+  subsidies: Record<string, z.infer<typeof SubsidySchema>>;
 }
 
-/** Validate one block of the region file and throw a contextual error on failure. */
-function parseBlock<T>(schema: z.ZodType<T>, value: unknown, block: string): T {
+/** Validate one block of a region file and throw a contextual error on failure. */
+function parseBlock<T>(schema: z.ZodType<T>, value: unknown, file: string, block: string): T {
   const validation = schema.safeParse(value);
   if (!validation.success) {
     const issues = validation.error.issues.map((i) => `  ${i.path.join('.')}: ${i.message}`).join('\n');
-    throw new Error(`berlin-brandenburg.yaml/${block} validation failed:\n${issues}`);
+    throw new Error(`${file}/${block} validation failed:\n${issues}`);
   }
   return validation.data;
 }
 
-function parseRegionFile(filePath: string): ParsedRegion {
+function parseRegionFile(filePath: string, fileName: string): ParsedRegion {
   const raw = readFileSync(filePath, 'utf-8');
-  const parsed = parseYaml(raw) as { meta?: unknown; climate?: unknown; enclosure?: unknown; economics?: unknown };
+  const parsed = parseYaml(raw) as {
+    meta?: unknown; climate?: unknown; enclosure?: unknown; economics?: unknown; subsidies?: unknown;
+  };
 
   if (!parsed || typeof parsed !== 'object') {
-    throw new Error('berlin-brandenburg.yaml → not an object');
+    throw new Error(`${fileName} → not an object`);
   }
   for (const block of ['meta', 'climate', 'enclosure', 'economics'] as const) {
-    if (!parsed[block]) throw new Error(`berlin-brandenburg.yaml → missing "${block}:" block`);
+    if (!parsed[block]) throw new Error(`${fileName} → missing "${block}:" block`);
+  }
+
+  // Subsidies are a keyed map of grants (region-scoped). Optional → {} if absent.
+  const subsidies: Record<string, z.infer<typeof SubsidySchema>> = {};
+  if (parsed.subsidies) {
+    for (const [id, value] of Object.entries(parsed.subsidies as Record<string, unknown>)) {
+      validateId(id, `${fileName}/subsidies`);
+      subsidies[id] = parseBlock(SubsidySchema, value, fileName, `subsidies.${id}`);
+    }
   }
 
   return {
-    meta: parseBlock(RegionMetaSchema, parsed.meta, 'meta'),
-    climate: parseBlock(ClimateSchema, parsed.climate, 'climate'),
-    enclosure: parseBlock(EnclosureSchema, parsed.enclosure, 'enclosure'),
-    economics: parseBlock(EconomicsSchema, parsed.economics, 'economics'),
+    meta: parseBlock(RegionMetaSchema, parsed.meta, fileName, 'meta'),
+    climate: parseBlock(ClimateSchema, parsed.climate, fileName, 'climate'),
+    enclosure: parseBlock(EnclosureSchema, parsed.enclosure, fileName, 'enclosure'),
+    economics: parseBlock(EconomicsSchema, parsed.economics, fileName, 'economics'),
+    subsidies,
+  };
+}
+
+/** Turn a parsed region file into the emitted Region object. */
+function buildRegion(r: ParsedRegion, fileName: string, fishIds: string[], cropIds: string[]) {
+  const monthly = r.climate.monthlyAmbientC;
+  const annualMeanAmbientC = Math.round((monthly.reduce((a, b) => a + b, 0) / monthly.length) * 1e4) / 1e4;
+
+  const { fishPrices, cropPrices, ...econScalars } = r.economics;
+
+  // Price-map keys must reference real fish/crop ids — catches typos in the YAML.
+  for (const k of Object.keys(fishPrices)) {
+    if (!fishIds.includes(k)) throw new Error(`${fileName}/economics.fishPrices → unknown fish id "${k}"`);
+  }
+  for (const k of Object.keys(cropPrices)) {
+    if (!cropIds.includes(k)) throw new Error(`${fileName}/economics.cropPrices → unknown crop id "${k}"`);
+  }
+
+  return {
+    id: r.meta.region,
+    label: r.meta.label,
+    currency: r.meta.currency,
+    dataVintage: r.meta.lastUpdated,
+    climateZone: r.climate.climateZone,
+    annualMeanAmbientC,
+    monthlyAmbientC: monthly,
+    supplementalLight: r.climate.supplementalLight,
+    enclosure: { type: r.enclosure.type, heatLossFactor: r.enclosure.heatLossFactor },
+    economics: econScalars,
+    fishPrices,
+    cropPrices,
+    subsidies: r.subsidies,
   };
 }
 
@@ -228,9 +283,12 @@ function toTsLiteral(value: unknown, indent = 0): string {
   }
 
   if (typeof value === 'object') {
+    // Quote keys that aren't valid bare identifiers (e.g. region ids with
+    // hyphens like "berlin-brandenburg").
+    const key = (k: string): string => (/^[A-Za-z_$][\w$]*$/.test(k) ? k : JSON.stringify(k));
     const entries = Object.entries(value as Record<string, unknown>)
       .sort(([a], [b]) => a.localeCompare(b))
-      .map(([k, v]) => `${innerPad}${k}: ${toTsLiteral(v, indent + 1)}`)
+      .map(([k, v]) => `${innerPad}${key(k)}: ${toTsLiteral(v, indent + 1)}`)
       .join(',\n');
     return `{\n${entries},\n${pad}}`;
   }
@@ -254,7 +312,8 @@ function buildEntityBlock<T extends object>(
 
 /**
  * Pure generate function — accepts dataDir so it works from any cwd.
- * The dataDir should contain fish.yaml, crops.yaml, scales.yaml, and regions/berlin-brandenburg.yaml.
+ * The dataDir should contain fish.yaml, crops.yaml, scales.yaml, model.yaml,
+ * and one or more regions/*.yaml files (berlin-brandenburg is the default).
  */
 export function generate(dataDir: string): string {
   const fish = parseAndValidateFile(
@@ -272,28 +331,37 @@ export function generate(dataDir: string): string {
     'scales/yaml',
     ScaleSchema,
   );
-  const subsidies = parseAndValidateFile(
-    join(dataDir, 'subsidies.yaml'),
-    'subsidies/yaml',
-    SubsidySchema,
-  );
-  const region = parseRegionFile(join(dataDir, 'regions/berlin-brandenburg.yaml'));
-  const economics = region.economics;
+  const fishIds = Object.keys(fish);
+  const cropIds = Object.keys(crops);
 
-  // Annual mean ambient is derived from the monthly climate array — not a
-  // separately-maintained constant — so the two can never drift apart.
-  const monthly = region.climate.monthlyAmbientC;
-  const annualMeanAmbientC = Math.round((monthly.reduce((a, b) => a + b, 0) / monthly.length) * 1e4) / 1e4;
-  const REGION = {
-    id: region.meta.region,
-    label: region.meta.label,
-    dataVintage: region.meta.lastUpdated,
-    climateZone: region.climate.climateZone,
-    annualMeanAmbientC,
-    monthlyAmbientC: monthly,
-    supplementalLight: region.climate.supplementalLight,
-    enclosure: { type: region.enclosure.type, heatLossFactor: region.enclosure.heatLossFactor },
-  };
+  // ── Multi-region load ──────────────────────────────────────────────────────
+  // Every data/regions/*.yaml is a self-contained region: climate, enclosure,
+  // economics (incl. per-species price overrides) and its own subsidy programs.
+  // Sorted by filename for a deterministic, byte-reproducible artifact.
+  const DEFAULT_REGION = 'berlin-brandenburg';
+  const regionsDir = join(dataDir, 'regions');
+  const regionFiles = readdirSync(regionsDir)
+    .filter((f) => f.endsWith('.yaml'))
+    .sort();
+
+  const REGIONS: Record<string, ReturnType<typeof buildRegion>> = {};
+  for (const file of regionFiles) {
+    const parsed = parseRegionFile(join(regionsDir, file), `regions/${file}`);
+    const region = buildRegion(parsed, `regions/${file}`, fishIds, cropIds);
+    if (REGIONS[region.id]) throw new Error(`duplicate region id "${region.id}" (${file})`);
+    REGIONS[region.id] = region;
+  }
+  const regionIds = Object.keys(REGIONS).sort();
+  if (!REGIONS[DEFAULT_REGION]) {
+    throw new Error(`default region "${DEFAULT_REGION}" not found in data/regions/`);
+  }
+
+  // Legacy single-region exports (ENERGY/PROPERTY/FINANCE/SUBSIDIES/REGION) are
+  // the default region's data — kept so the pure core + golden tests have a
+  // stable reference and pre-region call sites keep working.
+  const def = REGIONS[DEFAULT_REGION];
+  const economics = { ...def.economics, fishPrices: def.fishPrices, cropPrices: def.cropPrices };
+  const REGION = def;
 
   const modelRaw = parseYaml(readFileSync(join(dataDir, 'model.yaml'), 'utf-8')) as { model?: unknown };
   if (!modelRaw || typeof modelRaw !== 'object' || !modelRaw.model) {
@@ -306,8 +374,6 @@ export function generate(dataDir: string): string {
   }
   const model = modelValidation.data;
 
-  const fishIds = Object.keys(fish);
-  const cropIds = Object.keys(crops);
   const scaleIds = Object.keys(scales);
 
   const { fishPrices: _fp, cropPrices: _cp, rentPerM2Month, wage, deprYears, horizonYears, ...energyFields } = economics;
@@ -344,7 +410,11 @@ export function generate(dataDir: string): string {
     '',
     `export const REGION: Region = ${toTsLiteral(REGION)};`,
     '',
-    buildEntityBlock('SUBSIDIES', 'Subsidy', subsidies),
+    buildEntityBlock('SUBSIDIES', 'Subsidy', def.subsidies),
+    '',
+    `export type RegionId = ${regionIds.map((id) => JSON.stringify(id)).join(' | ')};`,
+    '',
+    `export const REGIONS: Record<RegionId, Region> = ${toTsLiteral(REGIONS)};`,
     '',
   ];
 

@@ -1,0 +1,101 @@
+meta:
+  schemaVersion: "1.0"
+  region: australia
+  label: "Australia"
+  currency: { code: "AUD", symbol: "A$", locale: "en-AU", fxToEur: 0.613 }
+  lastUpdated: "2026-06-08"
+  notes: "Location assumed: SE Queensland / northern NSW (humid subtropical, Köppen Cfa, Brisbane reference). Sources: BoM climate; electricity GlobalPetrolPrices/AER ~A$0.42/kWh business; SolarChoice/SolarQuotes PV ~A$1.1-1.3k/kWp; CER Small-scale Renewable Energy Scheme (STCs); Fair Work Horticulture Award MA000028 (1 Jul 2025); QRIDA grants; business.gov.au Energy Efficiency Grants. Fish/crop prices are direct-sale/farmgate estimates 2025/26."
+
+climate:
+  climateZone: humid-subtropical
+  # Brisbane/SE-QLD mean monthly air temp (°C). Southern Hemisphere: Jan = summer, Jul = winter.
+  monthlyAmbientC: [25.0, 24.8, 23.7, 21.3, 18.2, 15.7, 15.0, 16.0, 18.5, 21.0, 22.8, 24.3]
+  supplementalLight: [false, false, false, false, false, false, false, false, false, false, false, false]
+
+enclosure:
+  type: shade-house              # warm subtropics: shade/ventilation matters more than heating
+  heatLossFactor: 0.20           # W/m²/°C; low-spec shade-house / light polytunnel in warm climate
+
+economics:
+  feedPrice: 2.40                # AUD/kg commercial aquafeed (barramundi/native pellet, bulk)
+  cop: 3.0                       # heat-pump coefficient of performance
+  pvYield: 1500                  # kWh/kWp/yr; SE-QLD sunny, ~1450-1600
+  scRate: 65                     # % PV self-consumed (daytime aeration/pumps/heat)
+  gridPrice: 0.42                # AUD/kWh commercial (incl network/retail), business avg 2025
+  feedIn: 0.05                   # AUD/kWh exported; low/declining feed-in tariffs
+  gasPrice: 0.09                 # AUD/kWh thermal (natural gas, commercial)
+  omSolar: 0.01                  # AUD/kWh O&M on self-used solar
+  pvCostPerKwp: 1200             # AUD/kWp installed, small-commercial (pre-STC); Australia cheap
+  hpCostPerKw: 900               # AUD/kW thermal installed (air-source heat pump)
+  hpFullLoadHours: 700           # h/yr; warm subtropics → little heating demand
+  rentPerM2Month: 5.0            # AUD/m²/month rural/peri-urban ag shed/land
+  wage: 32.0                     # AUD/h loaded; Horticulture Award casual L1 ~A$30.35 + on-costs
+  deprYears: 10
+  horizonYears: 15
+  fishPrices:   # AUD/kg direct-sale, SE-QLD/northern-NSW
+    catfish: 16.0               # native eel-tailed/jade-perch substitute, niche direct-sale
+    tilapia: 4.0                # NOXIOUS/banned species in QLD & most of AU — nominal/low
+    trout: 20.0                 # rainbow trout, cool-season; retail A$13-20/kg
+    carp: 3.0                   # declared pest species in AU — minimal/no legal market
+    perch: 18.0                 # silver/jade perch context; live native, direct-sale
+    pikeperch: 22.0             # zander — not farmed in AU, import-parity estimate
+    archar: 26.0                # arctic char — not farmed in AU, cold-water premium estimate
+    sturgeon: 35.0              # niche/specialty; very limited AU production, premium
+    redclaw: 38.0               # popular AU native crayfish, strong live farmgate/direct price
+    prawn: 32.0                 # freshwater prawn (Macrobrachium); emerging QLD, premium live
+    noblecray: 30.0             # noble/marron-style premium freshwater crayfish, direct-sale
+  cropPrices:   # AUD/kg direct-sale
+    greens_mix: 12.0            # mixed salad leaf, direct/farmgate
+    premium_mix: 16.0          # premium specialty leaf mix
+    lettuce_head: 5.0          # whole head ~A$2.50-3.50 ea ≈ per-kg
+    lettuce_leaf: 9.0          # loose-leaf lettuce
+    rocket: 14.0               # arugula, strong direct-sale
+    basil: 22.0                # high-value culinary herb
+    spinach: 12.0              # baby spinach
+    chard: 8.0                 # silverbeet
+    pakchoi: 7.0               # pak choi / Asian greens
+    feldsalat: 24.0            # corn salad / lamb's lettuce — rare specialty, premium
+    herbs: 20.0                # mixed soft herbs
+    microgreens: 60.0          # microgreens, high-value direct-sale (A$40-80/kg)
+
+subsidies:
+  sres_stc_solar:
+    label: "SRES (STCs) solar rebate"
+    description: "Small-scale Renewable Energy Scheme: tradable STCs create an upfront point-of-sale discount on eligible solar PV (≤100 kW). Effective ~30% off PV CAPEX at 2025 STC prices."
+    rate: 0.30
+    basis: pv
+    requiresSolar: true
+    source: "https://cer.gov.au/schemes/renewable-energy-target/small-scale-renewable-energy-scheme"
+    sourceLabel: "Clean Energy Regulator — SRES"
+    note: "Deeming period (and thus % value) declines yearly to scheme end in 2030; actual benefit varies with STC spot price and system size."
+  energy_efficiency_grants_sme:
+    label: "Energy Efficiency Grants for SMEs (Round 2)"
+    description: "Federal grant for small/medium businesses to buy energy-efficient equipment (heat pumps, refrigeration, HVAC). Grants A$10,000-A$25,000, ~100% of eligible equipment cost up to the cap."
+    rate: 1.0
+    basis: equipment
+    capGrant: 25000
+    commercialOnly: true
+    minInvestment: 10000
+    source: "https://business.gov.au/grants-and-programs/energy-efficiency-grants-for-small-and-medium-enterprises-round-2"
+    sourceLabel: "business.gov.au — Energy Efficiency Grants SME R2"
+    note: "Competitive, round-based; total pool A$41.241M. Check current round status before relying on it."
+  qrida_drought_preparedness:
+    label: "QRIDA Drought Preparedness Grant"
+    description: "Queensland primary-producer grant covering 25% of permanent on-farm capital infrastructure (e.g. water storage/efficiency relevant to recirculating aquaponics)."
+    rate: 0.25
+    basis: construction
+    capGrant: 50000
+    commercialOnly: true
+    source: "https://www.qrida.qld.gov.au/program/drought-preparedness-grants"
+    sourceLabel: "QRIDA — Drought Preparedness Grants"
+    note: "QLD only; eligible primary producers; cumulative A$50k cap. Scope is drought/water infrastructure, not general CAPEX."
+  qrida_rural_agricultural_development:
+    label: "Rural Agricultural Development Grants"
+    description: "Queensland grants for on-farm/regional agricultural projects including new/expanded production infrastructure; up to A$200,000 per project on a co-contribution basis."
+    rate: 0.50
+    basis: eligibleCapex
+    capGrant: 200000
+    commercialOnly: true
+    source: "https://www.qrida.qld.gov.au/program/rural-agricultural-development-grants"
+    sourceLabel: "QRIDA — Rural Agricultural Development Grants"
+    note: "QLD; competitive and round-based with matched co-contribution; availability depends on open funding rounds."

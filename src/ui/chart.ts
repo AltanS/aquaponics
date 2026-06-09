@@ -2,8 +2,18 @@ import type { RampSeries, SeriesPoint } from '../core';
 import { el } from './dom';
 import { fmtK } from './format';
 
+/** Break-even years, rounded to the precision the model actually supports. */
+function beYears(be: number): string {
+  return `~${be >= 5 ? Math.round(be) : Math.round(be * 2) / 2}y`;
+}
+
 /** Hand-rolled SVG cumulative cash-flow chart with break-even markers. */
-export function renderChart(lease: RampSeries, rent: RampSeries, horizonYears: number): void {
+export function renderChart(
+  lease: RampSeries,
+  rent: RampSeries,
+  horizonYears: number,
+  firstFishYr: number,
+): void {
   const W = 640;
   const H = 320;
   const pl = 62;
@@ -42,6 +52,14 @@ export function renderChart(lease: RampSeries, rent: RampSeries, horizonYears: n
 
   const poly = (pts: SeriesPoint[], cls: string) =>
     `<polyline class="ln ${cls}" points="${pts.map((p) => `${X(p.x)},${Y(p.y)}`).join(' ')}"/>`;
+  // Faint marker where the first meaningful fish income lands — the inflection
+  // that turns the cash valley around (drawn under the cash-flow lines).
+  if (firstFishYr > 0 && firstFishYr <= horizonYears) {
+    const fx = X(firstFishYr);
+    o += `<line class="rampmark" x1="${fx}" y1="${pt}" x2="${fx}" y2="${y0}"/>`;
+    o += `<text class="ax ramplabel" x="${fx + 4}" y="${pt + 10}" text-anchor="start">fish income</text>`;
+  }
+
   o += poly(lease.pts, 'ln-lease') + poly(rent.pts, 'ln-rent');
 
   const mark = (be: number | null, cls: string) => {
@@ -49,7 +67,7 @@ export function renderChart(lease: RampSeries, rent: RampSeries, horizonYears: n
     const bx = X(be);
     o += `<line class="bemark ${cls}" x1="${bx}" y1="${pt}" x2="${bx}" y2="${y0}"/>`;
     o += `<circle class="bedot ${cls}" cx="${bx}" cy="${y0}" r="4"/>`;
-    o += `<text class="ax" x="${bx}" y="${pt + 12}" text-anchor="middle">${be.toFixed(1)}y</text>`;
+    o += `<text class="ax" x="${bx}" y="${pt + 12}" text-anchor="middle">${beYears(be)}</text>`;
   };
   mark(lease.breakEven, 'lease');
   mark(rent.breakEven, 'rent');

@@ -1,0 +1,100 @@
+meta:
+  schemaVersion: "1.0"
+  region: usa-east
+  label: "USA · East Coast"
+  currency: { code: "USD", symbol: "$", locale: "en-US", fxToEur: 0.926 }
+  lastUpdated: "2026-06-08"
+  notes: "Location assumed: Raleigh / mid-Atlantic (North Carolina, representative of VA/MD). Climate normals 1991-2020 (NOAA). Electricity EIA / Duke Energy commercial ~10.7c/kWh (Dec 2025). Solar cost SEIA/WoodMac Q4'25 commercial ~$1.71/Wdc. Fish/crop prices AgMRC, Selina Wamucii, Tridge, VDACS farmers-market reports, NOFA-NY (2025). Subsidies USDA REAP, federal ITC §48E, USDA NRCS EQIP High Tunnel, USDA VAPG."
+
+climate:
+  climateZone: humid-subtropical
+  monthlyAmbientC: [5.5, 7.5, 11.5, 16.5, 21.0, 25.5, 26.9, 26.0, 22.5, 16.5, 11.0, 6.5]  # Raleigh NC (NOAA 1991-2020)
+  supplementalLight: [true, true, false, false, false, false, false, false, false, false, true, true]
+
+enclosure:
+  type: insulated-greenhouse
+  heatLossFactor: 0.30   # W/m²/°C; mid-Atlantic insulated greenhouse
+
+economics:
+  feedPrice: 1.55        # USD/kg commercial aquafeed (32-40% protein, bulk)
+  cop: 3
+  pvYield: 1400          # kWh/kWp/yr; mid-Atlantic (NREL PVWatts NC)
+  scRate: 65             # % PV self-consumed
+  gridPrice: 0.107       # USD/kWh commercial (EIA/Duke Energy NC, Dec 2025)
+  feedIn: 0.04           # USD/kWh exported / avoided-cost net-metering credit (NC)
+  gasPrice: 0.035        # USD/kWh thermal (NC commercial natural gas ~$1.00/therm)
+  omSolar: 0.005         # USD/kWh self-used (O&M)
+  pvCostPerKwp: 1710     # USD/kWp installed, commercial (SEIA/WoodMac Q4 2025)
+  hpCostPerKw: 900       # USD/kW thermal installed
+  hpFullLoadHours: 1700  # h/yr; mid-Atlantic heating demand
+  rentPerM2Month: 0.65   # USD/m²/month (~$0.72/sqft/yr greenhouse/ag building)
+  wage: 19.5             # USD/h loaded farm labour (~$16 base + ~22% load)
+  deprYears: 10
+  horizonYears: 15
+  fishPrices:   # USD/kg direct-sale / farmers-market (whole or fillet-equivalent)
+    catfish: 8.8     # ~$4/lb; large Southern market, direct-sale premium over farmgate
+    tilapia: 13.0    # ~$5.90/lb live/whole direct-sale (USDA farm-gate ~$3.19/lb wholesale)
+    trout: 17.6      # ~$8/lb whole rainbow trout direct
+    carp: 7.0        # ~$3.20/lb; limited US market
+    perch: 33.0      # ~$15/lb; yellow perch high-value Great Lakes/East
+    pikeperch: 30.0  # ~$13.60/lb walleye-equivalent
+    archar: 26.0     # ~$11.80/lb arctic char
+    sturgeon: 35.0   # ~$15.90/lb (meat; caviar separate)
+    redclaw: 33.0    # ~$15/lb redclaw crayfish, niche live market
+    prawn: 26.0      # ~$11.80/lb freshwater prawn (Macrobrachium), SE direct-sale
+    noblecray: 35.0  # ~$15.90/lb noble crayfish, premium niche
+  cropPrices:   # USD/kg direct-sale / farmers-market
+    greens_mix: 13.0     # ~$5.90/lb mixed salad greens
+    premium_mix: 18.0    # ~$8.16/lb premium/specialty mix
+    lettuce_head: 8.5    # ~$4/head equiv per kg
+    lettuce_leaf: 11.0   # ~$5/lb leaf lettuce
+    rocket: 17.0         # ~$7.70/lb arugula
+    basil: 26.0          # ~$11.80/lb culinary herb
+    spinach: 13.0        # ~$5.90/lb
+    chard: 9.5           # ~$4.30/lb
+    pakchoi: 9.0         # ~$4.10/lb
+    feldsalat: 22.0      # ~$10/lb mâche/corn salad, specialty
+    herbs: 24.0          # ~$10.90/lb mixed culinary herbs
+    microgreens: 55.0    # ~$25/lb; retail $25-50/lb
+
+subsidies:
+  reap_grant:
+    label: "USDA REAP Renewable Energy Grant"
+    description: "Rural Energy for America Program grant for renewable energy systems (solar PV, etc.) for farms and rural small businesses."
+    rate: 0.5
+    basis: eligibleCapex
+    capGrant: 1000000     # USD cap for renewable energy system grants
+    minInvestment: 2500
+    commercialOnly: true
+    source: "https://www.rd.usda.gov/programs-services/energy-programs/rural-energy-america-program-renewable-energy-systems-energy-efficiency-improvement-grants"
+    sourceLabel: "USDA Rural Development REAP (2025)"
+    note: "IRA-funded REAP allowed up to 50% cost share; may revert to 25% (base Farm Bill funds) in FY2026. Signups paused at times in 2025 — verify current NOFO."
+  federal_itc:
+    label: "Federal Solar ITC (§48E)"
+    description: "Clean Electricity Investment Tax Credit (~30%) on commercial solar PV capital cost."
+    rate: 0.3
+    basis: pv
+    requiresSolar: true
+    commercialOnly: true
+    source: "https://www.energy.gov/eere/solar/federal-solar-tax-credits-businesses"
+    sourceLabel: "Federal ITC §48E (2026)"
+    note: "Full 30% for commercial projects that begin construction by July 4, 2026; new sourcing rules apply for 2026+ starts. Stackable with REAP on the non-grant basis."
+  nrcs_high_tunnel:
+    label: "USDA NRCS EQIP High Tunnel"
+    description: "EQIP financial assistance for seasonal high tunnel / hoop house structures (growing-area enclosure)."
+    rate: 0.5
+    basis: construction
+    capEligible: 50000    # ~2,160 sqft tunnel basis at $5.90-$12.21/sqft payment
+    source: "https://www.nrcs.usda.gov/programs-initiatives/eqip-high-tunnel-initiative"
+    sourceLabel: "USDA NRCS EQIP High Tunnel Initiative (2025)"
+    note: "Pays a flat per-sqft rate up to a ~2,160 sqft tunnel; historically-underserved producers up to 90%. Effective cost share varies; modeled at ~50%."
+  usda_vapg:
+    label: "USDA Value-Added Producer Grant"
+    description: "Working-capital / processing & marketing grant for value-added agricultural products (e.g. processed/branded aquaponic produce & fish)."
+    rate: 0.5
+    basis: eligibleCapex
+    capGrant: 250000      # working-capital max (planning grants $75k)
+    minInvestment: 5000
+    source: "https://www.rd.usda.gov/programs-services/business-programs/value-added-producer-grants"
+    sourceLabel: "USDA Rural Development VAPG (2025)"
+    note: "1:1 match required; covers working capital / processing / marketing, not core construction. Nationally competitive."

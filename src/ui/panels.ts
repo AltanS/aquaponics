@@ -1,5 +1,4 @@
-import { CROPS, FISH, type CropId, type FishId } from '../data';
-import { BERLIN_REGION } from '../data/berlin-defaults';
+import { CROPS, FISH, REGIONS, type CropId, type FishId } from '../data';
 import { loopTemp, pairFishPlant, type PairClass } from '../core';
 import { deriveSuitability } from '../core/derive';
 import { el } from './dom';
@@ -19,7 +18,7 @@ const SUITABILITY_LABEL: Record<'native' | 'workable' | 'costly', string> = {
 
 export function renderFishPanel(state: AppState): void {
   const f = FISH[state.species];
-  const suitability = deriveSuitability(f, BERLIN_REGION);
+  const suitability = deriveSuitability(f, REGIONS[state.region]);
   el('fish-ttl').innerHTML =
     `${f.label}${wikiLink(f.wiki, f.label)} <span class="badge ${diffClass(f.difficulty)}">${f.difficulty}</span>`;
   el('fish-attrs').innerHTML =

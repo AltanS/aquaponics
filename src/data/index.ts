@@ -1,9 +1,11 @@
 export { FISH, type FishId } from './generated';
 export { CROPS, type CropId } from './generated';
 export { SCALES, type ScaleId } from './generated';
-export { ENERGY, PROPERTY, FINANCE, MODEL, SUBSIDIES, REGION } from './generated';
+export { ENERGY, PROPERTY, FINANCE, MODEL, SUBSIDIES, REGION, REGIONS } from './generated';
+export type { RegionId } from './generated';
 export type {
   Crop,
+  Currency,
   Difficulty,
   EnergyDefaults,
   FinanceDefaults,
@@ -11,6 +13,7 @@ export type {
   ModelAssumptions,
   PropertyDefaults,
   Region,
+  RegionEconomics,
   RegionEnclosure,
   Scale,
   Subsidy,

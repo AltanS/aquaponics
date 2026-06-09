@@ -1,5 +1,5 @@
 import './style.css';
-import { CROPS, FISH, REGION, SCALES, type ScaleId } from './data';
+import { CROPS, FISH, REGIONS, SCALES, type ScaleId } from './data';
 import type { ScenarioKey } from './core';
 import { el } from './ui/dom';
 import { applyCropPreset, applyFishPreset, applyScalePreset, fillAll, INPUT_IDS } from './ui/inputs';
@@ -35,18 +35,27 @@ function populateScaleSelect(): void {
   }
 }
 
-/** Fill the region selector, eyebrow and page title from the region data. */
-function populateRegionChrome(): void {
+/** Fill the region selector with every region (one option per data/regions/*.yaml). */
+function populateRegionSelect(): void {
   const sel = el<HTMLSelectElement>('region-select');
   sel.innerHTML = '';
-  const o = document.createElement('option');
-  o.value = REGION.id;
-  o.textContent = REGION.label;
-  sel.appendChild(o);
+  for (const id of Object.keys(REGIONS) as RegionId[]) {
+    const o = document.createElement('option');
+    o.value = id;
+    o.textContent = REGIONS[id].label;
+    sel.appendChild(o);
+  }
+}
 
+/** Sync the region-dependent chrome to the active region: dropdown value,
+ *  eyebrow, page title and every currency symbol marker in the static labels. */
+function refreshRegionChrome(): void {
+  const r = REGIONS[state.region];
+  el<HTMLSelectElement>('region-select').value = state.region;
   const eyebrow = document.querySelector('.eyebrow');
-  if (eyebrow) eyebrow.textContent = `Aquaponics · ${REGION.label} · ${REGION.dataVintage.slice(0, 4)} figures`;
-  document.title = `Aquaponics profitability · ${REGION.label}`;
+  if (eyebrow) eyebrow.textContent = `Aquaponics · ${r.label} · ${r.dataVintage.slice(0, 4)} figures`;
+  document.title = `Aquaponics profitability · ${r.label}`;
+  document.querySelectorAll<HTMLElement>('.cur').forEach((e) => { e.textContent = r.currency.symbol; });
 }
 
 /** Keep the dropdown and the Setup pills reflecting the active scale. */
@@ -82,7 +91,7 @@ function hydrate(): void {
   state.species = pick('species', FISH) ?? state.species;
   state.crop = pick('crop', CROPS) ?? state.crop;
   state.focus = pick<ScenarioKey>('focus', ['lease', 'rent'] as const) ?? state.focus;
-  state.region = pick<RegionId>('region', ['berlin-brandenburg'] as const) ?? state.region;
+  state.region = pick<RegionId>('region', REGIONS) ?? state.region;
   state.tab = pick<TabId>('tab', TAB_IDS) ?? state.tab;
   if (typeof saved['solar'] === 'boolean') state.solar = saved['solar'];
   if (typeof saved['heatpump'] === 'boolean') state.heatpump = saved['heatpump'];
@@ -104,7 +113,7 @@ function syncWidgets(): void {
   const hp = el('tg-hp');
   hp.classList.toggle('on', state.heatpump);
   hp.classList.toggle('off', !state.heatpump);
-  el<HTMLSelectElement>('region-select').value = state.region;
+  refreshRegionChrome();
   syncScaleWidgets();
   el('focus-set')
     .querySelectorAll<HTMLButtonElement>('.pbtn')
@@ -115,7 +124,7 @@ function syncWidgets(): void {
 // ── Wiring ─────────────────────────────────────────────────────────────────
 
 function wire(): void {
-  populateRegionChrome();
+  populateRegionSelect();
   populateScaleSelect();
   buildTabs('scale-set', SCALES, state.scale, (key) => selectScale(key));
 
@@ -154,8 +163,8 @@ function wire(): void {
   // Region selector
   el<HTMLSelectElement>('region-select').addEventListener('change', function () {
     state.region = this.value as RegionId;
-    applyFishPreset(state);
-    fillAll(state);
+    fillAll(state); // reseeds economics, regional prices & heat demand for the new region
+    refreshRegionChrome();
     render(state);
   });
 

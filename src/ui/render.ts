@@ -1,4 +1,4 @@
-import { CROPS, FISH, REGION, SUBSIDIES } from '../data';
+import { CROPS, FISH, REGIONS } from '../data';
 import {
   computeScenario,
   computeSubsidies,
@@ -13,7 +13,7 @@ import {
   type Toggles,
 } from '../core';
 import { el } from './dom';
-import { ct, eur, kwh } from './format';
+import { ct, eur, eurApprox, kwh, setCurrency } from './format';
 import { INPUT_IDS, readInputs } from './inputs';
 import { renderChart } from './chart';
 import { renderTable } from './table';
@@ -26,6 +26,7 @@ import type { AppState } from './state';
 /** Grant a scenario its eligible subsidies and return a CAPEX-reduced clone. */
 function applyGrants(
   s: ScenarioResult, scaleTier: string, t: Toggles, deprYears: number,
+  grants: Parameters<typeof computeSubsidies>[1],
 ): { sub: SubsidyResult; adj: ScenarioResult } {
   const sub = computeSubsidies(
     {
@@ -34,38 +35,83 @@ function applyGrants(
       heatpump: t.heatpump,
       solar: t.solar,
     },
-    SUBSIDIES,
+    grants,
   );
   const netCapex = Math.max(0, s.capex - sub.total);
   const depr = netCapex / deprYears;
   return { sub, adj: { ...s, capex: netCapex, depr, net: s.ebitda - depr } };
 }
 
-/** Data-vintage banner text — built from the region metadata (spec-06). */
-const VINTAGE_BANNER_TEXT =
-  `${REGION.label} figures, compiled ${REGION.dataVintage.slice(0, 7)} — prices drift`;
-
 function beText(be: number | null, ebitda: number, horizon: number): string {
-  if (be !== null) return `${be.toFixed(1)} yr`;
+  // Round to the precision the model supports — half-years up to 5, whole years
+  // beyond. A "~3.5 yr" reads as the estimate it is, not a measured date.
+  if (be !== null) {
+    const r = be >= 5 ? Math.round(be) : Math.round(be * 2) / 2;
+    return `~${r} yr`;
+  }
   return ebitda > 0 ? `> ${horizon} yr` : 'never';
+}
+
+/** Header break-even tile: a compact value plus a one-line clarifier for the
+ *  two non-payback states, which are otherwise cryptic ("> 15 yr", "never"). */
+function setHeaderBE(be: number | null, ebitda: number, horizon: number): void {
+  const v = el('sk-be');
+  if (be !== null) {
+    v.textContent = beText(be, ebitda, horizon);
+  } else if (ebitda > 0) {
+    v.innerHTML = `&gt; ${horizon} yr<small class="vsub">payback past the ${horizon}-yr horizon</small>`;
+  } else {
+    v.innerHTML = `never<small class="vsub">loses money every year</small>`;
+  }
+}
+
+/** Local-currency figure with the comparison-only "≈ €" companion (if any). */
+function withApprox(localValue: number): string {
+  const approx = eurApprox(localValue);
+  return approx ? `${eur(localValue)}<small class="eurx">${approx}</small>` : eur(localValue);
+}
+
+/** Which scenario breaks even first — 'L', 'R', or null if neither pays back.
+ *  This is the ONLY thing that earns the green accent; it is not hardwired to
+ *  either scenario, so the visual "advantage" tracks the actual numbers. */
+function pickWinner(beL: number | null, beR: number | null): 'L' | 'R' | null {
+  if (beL !== null && beR !== null) return beL <= beR ? 'L' : 'R';
+  if (beL !== null) return 'L';
+  if (beR !== null) return 'R';
+  return null;
+}
+
+/** Flag the winning column (accent header + "breaks even first"); clear the other. */
+function setWinner(prefix: 'L' | 'R', isWinner: boolean): void {
+  el(`${prefix}-head`).classList.toggle('won', isWinner);
+  el(`${prefix}-win`).textContent = isWinner ? '✓ breaks even first' : '';
 }
 
 function setScenarioCard(
   prefix: 'L' | 'R', s: ScenarioResult, adj: ScenarioResult, sub: SubsidyResult,
-  be: number | null, horizon: number,
+  be: number | null, beNoGrant: number | null, horizon: number,
 ): void {
-  el(`${prefix}-capex`).textContent = eur(s.capex); // gross
-  el(`${prefix}-con`).textContent = eur(s.construction);
+  // Break-even is the hero. When grants apply and actually move the date, show
+  // the un-granted break-even alongside so the grant's value reads as time saved.
+  const beMain = beText(be, s.ebitda, horizon);
+  const showVs = sub.total > 0 && be !== null && beNoGrant !== null
+    && beText(beNoGrant, s.ebitda, horizon) !== beMain;
+  el(`${prefix}-be`).innerHTML = showVs
+    ? `${beMain}<small class="bevs">${beText(beNoGrant, s.ebitda, horizon)} without grants</small>`
+    : beMain;
+
+  el(`${prefix}-capex`).innerHTML = withApprox(s.capex); // gross + €-companion
+  el(`${prefix}-con`).textContent = s.construction > 0 ? eur(s.construction) : '—';
   el(`${prefix}-eq`).textContent = eur(s.energyCapex);
   const grant = el(`${prefix}-grant`);
-  grant.textContent = sub.total > 0 ? `−${eur(sub.total)}` : '€0';
+  grant.textContent = sub.total > 0 ? `−${eur(sub.total)}` : '—';
   grant.style.color = sub.total > 0 ? 'var(--good)' : '';
   el(`${prefix}-netcapex`).textContent = eur(adj.capex); // after grants
   el(`${prefix}-rent`).textContent = eur(s.rent);
   const ebitda = el(`${prefix}-ebitda`);
-  ebitda.textContent = eur(s.ebitda);
+  ebitda.innerHTML = withApprox(s.ebitda);
   ebitda.style.color = s.ebitda >= 0 ? 'var(--good)' : 'var(--bad)';
-  el(`${prefix}-owner`).textContent = s.ownerLabor > 0 ? `−${eur(s.ownerLabor)}` : '€0';
+  el(`${prefix}-owner`).textContent = s.ownerLabor > 0 ? `−${eur(s.ownerLabor)}` : eur(0);
   const econ = el(`${prefix}-econ`);
   const econProfit = s.ebitda - s.ownerLabor;
   econ.textContent = eur(econProfit);
@@ -73,7 +119,6 @@ function setScenarioCard(
   const net = el(`${prefix}-net`);
   net.textContent = eur(adj.net); // depreciation on net-of-grant CAPEX
   net.style.color = adj.net >= 0 ? 'var(--good)' : 'var(--bad)';
-  el(`${prefix}-be`).textContent = beText(be, s.ebitda, horizon);
 }
 
 /** Distribute segment widths of a stacked bar proportionally to their values. */
@@ -82,17 +127,6 @@ function setBarWidths(parts: { id: string; v: number }[]): void {
   for (const p of parts) {
     el(p.id).style.width = `${total > 0 ? (Math.max(0, p.v) / total) * 100 : 0}%`;
   }
-}
-
-function renderCompare(L: ScenarioResult, R: ScenarioResult): void {
-  const grp = (title: string, leaseVal: number, rentVal: number) => {
-    const mx = Math.max(Math.abs(leaseVal), Math.abs(rentVal), 1);
-    const bar = (tag: string, val: number, col: string) =>
-      `<div class="b"><span class="tag">${tag}</span><span class="bar" style="width:${(Math.abs(val) / mx) * 100}%;background:${col}"></span><span class="num">${eur(val)}</span></div>`;
-    return `<div class="grp"><div class="gl">${title}</div>${bar('Lease', leaseVal, 'var(--teal)')}${bar('Rent', rentVal, 'var(--blue)')}</div>`;
-  };
-  el('cmp').innerHTML =
-    grp('Upfront investment', L.capex, R.capex) + grp('Steady profit / yr', L.ebitda, R.ebitda);
 }
 
 function renderIndices(i: CalcInputs): void {
@@ -133,16 +167,11 @@ function renderBreakdown(s: ScenarioResult): void {
 
 function renderVerdict(
   L: ScenarioResult, R: ScenarioResult,
-  beL: number | null, beR: number | null,
+  winner: 'L' | 'R' | null,
   s: ScenarioResult, horizon: number,
 ): void {
-  const winner =
-    beL !== null && beR !== null ? (beL < beR ? 'Lease' : 'Rent')
-    : beL !== null ? 'Lease'
-    : beR !== null ? 'Rent'
-    : null;
   const head = winner
-    ? `${winner} breaks even first`
+    ? `${winner === 'L' ? 'Lease' : 'Rent'} breaks even first`
     : `Neither pays back within <span class="n">${horizon}</span> years`;
   let v = `<b>${head}</b>. `;
   v += `Lease ties up <b class="n">${eur(L.capex)}</b> upfront; renting needs <span class="n">${eur(R.capex)}</span> but <span class="n">${eur(R.rent)}</span>/yr in rent. `;
@@ -152,9 +181,12 @@ function renderVerdict(
 
 /** Recompute everything from the form and repaint all outputs. */
 export function render(state: AppState): void {
-  // Update vintage banner (ensures DOM text matches source constant)
+  // Active region drives the display currency, the data-vintage banner, and the
+  // subsidy programs offered.
+  const reg = REGIONS[state.region];
+  setCurrency(reg.currency);
   const bannerEl = document.getElementById('vintage-banner');
-  if (bannerEl) bannerEl.textContent = VINTAGE_BANNER_TEXT;
+  if (bannerEl) bannerEl.textContent = `${reg.label} figures, compiled ${reg.dataVintage.slice(0, 7)} — prices drift`;
   const i = readInputs(state);
   const t: Toggles = { solar: state.solar, heatpump: state.heatpump };
 
@@ -162,30 +194,43 @@ export function render(state: AppState): void {
   const R = computeScenario('rent', i, t);
   // Eligible grants reduce the CAPEX base → shallower cash valley & lower
   // depreciation. Break-even and net are computed on the grant-adjusted clone.
-  const { sub: subL, adj: adjL } = applyGrants(L, state.scale, t, i.deprYears);
-  const { sub: subR, adj: adjR } = applyGrants(R, state.scale, t, i.deprYears);
+  const { sub: subL, adj: adjL } = applyGrants(L, state.scale, t, i.deprYears, reg.subsidies);
+  const { sub: subR, adj: adjR } = applyGrants(R, state.scale, t, i.deprYears, reg.subsidies);
   const Ls = simulateMonthly(adjL, i, i.horizon);
   const Rs = simulateMonthly(adjR, i, i.horizon);
+  // No-grant break-even (L/R carry the gross CAPEX) — only when grants apply, so
+  // the card can show "how much sooner the grant pays you back".
+  const beNoGrantL = subL.total > 0 ? simulateMonthly(L, i, i.horizon).breakEven : null;
+  const beNoGrantR = subR.total > 0 ? simulateMonthly(R, i, i.horizon).breakEven : null;
 
-  setScenarioCard('L', L, adjL, subL, Ls.breakEven, i.horizon);
-  setScenarioCard('R', R, adjR, subR, Rs.breakEven, i.horizon);
+  setScenarioCard('L', L, adjL, subL, Ls.breakEven, beNoGrantL, i.horizon);
+  setScenarioCard('R', R, adjR, subR, Rs.breakEven, beNoGrantR, i.horizon);
 
-  const profitMo = (id: string, ebitda: number): void => {
-    const e = el(id);
-    e.textContent = eur(ebitda / 12);
-    e.style.color = ebitda >= 0 ? 'var(--good)' : 'var(--bad)';
-  };
-  profitMo('sk-lprofit', L.ebitda);
-  profitMo('sk-rprofit', R.ebitda);
-  el('sk-lbe').textContent = beText(Ls.breakEven, L.ebitda, i.horizon);
-  el('sk-rbe').textContent = beText(Rs.breakEven, R.ebitda, i.horizon);
+  // The green accent is earned, not assigned: it lands on whichever scenario
+  // breaks even first (or neither), so the comparison stops implying lease wins.
+  const winner = pickWinner(Ls.breakEven, Rs.breakEven);
+  setWinner('L', winner === 'L');
+  setWinner('R', winner === 'R');
 
-  renderChart(Ls, Rs, i.horizon);
-  renderCompare(L, R);
+  // Sticky header is the bare decision: which option, when it pays back, and the
+  // monthly profit AFTER paying yourself (owner-unpaid EBITDA would flatter a
+  // one-person farm by a full-time salary). It follows the data-driven winner —
+  // and falls back to the higher-monthly scenario when neither pays back.
+  const wPrefix = winner ?? (L.ebitda - L.ownerLabor >= R.ebitda - R.ownerLabor ? 'L' : 'R');
+  const wScn = wPrefix === 'L' ? L : R;
+  const wBe = wPrefix === 'L' ? Ls.breakEven : Rs.breakEven;
+  el('sk-best').textContent = winner ? (winner === 'L' ? 'Lease & build' : 'Rent existing') : 'Neither pays back';
+  setHeaderBE(wBe, wScn.ebitda, i.horizon);
+  const skProfit = el('sk-profit');
+  const wMonthly = (wScn.ebitda - wScn.ownerLabor) / 12;
+  skProfit.innerHTML = withApprox(wMonthly);
+  skProfit.style.color = wMonthly >= 0 ? 'var(--good)' : 'var(--bad)';
+
+  renderChart(Ls, Rs, i.horizon, i.growMonths / 12);
 
   el('e-gen').textContent = kwh(L.E.gen);
   el('e-imp').textContent = kwh(L.E.imp);
-  el('e-eff').textContent = `${ct(L.E.eff)}/kWh`;
+  el('e-eff').textContent = ct(L.E.eff);
   renderTotals(state, i, L.E);
   renderSubsidies(state.focus === 'lease' ? subL : subR, state.focus);
 
@@ -202,7 +247,7 @@ export function render(state: AppState): void {
   updatePairings(state);
   renderPairs(state);
   renderBreakdown(s);
-  renderVerdict(L, R, Ls.breakEven, Rs.breakEven, s, i.horizon);
+  renderVerdict(L, R, winner, s, i.horizon);
 
   // Persist the full session (selections + every input) to localStorage.
   const values: Record<string, string | number | boolean> = {

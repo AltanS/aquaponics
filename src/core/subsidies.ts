@@ -104,7 +104,7 @@ export function computeSubsidies(
       continue;
     }
     if (g.minInvestment !== undefined && ctx.capex.total < g.minInvestment) {
-      reject(`minimum investment €${Math.round(g.minInvestment).toLocaleString('de-DE')} not reached`);
+      reject(`minimum investment of ${Math.round(g.minInvestment).toLocaleString('en-US')} (local currency) not reached`);
       continue;
     }
 

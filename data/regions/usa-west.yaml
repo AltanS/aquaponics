@@ -1,0 +1,101 @@
+meta:
+  schemaVersion: "1.0"
+  region: usa-west
+  label: "USA · West Coast"
+  currency: { code: "USD", symbol: "$", locale: "en-US", fxToEur: 0.926 }
+  lastUpdated: "2026-06-08"
+  notes: "Location assumed: Central California (Fresno / San Joaquin Valley). Temps NWS/NOAA 1991-2020 normals (Fresno). Electricity CA avg commercial ~29c/kWh Aug-2025 (CPUC Public Advocates; EIA). Wage CA $16.90/hr state minimum eff. Jan-2026 (DIR), loaded. PV/ITC/REAP/VAPG per cited federal sources. Prices reflect CA direct-sale / farmers-market premium, converted from $/lb x2.2046."
+
+climate:
+  climateZone: mediterranean-california   # hot-summer Mediterranean / arid subtropical (Csa)
+  monthlyAmbientC: [9, 11, 14, 17, 21, 26, 29, 28, 25, 19, 12, 9]   # Fresno mean air temp Jan..Dec
+  supplementalLight: [true, true, false, false, false, false, false, false, false, false, true, true]
+
+enclosure:
+  type: polytunnel          # mild CA climate; low-cost ventilated polytunnel typical
+  heatLossFactor: 0.25      # W/m²/°C; mild winters, modest insulation need
+
+economics:
+  feedPrice: 1.65           # USD/kg commercial aquafeed (bulk 32-40% protein, 2025)
+  cop: 3.0
+  pvYield: 1750             # kWh/kWp/yr; sunny Central Valley
+  scRate: 65                # % PV self-consumed (daytime farm load)
+  gridPrice: 0.29           # USD/kWh CA avg commercial (~29c, Aug-2025)
+  feedIn: 0.05              # USD/kWh exported under NEM 3.0 avoided-cost export (low)
+  gasPrice: 0.06            # USD/kWh thermal (natural gas, commercial CA)
+  omSolar: 0.01             # USD/kWh self-used (O&M)
+  pvCostPerKwp: 1800        # USD/kWp installed, commercial-scale (pre-incentive)
+  hpCostPerKw: 900          # USD/kW thermal installed
+  hpFullLoadHours: 900      # h/yr; mild climate, low heating demand
+  rentPerM2Month: 8.0       # USD/m²/month (~$0.75/sqft/mo; Central Valley industrial/ag ~$9/sqft/yr)
+  wage: 22.0                # USD/h loaded farm labour (CA $16.90 min + ~30% burden)
+  deprYears: 10
+  horizonYears: 15
+  fishPrices:   # USD/kg direct-sale / farmers-market, CA
+    catfish: 17.6     # ~$8/lb
+    tilapia: 15.4     # ~$7/lb live/whole
+    trout: 19.8       # ~$9/lb
+    carp: 8.8         # ~$4/lb (niche live-market)
+    perch: 22.0       # ~$10/lb
+    pikeperch: 26.5   # ~$12/lb (walleye/zander, premium)
+    archar: 24.3      # arctic char ~$11/lb
+    sturgeon: 44.1    # ~$20/lb white sturgeon meat (Sterling/CA farms)
+    redclaw: 33.1     # ~$15/lb redclaw crayfish (niche)
+    prawn: 30.9       # ~$14/lb freshwater prawn (Macrobrachium, niche)
+    noblecray: 39.7   # ~$18/lb noble crayfish (very niche premium)
+  cropPrices:   # USD/kg direct-sale, CA farmers-market premium
+    greens_mix: 13.2      # ~$6/lb mixed salad greens
+    premium_mix: 17.6     # ~$8/lb premium/spring mix
+    lettuce_head: 6.6     # ~$3/lb head lettuce
+    lettuce_leaf: 8.8     # ~$4/lb leaf lettuce
+    rocket: 15.4          # ~$7/lb arugula
+    basil: 17.6           # ~$8/lb fresh basil
+    spinach: 13.2         # ~$6/lb
+    chard: 8.8            # ~$4/lb
+    pakchoi: 8.8          # ~$4/lb bok choy
+    feldsalat: 22.0       # ~$10/lb mâche/lamb's lettuce (specialty)
+    herbs: 22.0           # ~$10/lb mixed culinary herbs
+    microgreens: 55.1     # ~$25/lb microgreens
+
+subsidies:
+  federal_solar_itc:
+    label: "Federal Solar ITC (Section 48E)"
+    description: "Investment tax credit on solar PV CAPEX; full 30% for projects <1 MW (no prevailing-wage requirement)."
+    rate: 0.30
+    basis: pv
+    commercialOnly: true
+    requiresSolar: true
+    source: "https://www.energy.gov/eere/solar/federal-solar-tax-credits-businesses"
+    sourceLabel: "U.S. DOE / IRS Clean Electricity ITC (48E), 2025"
+    note: "30% base rate for sub-1MW commercial systems; OBBBA (Jul-2025) tightened deadlines — begin construction by Jul 4 2026. Stackable domestic-content/energy-community adders."
+  usda_reap_grant:
+    label: "USDA REAP Renewable Energy Grant"
+    description: "Grant covering renewable energy systems & energy-efficiency improvements for agricultural producers / rural small businesses."
+    rate: 0.50
+    basis: eligibleCapex
+    capGrant: 1000000
+    commercialOnly: true
+    minInvestment: 2500
+    source: "https://www.rd.usda.gov/programs-services/energy-programs/rural-energy-america-program-renewable-energy-systems-energy-efficiency-improvement-grants"
+    sourceLabel: "USDA Rural Development REAP (IRA funding), FY2025"
+    note: "Up to 50% of eligible costs under IRA funds; 25% under base Farm Bill funds. Grant application windows are periodic — verify open cycle."
+  usda_vapg:
+    label: "USDA Value-Added Producer Grant"
+    description: "Working-capital / planning grant for producers adding value to ag products (e.g. processing, branded direct-market fish & greens)."
+    rate: 0.50
+    basis: eligibleCapex
+    capGrant: 250000
+    commercialOnly: true
+    source: "https://www.rd.usda.gov/programs-services/business-programs/value-added-producer-grants"
+    sourceLabel: "USDA Rural Development VAPG, FY2025"
+    note: "1:1 match required (effective 50% coverage). Max $250k working-capital / $75k planning. Funds value-added activity, not raw CAPEX directly — partial applicability."
+  cdfa_healthy_soils:
+    label: "CDFA Healthy Soils / Specialty Crop Grant"
+    description: "California state grants supporting specialty-crop producers and on-farm soil/efficiency practices."
+    rate: 0.40
+    basis: eligibleCapex
+    capGrant: 100000
+    commercialOnly: true
+    source: "https://www.cdfa.ca.gov/oefi/healthysoils/"
+    sourceLabel: "CA Dept. of Food & Agriculture, OEFI"
+    note: "Program scope and rates vary by annual solicitation; aquaponics eligibility is partial/practice-dependent — verify current round."

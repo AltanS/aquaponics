@@ -17,3 +17,4 @@ data/scales.yaml
 data/crops.yaml
 data/fish.yaml
 data/regions/berlin-brandenburg.yaml
+src/ui/format.ts

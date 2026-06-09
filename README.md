@@ -1,9 +1,39 @@
 # Aquaponics Profitability Calculator
 
-Interactive feasibility model for commercial aquaponics in the Berlin/Brandenburg
-region (2026 figures). Vite + TypeScript rebuild of the original single-file
+Interactive feasibility model for commercial aquaponics. Pick a region, a fish, a
+crop and a scale, tune the inputs, and the model live-computes whether the venture
+pays back — and when. Vite + TypeScript rebuild of the original single-file
 prototype (`aquaponics-calculator.html`, kept as the behavioural reference —
 see `HANDOFF.md` for the full domain handoff).
+
+## What it does
+
+- **Lease vs. rent, head to head.** Compares building your own structure on cheap
+  land (lease) against renting an existing one — one aligned table, with the
+  break-even date as the headline. The single green accent marks whichever option
+  actually breaks even first (it moves with the numbers, or marks neither).
+- **Time-to-payback, not just steady profit.** A monthly cash-flow model accounts
+  for the grow-out ramp (no fish income until the fish reach market size, no crop
+  income until the first cycle), so the chart shows the cash valley → payback
+  J-curve, not an idealised flat year.
+- **Three honest profit views.** Operating cash (before paying yourself),
+  profit after paying yourself a wage, and accounting profit after depreciation —
+  shown as parallel lenses, not a misleading running total.
+- **Fish × crop pairing.** The selected fish sets the shared loop temperature;
+  each crop is rated good / workable / poor against it (poor = a decoupled design,
+  never a hard block).
+- **Energy modelling.** Heat demand derived from the species' temperature band,
+  the region's monthly climate and the enclosure; optional solar PV and heat pump
+  with a full energy balance.
+- **Region-aware.** Seven regions (Berlin/Brandenburg, Spain, Turkey, USA West &
+  East, Australia, Thailand), each with its own climate, economics, per-species/
+  -crop prices, **local currency** (headline figures also show a rough `≈ €`
+  comparison) and **capital-subsidy programmes** with real, sourced eligibility
+  gates.
+- **Everything is an editable assumption.** All defaults come from version-
+  controlled YAML (`data/`); your in-browser tweaks persist locally. Figures are
+  dated point estimates — the UI says so, and rounds break-even to a range rather
+  than feigning precision.
 
 ## Run
 
@@ -52,9 +82,11 @@ test/
 - `src/core/` mirrors the calculation reference in HANDOFF.md §4
   (`computeScenario`, `simulateMonthly`, `pairFishPlant`, `indexScore`, …)
   and never touches the DOM.
-- The UI is organised into main tabs (Results · Scale & costs · Fish · Plants ·
-  Energy) under a sticky header that keeps the four key metrics and a cash-flow
-  sparkline visible while adjusting variables. It re-renders live on any input.
+- The UI is organised into main tabs (Results · Scale & costs · Fish & plants ·
+  Energy · Subsidies) under a sticky header that keeps the four key metrics and a
+  cash-flow sparkline visible while adjusting variables. It re-renders live on any
+  input. Headline money figures in non-EUR regions carry a small comparison-only
+  "≈ €" companion (a dated FX rate per region file — not a quote).
 - **Local persistence:** the whole session (selections, toggles, active tab,
   every input value) is stored in the browser via
   [TinyBase](https://tinybase.org/) (`src/ui/persist.ts`, localStorage key
@@ -87,16 +119,16 @@ A build-time codegen script validates them and emits a typed TypeScript artifact
 
 ```
 data/
-  fish.yaml                   # universal biology — 11 species (fcr, temp band, growMonths, marketWeightKg, …)
-  crops.yaml                  # universal biology — 11 crops (yld, cycleDays, temp ranges, unit weights, …)
+  fish.yaml                   # universal biology — 11 species (fcr, temp band, growMonths, marketWeightKg, wiki, …)
+  crops.yaml                  # universal biology — 12 crops (yld, cycleDays, temp ranges, unit weights, wiki, …)
   scales.yaml                 # 4 scale tiers (hobby → mid; harvest, build standards, total + owner labour hrs)
   model.yaml                  # model assumptions — labour/energy attribution shares, cropAreaFraction (canopy ÷ footprint)
-  subsidies.yaml              # regional capital grants — rate, cost basis, caps, eligibility gates, sources
-  regions/
-    berlin-brandenburg.yaml   # Berlin/Brandenburg region: climate block + all economics + prices
+  regions/                    # one self-contained file per region (loaded automatically)
+    berlin-brandenburg.yaml   #   meta+currency, climate, enclosure, economics (+ price overrides), subsidies
+    spain.yaml  turkey.yaml  usa-west.yaml  usa-east.yaml  australia.yaml  thailand.yaml
 ```
 
-**Taxonomy:** Biology (fish.yaml, crops.yaml) is region-independent — no prices, no display strings. Prices and economics live in the region file. Derived values (heatDemand, suitability) are never stored.
+**Taxonomy:** Biology (fish.yaml, crops.yaml) is region-independent — no prices, no display strings. Everything that varies by place lives in the region file: climate, enclosure, economics, per-species/-crop price overrides (a missing id falls back to the universal price), the local **currency**, and that region's **capital-subsidy programs**. Derived values (heatDemand, suitability, annualMeanAmbientC) are never stored — they're computed. The codegen emits a `REGIONS` map + `RegionId` union from every `regions/*.yaml`; `berlin-brandenburg` is the default and backs the legacy `ENERGY`/`PROPERTY`/`FINANCE`/`SUBSIDIES`/`REGION` exports the pure core + golden tests use.
 
 ### Running the codegen
 
@@ -139,22 +171,28 @@ src/data/generated.ts is stale — run `pnpm build:data` and commit the result
 
 ### Adding a new region
 
-> The codegen currently loads exactly one region
-> (`regions/berlin-brandenburg.yaml`) — the axis exists, but multi-region needs
-> a small codegen extension. **Only add a region when you have real, sourced
-> numbers for it** (see `docs/research/` for why fabricated zone data is the
-> failure mode to avoid).
+The codegen loads **every** `data/regions/*.yaml` automatically and emits the
+`REGIONS` map, the `RegionId` union and the region `<select>` from it — no code
+changes needed. **Only add a region when you have real, sourced numbers for it**
+(see `docs/research/` for why fabricated zone data is the failure mode to avoid).
 
 1. Create `/data/regions/<region-id>.yaml` with all required blocks
    (mirror `berlin-brandenburg.yaml`):
-   - `meta:` header (`schemaVersion`, `region`, `lastUpdated`, `notes`)
-   - `climate:` block (`climateZone`, `monthlyAmbientC` 12-element array, `supplementalLight` bool array)
-   - `enclosure:` block (`type`, `heatLossFactor`)
-   - `economics:` block (all energy constants, property, finance, `fishPrices`, `cropPrices`)
-2. Extend `scripts/build-data.ts` to load and emit the new region alongside the existing one.
-3. Add the region id to `RegionId` in `src/ui/state.ts` and an option to the
-   `<select id="region-select">` in `index.html`.
-4. Run `pnpm run build:data`, then `pnpm test`, and commit all changes together.
+   - `meta:` header — `schemaVersion`, `region` (must equal the filename id),
+     `label`, `currency:` (`code`, `symbol`, `locale`, `fxToEur` — EUR per 1
+     local unit, a dated rate driving the comparison-only "≈ €" companion;
+     use `1` for EUR regions), `lastUpdated`, `notes`
+   - `climate:` block — `climateZone`, `monthlyAmbientC` (12 numbers), `supplementalLight` (12 bools)
+   - `enclosure:` block — `type`, `heatLossFactor`
+   - `economics:` block — all energy constants, `rentPerM2Month`, `wage`,
+     `deprYears`, `horizonYears`, plus `fishPrices`/`cropPrices` overrides
+     (partial — any omitted id falls back to the universal price). **All money
+     in the region's local currency.**
+   - `subsidies:` block — region-scoped capital grants (`rate`, `basis`, caps,
+     eligibility gates, `source`/`sourceLabel`/`note`)
+2. Run `pnpm run build:data`, then `pnpm test`, and commit the YAML + regenerated
+   `generated.ts` together. The build validates currency, climate-array lengths,
+   and that every price-map key references a real fish/crop id.
 
 ### Adding a new species or crop
 

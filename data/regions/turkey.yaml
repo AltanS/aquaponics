@@ -1,0 +1,94 @@
+meta:
+  schemaVersion: "1.0"
+  region: turkey
+  label: "Turkey"
+  currency: { code: "TRY", symbol: "₺", locale: "tr-TR", fxToEur: 0.0213 }
+  lastUpdated: "2026-06-08"
+  notes: "Location assumed: Aegean region (İzmir/Muğla) — inland trout + coastal sea-bass/bream. Sources: tarimziraat.com & cimri.com (fish/feed retail), CSGB asgari ücret 2026, GlobalPetrolPrices/BOTAŞ (energy Apr-2026), World Bank GSA (PV yield), IPARD III & KKYDP & KOSGEB (subsidies). Verify before commercial use."
+
+climate:
+  climateZone: temperate-mediterranean
+  monthlyAmbientC: [8.5, 9.5, 12.0, 15.5, 20.0, 25.0, 28.0, 27.5, 23.5, 18.5, 13.5, 10.0]  # İzmir/Aegean coastal means
+  supplementalLight: [true, true, false, false, false, false, false, false, false, false, true, true]
+
+enclosure:
+  type: insulated-greenhouse
+  heatLossFactor: 0.28  # milder than Berlin (0.35); Mediterranean insulated greenhouse
+
+economics:
+  feedPrice: 60          # TRY/kg extruded trout/marine aquafeed, bulk 2025-26 (≈55-65 TRY/kg sacked)
+  cop: 3.2               # heat-pump seasonal COP, mild climate
+  pvYield: 1550          # kWh/kWp/yr, Aegean/İzmir (World Bank GSA range 1450-1900)
+  scRate: 55             # % PV self-consumed
+  gridPrice: 5.10        # TRY/kWh commercial (ticarethane), incl. taxes, post Apr-2026 hike
+  feedIn: 1.80           # TRY/kWh exported (YEKDEM/lisanssız self-consumption offset, indicative)
+  gasPrice: 2.20         # TRY/kWh thermal natural gas (BOTAŞ commercial ≈1770 TRY/MWh wholesale + distrib/tax)
+  omSolar: 0.15          # TRY/kWh self-used O&M
+  pvCostPerKwp: 28000    # TRY installed/kWp, small commercial rooftop 2025-26 (≈$0.7-0.8/W)
+  hpCostPerKw: 22000     # TRY/kW thermal installed
+  hpFullLoadHours: 1400  # h/yr, milder than Germany (2000)
+  rentPerM2Month: 45     # TRY/m²/month agricultural/light-commercial, Aegean periphery
+  wage: 165              # TRY/h loaded farm labour (2026 min wage ≈147 TRY/h gross + employer load)
+  deprYears: 10
+  horizonYears: 15
+  fishPrices:   # TRY/kg farm-gate / direct-sale, 2026
+    catfish: 95         # yayın/africa catfish, niche
+    tilapia: 110
+    trout: 130          # alabalık, gutted farm-gate/direct; Turkey is a top-3 world producer
+    carp: 70            # sazan, low-value freshwater
+    perch: 180          # tatlısu levreği, niche premium
+    pikeperch: 220      # sudak, export-grade premium
+    archar: 260         # arctic char, very niche
+    sturgeon: 400       # mersin balığı, specialty
+    redclaw: 450        # tropical crayfish, niche premium
+    prawn: 380          # karides, farmed
+    noblecray: 500      # kerevit, high-value
+  cropPrices:   # TRY/kg direct-sale, 2026
+    greens_mix: 90
+    premium_mix: 130
+    lettuce_head: 45      # marul, per kg basis
+    lettuce_leaf: 60
+    rocket: 110           # roka
+    basil: 200            # fesleğen, premium herb
+    spinach: 55           # ıspanak
+    chard: 50             # pazı
+    pakchoi: 100
+    feldsalat: 180        # kuzu kulağı/valerianella, niche
+    herbs: 220            # mixed culinary herbs
+    microgreens: 700      # premium microgreens, direct/HoReCa
+
+subsidies:
+  ipard3_aquaculture:
+    label: "IPARD III – Aquaculture (302)"
+    description: "EU/Türkiye rural development grant for new/expanded aquaculture facilities, processing, cold storage and equipment in eligible provinces."
+    rate: 0.50            # 50-65% depending on applicant (young/female farmers higher)
+    basis: eligibleCapex
+    capEligible: 17500000 # ~€500k cap on eligible investment (EUR/TRY ≈35)
+    commercialOnly: true
+    minInvestment: 700000
+    source: "https://ipard.tarimorman.gov.tr/destekdetay/3"
+    sourceLabel: "IPARD III Measure 302, TKDK/Min. of Agriculture & Forestry"
+    note: "Call-based; rate 50-65% by profile/region; €500k cap. Verify open call window & current rate."
+
+  kkydp_equipment:
+    label: "KKYDP – Rural Development Machinery & Equipment Grant"
+    description: "Non-repayable grant on agricultural machinery and equipment purchases under the Rural Development Investments Support Programme."
+    rate: 0.50            # 50% (up to 70% for some categories/regions)
+    basis: equipment
+    capEligible: 30000000 # project ceiling per 2025 tebliğ (100k–30M TRY band)
+    commercialOnly: false
+    minInvestment: 100000
+    source: "https://www.tarimorman.gov.tr/TRGM"
+    sourceLabel: "KKYDP, Tarım Reformu Genel Müdürlüğü (2025 tebliği)"
+    note: "Call-based, eligible-equipment list changes yearly. Verify rate (50-70%) and current call."
+
+  kosgeb_teknoyatirim:
+    label: "KOSGEB TEKNOYATIRIM – Tech Investment Grant"
+    description: "SME non-repayable grant component for machinery/equipment/software when commercialising a domestically-developed technological product."
+    rate: 0.30            # non-repayable portion of total support (grant + loan)
+    basis: equipment
+    capGrant: 3000000     # non-repayable cap (600k low/mid-tech, up to 3M high-tech)
+    commercialOnly: true
+    source: "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/6443/kobi-teknolojik-urun-yatirim-teknoyatirim-destek-programi"
+    sourceLabel: "KOSGEB KOBİ TEKNOYATIRIM Destek Programı"
+    note: "+15% if domestically-produced equipment. Eligibility tied to a registered tech product; verify caps/period."

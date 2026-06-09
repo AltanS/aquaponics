@@ -1,0 +1,103 @@
+meta:
+  schemaVersion: "1.0"
+  region: thailand
+  label: "Thailand"
+  currency: { code: "THB", symbol: "฿", locale: "th-TH", fxToEur: 0.026 }
+  lastUpdated: "2026-06-08"
+  notes: "Location assumed Central Thailand / greater Bangkok plains. Sources: tilapia farm-gate ~72.5 THB/kg (Tridge/Selina Wamucii Apr 2025); freshwater prawn wholesale (CEIC Bangkok metropolis); catfish wholesale (Thailand Fish Marketing Organization, Mar 2025); commercial electricity blended ~4.5 THB/kWh incl. Ft + VAT (ERC base 3.98 THB/unit, May-Aug 2025; MEA/PEA); Bangkok min wage 400 THB/day from 1 Jul 2025 (Ministry of Labour); Bangkok PV yield ~1,400 kWh/kWp/yr (multi-region Thai PVPS studies); climate normals Bangkok (climate-data.org / weatherspark). All monetary values in THB."
+
+climate:
+  climateZone: tropical-savanna
+  # Bangkok mean monthly air temperature (°C), Jan..Dec — hot year-round
+  monthlyAmbientC: [27.0, 28.3, 29.5, 30.5, 30.0, 29.5, 29.0, 28.8, 28.4, 28.2, 27.8, 26.7]
+  # Tropical: ample daylight year-round, no horticultural supplemental lighting assumed
+  supplementalLight: [false, false, false, false, false, false, false, false, false, false, false, false]
+
+enclosure:
+  type: net-house          # tropical: no heating; insect netting + roof, shading/ventilation driven
+  heatLossFactor: 0.10     # W/m²/°C; heating essentially unused in tropics
+
+economics:
+  feedPrice: 32            # THB/kg floating aquafeed (32% protein, common Thai pellet)
+  cop: 3                   # nominal; heat pump heating effectively never required
+  pvYield: 1400            # kWh/kWp/yr, Bangkok/Central plains
+  scRate: 70               # % PV self-consumed (daytime farm load, pumps/aeration)
+  gridPrice: 4.5           # THB/kWh commercial blended incl. Ft + VAT
+  feedIn: 2.2              # THB/kWh exported (rooftop solar export tier, indicative)
+  gasPrice: 2.0            # THB/kWh thermal (LPG equivalent)
+  omSolar: 0.15            # THB/kWh self-used (O&M)
+  pvCostPerKwp: 32000      # THB/kWp installed, small commercial rooftop
+  hpCostPerKw: 18000       # THB/kW thermal
+  hpFullLoadHours: 50      # h/yr; tropical → heating barely used
+  rentPerM2Month: 80       # THB/m²/month, peri-urban Central Thailand light-industrial/agri land
+  wage: 60                 # THB/h loaded farm labour (≈400 THB/day Bangkok min wage + on-costs ÷ ~8h)
+  deprYears: 10
+  horizonYears: 12
+  fishPrices:   # THB/kg farm-gate / direct-sale
+    catfish: 70       # pla duk; very common & cheap staple
+    tilapia: 75       # pla nin; THE staple, high volume (farm-gate ~72.5)
+    trout: 380        # exotic/imported in tropics → premium niche (highland farmed)
+    carp: 55          # low-value, limited Thai market
+    perch: 180        # priced as barramundi/sea bass (pla kapong) context
+    pikeperch: 320    # not farmed locally; import-equivalent niche
+    archar: 140       # archer/specialty context, niche
+    sturgeon: 600     # exotic, caviar-context premium, very niche
+    redclaw: 320      # redclaw crayfish, premium specialty
+    prawn: 420        # kung mae nam (giant freshwater prawn), premium & widely farmed
+    noblecray: 360    # noble crayfish, exotic premium niche
+  cropPrices:   # THB/kg direct-sale
+    greens_mix: 60        # mixed salad greens
+    premium_mix: 110      # premium/specialty salad mix
+    lettuce_head: 50      # iceberg/cos head lettuce
+    lettuce_leaf: 40      # leaf lettuce
+    rocket: 130           # arugula, specialty
+    basil: 45             # Thai/holy basil cheap & ubiquitous (Genovese commands premium)
+    spinach: 60
+    chard: 80             # uncommon in Thai market, specialty
+    pakchoi: 35           # pak choi / bok choy, very common Asian green, cheap
+    feldsalat: 180        # lamb's lettuce, import-specialty, rare
+    herbs: 100            # mixed culinary herbs
+    microgreens: 600      # high-value, restaurant/HoReCa channel
+
+subsidies:
+  boi_bcg_smart_agri:
+    label: "BOI BCG / Smart Agriculture"
+    description: "Board of Investment promotion for agriculture & smart-farming (Bio-Circular-Green). Import-duty exemption on machinery/equipment plus multi-year corporate income tax exemption; capital-relevant portion expressed as grant-equivalent on imported equipment."
+    rate: 0.10
+    basis: equipment
+    commercialOnly: true
+    minInvestment: 1000000
+    source: "https://www.boi.go.th/upload/content/BOI_A_Guide_EN.pdf"
+    sourceLabel: "BOI Investment Promotion Guide 2025"
+    note: "Primarily a tax incentive (machinery import-duty + CIT exemption), NOT a cash grant. Rate is an estimated grant-equivalent of the duty saving on imported equipment; actual benefit depends on activity category (A1-A4) and tariff lines. Requires BOI promotion certificate."
+  boi_energy_efficiency:
+    label: "BOI Energy Efficiency Improvement"
+    description: "BOI measure for improvement of energy efficiency / switch to renewable energy in existing operations; import-duty exemption on machinery and 3-year CIT exemption on revenue of the existing line, capped at 50% of the investment in the efficiency/PV equipment."
+    rate: 0.10
+    basis: equipment
+    capEligible: 100000000
+    commercialOnly: true
+    requiresSolar: true
+    source: "https://lexnovapartners.com/boi-incentives-for-renewable-energy-thailand/"
+    sourceLabel: "BOI renewable-energy / efficiency measure 2025"
+    note: "Tax incentive, not cash. Grant-equivalent estimate of duty + CIT relief attributable to PV/efficiency CAPEX. Cannot be combined with the Revenue Code solar deduction below on the same equipment."
+  rd805_solar_energy_saving:
+    label: "Solar / Energy-Saving Equipment Deduction (RD 805)"
+    description: "Royal Decree No. 805: 150% corporate tax deduction for investment in DEDE/EGAT 5-star energy-saving machinery and solar equipment; the extra 50% deduction yields a tax saving of roughly 50% × 20% CIT ≈ 10% of qualifying CAPEX."
+    rate: 0.10
+    basis: equipment
+    commercialOnly: true
+    requiresSolar: true
+    source: "https://www.nishimura.com/en/knowledge/publications/20251215-117386"
+    sourceLabel: "Royal Decree No. 805 (eff. 3 Mar 2026, through 31 Dec 2028)"
+    note: "Tax deduction, not a cash grant; benefit ≈ extra-50% deduction × 20% CIT. Equipment must NOT be used in an activity already receiving BOI/EEC CIT exemption — mutually exclusive with the BOI measures above."
+  nia_innovation_grant:
+    label: "NIA Open Innovation Grant"
+    description: "National Innovation Agency open-innovation / agri-foodtech grant co-funding for innovative aquaponics/smart-farming projects; cash grant covering a share of eligible project CAPEX/OPEX."
+    rate: 0.50
+    basis: eligibleCapex
+    capGrant: 1500000
+    minInvestment: 200000
+    source: "https://www.nia.or.th/advance_search/Funding"
+    sourceLabel: "NIA Open Innovation funding (FY2025)"
+    note: "Genuine cash grant but competitive and innovation-gated; typical open-innovation cap on the order of ~1.5M THB and recoverable/co-funding conditions apply. Not guaranteed to all applicants."

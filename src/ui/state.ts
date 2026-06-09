@@ -1,14 +1,14 @@
-import type { CropId, FishId, ScaleId } from '../data';
+import type { CropId, FishId, RegionId, ScaleId } from '../data';
 import type { ScenarioKey } from '../core';
 
-/** Available region IDs */
-export type RegionId = 'berlin-brandenburg';
+/** Region IDs come from the data layer (one per data/regions/*.yaml). */
+export type { RegionId };
 
 /** Main content tabs — sticky header stays visible while tabbing around.
  * Fish & plants share one "production" pane: in a coupled system they are
  * inseparable, so they're tuned and compared side by side. */
-export type TabId = 'results' | 'setup' | 'production' | 'energy';
-export const TAB_IDS: readonly TabId[] = ['results', 'setup', 'production', 'energy'];
+export type TabId = 'results' | 'setup' | 'production' | 'energy' | 'subsidies';
+export const TAB_IDS: readonly TabId[] = ['results', 'setup', 'production', 'energy', 'subsidies'];
 
 export interface AppState {
   scale: ScaleId;

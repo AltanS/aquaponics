@@ -1,5 +1,4 @@
-import { CROPS, ENERGY, FINANCE, FISH, MODEL, PROPERTY, SCALES } from '../data';
-import { BERLIN_REGION, BERLIN_ENCLOSURE } from '../data/berlin-defaults';
+import { CROPS, FISH, MODEL, REGIONS, SCALES } from '../data';
 import { deriveHeatDemand, deriveMonthlyHeatDemand } from '../core/derive';
 import type { CalcInputs } from '../core';
 import { num, setVal } from './dom';
@@ -21,19 +20,21 @@ export const INPUT_IDS = [
 export function applyFishPreset(state: AppState): void {
   const f = FISH[state.species];
   const s = SCALES[state.scale];
-  setVal('fishPrice', f.price);
+  const R = REGIONS[state.region];
+  setVal('fishPrice', R.fishPrices[state.species] ?? f.price);
   setVal('fcr', f.fcr);
   setVal('stockCost', f.stockCost);
   setVal('growMonths', f.growMonths);
-  const heat = Math.round(deriveHeatDemand(f, BERLIN_REGION, BERLIN_ENCLOSURE, s));
+  const heat = Math.round(deriveHeatDemand(f, R, R.enclosure, s));
   setVal('heatDemand', heat);
 }
 
-/** Seed the crop-related inputs from the selected crop. */
+/** Seed the crop-related inputs from the selected crop (regional price override). */
 export function applyCropPreset(state: AppState): void {
   const c = CROPS[state.crop];
+  const R = REGIONS[state.region];
   setVal('yieldM2', c.yld);
-  setVal('plantPrice', c.price);
+  setVal('plantPrice', R.cropPrices[state.crop] ?? c.price);
   setVal('seedCost', c.seedCost);
   setVal('cycleDays', c.cycleDays);
 }
@@ -47,6 +48,7 @@ export function applyCropPreset(state: AppState): void {
 export function applyScalePreset(state: AppState): void {
   const s = SCALES[state.scale];
   const f = FISH[state.species];
+  const R = REGIONS[state.region];
   setVal('fishKg', s.fishKg);
   setVal('growArea', s.growArea);
   setVal('sysKwh', s.sysKwh);
@@ -59,33 +61,34 @@ export function applyScalePreset(state: AppState): void {
   setVal('equipmentCapex', s.equipmentCapex);
   setVal('constructionPerM2', s.constructionPerM2);
   setVal('landLeaseYear', s.landLeaseYear);
-  setVal('heatDemand', Math.round(deriveHeatDemand(f, BERLIN_REGION, BERLIN_ENCLOSURE, s)));
+  setVal('heatDemand', Math.round(deriveHeatDemand(f, R, R.enclosure, s)));
 }
 
 /** Seed every input from the current scale + species + crop + global defaults. */
 export function fillAll(state: AppState): void {
+  const E = REGIONS[state.region].economics;
   applyScalePreset(state);
   applyFishPreset(state);
   applyCropPreset(state);
 
-  setVal('feedPrice', ENERGY.feedPrice);
-  setVal('cop', ENERGY.cop);
-  setVal('pvYield', ENERGY.pvYield);
-  setVal('scRate', ENERGY.scRate);
-  setVal('gridPrice', ENERGY.gridPrice);
-  setVal('feedIn', ENERGY.feedIn);
-  setVal('gasPrice', ENERGY.gasPrice);
-  setVal('omSolar', ENERGY.omSolar);
-  setVal('pvCostPerKwp', ENERGY.pvCostPerKwp);
-  setVal('hpCostPerKw', ENERGY.hpCostPerKw);
-  setVal('hpFullLoadHours', ENERGY.hpFullLoadHours);
+  setVal('feedPrice', E.feedPrice);
+  setVal('cop', E.cop);
+  setVal('pvYield', E.pvYield);
+  setVal('scRate', E.scRate);
+  setVal('gridPrice', E.gridPrice);
+  setVal('feedIn', E.feedIn);
+  setVal('gasPrice', E.gasPrice);
+  setVal('omSolar', E.omSolar);
+  setVal('pvCostPerKwp', E.pvCostPerKwp);
+  setVal('hpCostPerKw', E.hpCostPerKw);
+  setVal('hpFullLoadHours', E.hpFullLoadHours);
 
   setVal('canopyPct', Math.round(MODEL.cropAreaFraction * 100));
   setVal('stackFactor', 1);
-  setVal('rentPerM2Month', PROPERTY.rentPerM2Month);
-  setVal('wage', FINANCE.wage);
-  setVal('deprYears', FINANCE.deprYears);
-  setVal('horizonYears', FINANCE.horizonYears);
+  setVal('rentPerM2Month', E.rentPerM2Month);
+  setVal('wage', E.wage);
+  setVal('deprYears', E.deprYears);
+  setVal('horizonYears', E.horizonYears);
 }
 
 /** Read every editable assumption from the form. */
@@ -135,10 +138,11 @@ export function readInputs(state?: AppState): CalcInputs {
   if (state) {
     const fish = FISH[state.species];
     const scale = SCALES[state.scale];
+    const R = REGIONS[state.region];
     const gridPrice = base.gridPrice;
     const cop = base.cop;
     const gasPrice = base.gasPrice;
-    const monthlyHeat = deriveMonthlyHeatDemand(fish, BERLIN_REGION, BERLIN_ENCLOSURE, scale);
+    const monthlyHeat = deriveMonthlyHeatDemand(fish, R, R.enclosure, scale);
     // Heat pump on → electricity at gridPrice/COP; heat pump off → gas at gasPrice per kWh thermal
     base.monthlyHeatOpex = state.heatpump
       ? monthlyHeat.map((kwhHeat) => (kwhHeat / cop) * gridPrice)

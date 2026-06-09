@@ -28,10 +28,9 @@
       <div class="selection" id="selection" title="Current fish × crop pairing — set on the Fish &amp; plants tab"></div>
     </div>
     <div class="skstats">
-      <div class="sk"><div class="k">Lease · profit / month</div><div class="v" id="sk-lprofit">–</div></div>
-      <div class="sk"><div class="k">Lease · time to break-even</div><div class="v" id="sk-lbe">–</div></div>
-      <div class="sk sk-sep"><div class="k">Rent · profit / month</div><div class="v" id="sk-rprofit">–</div></div>
-      <div class="sk"><div class="k">Rent · time to break-even</div><div class="v" id="sk-rbe">–</div></div>
+      <div class="sk"><div class="k">Better option</div><div class="v txt" id="sk-best">–</div></div>
+      <div class="sk sk-sep"><div class="k">Break-even</div><div class="v" id="sk-be">–</div></div>
+      <div class="sk"><div class="k">Profit / mo <small>after your pay</small></div><div class="v" id="sk-profit">–</div></div>
     </div>
   </div>
   <div class="maintabs" id="main-tabs">
@@ -39,6 +38,7 @@
     <button class="mtab" data-tab="setup">Scale &amp; costs</button>
     <button class="mtab" data-tab="production">Fish &amp; plants</button>
     <button class="mtab" data-tab="energy">Energy</button>
+    <button class="mtab" data-tab="subsidies">Subsidies</button>
     <button class="mtab reset" id="reset-btn" title="Clear the locally saved session and restore defaults">Reset</button>
   </div>
 </div>
@@ -50,56 +50,45 @@
     <div>
       <div class="card">
         <h2>Lease vs. rent</h2>
-        <div class="scen2">
-          <div class="scard lease">
-            <h3><span class="dot" style="background:var(--teal)"></span>Lease &amp; build</h3>
-            <p class="tiny">Cheap land, you build the structure.</p>
-            <div class="line"><span class="lab">Upfront investment</span><span class="val" id="L-capex">–</span></div>
-            <div class="line"><span class="lab">— of which construction</span><span class="val" id="L-con">–</span></div>
-            <div class="line"><span class="lab">— solar + heat pump</span><span class="val" id="L-eq">–</span></div>
-            <div class="line"><span class="lab">− grants &amp; subsidies</span><span class="val" id="L-grant">–</span></div>
-            <div class="line"><span class="lab">Net upfront (after grants)</span><span class="val" id="L-netcapex">–</span></div>
-            <div class="line"><span class="lab">Land lease /yr</span><span class="val" id="L-rent">–</span></div>
-            <div class="line big"><span class="lab">Cash profit /yr <small>owner unpaid</small></span><span class="val" id="L-ebitda">–</span></div>
-            <div class="line"><span class="lab">— your labour (unpaid)</span><span class="val" id="L-owner">–</span></div>
-            <div class="line"><span class="lab">Profit after your wage /yr</span><span class="val" id="L-econ">–</span></div>
-            <div class="line"><span class="lab">Steady net (after deprec.)</span><span class="val" id="L-net">–</span></div>
-            <div class="line"><span class="lab">Break-even (with ramp)</span><span class="val" id="L-be">–</span></div>
-          </div>
-          <div class="scard rent">
-            <h3><span class="dot" style="background:var(--blue)"></span>Rent existing</h3>
-            <p class="tiny">No build, but real monthly rent.</p>
-            <div class="line"><span class="lab">Upfront investment</span><span class="val" id="R-capex">–</span></div>
-            <div class="line"><span class="lab">— of which construction</span><span class="val" id="R-con">–</span></div>
-            <div class="line"><span class="lab">— solar + heat pump</span><span class="val" id="R-eq">–</span></div>
-            <div class="line"><span class="lab">− grants &amp; subsidies</span><span class="val" id="R-grant">–</span></div>
-            <div class="line"><span class="lab">Net upfront (after grants)</span><span class="val" id="R-netcapex">–</span></div>
-            <div class="line"><span class="lab">Structure rent /yr</span><span class="val" id="R-rent">–</span></div>
-            <div class="line big"><span class="lab">Cash profit /yr <small>owner unpaid</small></span><span class="val" id="R-ebitda">–</span></div>
-            <div class="line"><span class="lab">— your labour (unpaid)</span><span class="val" id="R-owner">–</span></div>
-            <div class="line"><span class="lab">Profit after your wage /yr</span><span class="val" id="R-econ">–</span></div>
-            <div class="line"><span class="lab">Steady net (after deprec.)</span><span class="val" id="R-net">–</span></div>
-            <div class="line"><span class="lab">Break-even (with ramp)</span><span class="val" id="R-be">–</span></div>
-          </div>
-        </div>
+        <table class="lvr">
+          <thead>
+            <tr>
+              <th></th>
+              <th id="L-head"><span class="dot lease"></span>Lease &amp; build<span class="winflag" id="L-win"></span></th>
+              <th id="R-head"><span class="dot rent"></span>Rent existing<span class="winflag" id="R-win"></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="lvr-hero">
+              <td>Break-even <small>incl. ramp</small></td>
+              <td class="num" id="L-be">–</td>
+              <td class="num" id="R-be">–</td>
+            </tr>
+            <tr class="lvr-sec"><td colspan="3">Upfront</td></tr>
+            <tr><td>Investment</td><td class="num" id="L-capex">–</td><td class="num" id="R-capex">–</td></tr>
+            <tr class="sub"><td>— of which construction</td><td class="num" id="L-con">–</td><td class="num" id="R-con">–</td></tr>
+            <tr class="sub"><td>— solar + heat pump</td><td class="num" id="L-eq">–</td><td class="num" id="R-eq">–</td></tr>
+            <tr><td>− grants &amp; subsidies</td><td class="num" id="L-grant">–</td><td class="num" id="R-grant">–</td></tr>
+            <tr><td>Net upfront <small>after grants</small></td><td class="num" id="L-netcapex">–</td><td class="num" id="R-netcapex">–</td></tr>
+            <tr><td>Property cost /yr <small>lease: land · rent: structure</small></td><td class="num" id="L-rent">–</td><td class="num" id="R-rent">–</td></tr>
+            <tr class="lvr-sec"><td colspan="3">Steady year · three views, not a running total</td></tr>
+            <tr><td>Operating cash <small>before your pay</small></td><td class="num" id="L-ebitda">–</td><td class="num" id="R-ebitda">–</td></tr>
+            <tr class="sub"><td>— your labour, if paid</td><td class="num" id="L-owner">–</td><td class="num" id="R-owner">–</td></tr>
+            <tr><td>After paying yourself</td><td class="num" id="L-econ">–</td><td class="num" id="R-econ">–</td></tr>
+            <tr><td>Accounting profit <small>after wear</small></td><td class="num" id="L-net">–</td><td class="num" id="R-net">–</td></tr>
+          </tbody>
+        </table>
+        <p class="uncert">Estimates, not quotes. Prices, yields and wages here can each be off by ±30–50% — treat break-even as a <b>range</b>, not a date.</p>
       </div>
 
       <div class="card">
         <h2>Cumulative cash flow &amp; break-even</h2>
-        <p class="note">Year 0 is the upfront investment. The dip deepens through the grow-out phase, then climbs once fish reach market size. Zero-crossing = paid back.</p>
+        <p class="note">Year 0 is the upfront investment. The dip deepens through the grow-out phase, then climbs once fish reach market size (dashed marker = first fish income). Zero-crossing = paid back.</p>
         <div class="chartbox" id="chart"></div>
         <div class="legend">
-          <span><span class="dot" style="background:var(--teal)"></span>Lease &amp; build</span>
-          <span><span class="dot" style="background:var(--blue)"></span>Rent existing</span>
+          <span><span class="dot lease"></span>Lease &amp; build <small class="lnhint">solid</small></span>
+          <span><span class="dot rent"></span>Rent existing <small class="lnhint">dashed</small></span>
         </div>
-      </div>
-
-      <div class="card"><h2>The trade, visualised</h2><div class="cmp" id="cmp"></div></div>
-
-      <div class="card">
-        <h2>Subsidies &amp; grants <span class="h2note">applied only when eligible</span></h2>
-        <p class="note">One-off capital grants for the <b id="sub-focus">Lease &amp; build</b> scenario (follows the Lease/Rent view). They cut the upfront cash and the depreciation base — not operating profit. Verify rates before relying on them.</p>
-        <div id="subsidy-breakdown"></div>
       </div>
     </div>
 
@@ -135,7 +124,7 @@
   </div>
 
   <p class="foot">
-    Compatibility is temperature-based: the fish's comfort midpoint sets the shared-loop temperature, and each crop is rated by whether that falls in its preferred (good), tolerable (workable) or outside (poor) root-zone range. "Poor" pairs aren't impossible — they imply a decoupled design with separate water loops. Monthly cash-flow model: year 0 = investment; fish income starts after the grow-out lag (continuous stocking), crops after the first cycle, costs from month 1 (full feed, slightly conservative). Break-even = first month cumulative turns positive. Excluded: financing/interest, tax, working capital, permits/effluent/hygiene. High-value fish/crustaceans (pikeperch, prawn, noble crayfish) are indicative niche species. Defaults: BDEW/Bundesnetzagentur grid prices, Fraunhofer&nbsp;ISE PV cost, EEG&nbsp;2026 feed-in, Amt für Statistik Berlin-Brandenburg land lease, regional commercial rents, German direct-marketing produce &amp; farm-gate prices, statutory minimum wage 2026.
+    Compatibility is temperature-based: the fish's comfort midpoint sets the shared-loop temperature, and each crop is rated by whether that falls in its preferred (good), tolerable (workable) or outside (poor) root-zone range. "Poor" pairs aren't impossible — they imply a decoupled design with separate water loops. Monthly cash-flow model: year 0 = investment; fish income starts after the grow-out lag (continuous stocking), crops after the first cycle, costs from month 1 (full feed, slightly conservative). Break-even = first month cumulative turns positive. Excluded: financing/interest, tax, working capital, permits/effluent/hygiene. High-value fish/crustaceans (pikeperch, prawn, noble crayfish) are indicative niche species. Defaults are regional point-estimates — climate, energy, wages, rents, per-species prices and subsidy programs all switch with the Region selector and are sourced per <code>data/regions/&lt;region&gt;.yaml</code> (see each region's notes and the subsidy source links for provenance). All values are in the selected region's local currency; the small "≈ €" under the headline numbers is a rough, comparison-only conversion (a dated FX rate in each region file — not a quote). Verify figures before relying on them.
   </p>
 </section>
 
@@ -154,10 +143,10 @@
         <div class="grid2">
           <div class="f"><label>Labour total <span class="unit">hours / week</span></label><input type="number" id="laborHrs" step="1" min="0"></div>
           <div class="f"><label>— your own, unpaid <span class="unit">h/wk (sweat equity, not cash)</span></label><input type="number" id="ownerHrs" step="1" min="0"></div>
-          <div class="f"><label>Loaded wage <span class="unit">€/h (hired + your time value)</span></label><input type="number" id="wage" step="0.5" min="0"></div>
-          <div class="f"><label>Water + nutrients <span class="unit">€/yr</span></label><input type="number" id="waterNut" step="250" min="0"></div>
-          <div class="f"><label>Packaging + distribution <span class="unit">€/yr</span></label><input type="number" id="distrib" step="250" min="0"></div>
-          <div class="f"><label>Maintenance + insurance <span class="unit">€/yr</span></label><input type="number" id="maint" step="250" min="0"></div>
+          <div class="f"><label>Loaded wage <span class="unit"><span class="cur">€</span>/h (hired + your time value)</span></label><input type="number" id="wage" step="0.5" min="0"></div>
+          <div class="f"><label>Water + nutrients <span class="unit"><span class="cur">€</span>/yr</span></label><input type="number" id="waterNut" step="250" min="0"></div>
+          <div class="f"><label>Packaging + distribution <span class="unit"><span class="cur">€</span>/yr</span></label><input type="number" id="distrib" step="250" min="0"></div>
+          <div class="f"><label>Maintenance + insurance <span class="unit"><span class="cur">€</span>/yr</span></label><input type="number" id="maint" step="250" min="0"></div>
         </div>
       </div>
     </div>
@@ -165,19 +154,19 @@
     <div>
       <div class="card">
         <h2>Capital &amp; price assumptions</h2>
-        <p class="note">The central constants — defaults come from <code>data/regions/berlin-brandenburg.yaml</code>. Scale presets overwrite the build-related ones.</p>
+        <p class="note">The central constants — defaults come from the selected region's <code>data/regions/&lt;region&gt;.yaml</code>. Switching region reseeds these; scale presets overwrite the build-related ones.</p>
         <div class="grid2">
-          <div class="f"><label>Equipment CAPEX <span class="unit">€ — tanks, RAS, beds, pumps</span></label><input type="number" id="equipmentCapex" step="1000" min="0"></div>
-          <div class="f"><label>Construction <span class="unit">€/m² — structure (lease)</span></label><input type="number" id="constructionPerM2" step="10" min="0"></div>
-          <div class="f"><label>Land lease <span class="unit">€/yr (lease)</span></label><input type="number" id="landLeaseYear" step="250" min="0"></div>
-          <div class="f"><label>Structure rent <span class="unit">€/m²/month (rent)</span></label><input type="number" id="rentPerM2Month" step="0.25" min="0"></div>
-          <div class="f"><label>PV cost <span class="unit">€/kWp installed</span></label><input type="number" id="pvCostPerKwp" step="50" min="0"></div>
-          <div class="f"><label>Heat-pump cost <span class="unit">€/kW thermal</span></label><input type="number" id="hpCostPerKw" step="50" min="0"></div>
+          <div class="f"><label>Equipment CAPEX <span class="unit"><span class="cur">€</span> — tanks, RAS, beds, pumps</span></label><input type="number" id="equipmentCapex" step="1000" min="0"></div>
+          <div class="f"><label>Construction <span class="unit"><span class="cur">€</span>/m² — structure (lease)</span></label><input type="number" id="constructionPerM2" step="10" min="0"></div>
+          <div class="f"><label>Land lease <span class="unit"><span class="cur">€</span>/yr (lease)</span></label><input type="number" id="landLeaseYear" step="250" min="0"></div>
+          <div class="f"><label>Structure rent <span class="unit"><span class="cur">€</span>/m²/month (rent)</span></label><input type="number" id="rentPerM2Month" step="0.25" min="0"></div>
+          <div class="f"><label>PV cost <span class="unit"><span class="cur">€</span>/kWp installed</span></label><input type="number" id="pvCostPerKwp" step="50" min="0"></div>
+          <div class="f"><label>Heat-pump cost <span class="unit"><span class="cur">€</span>/kW thermal</span></label><input type="number" id="hpCostPerKw" step="50" min="0"></div>
           <div class="f"><label>HP full-load hours <span class="unit">h/yr for sizing</span></label><input type="number" id="hpFullLoadHours" step="100" min="100"></div>
-          <div class="f"><label>Grid price <span class="unit">€/kWh</span></label><input type="number" id="gridPrice" step="0.01" min="0"></div>
-          <div class="f"><label>Feed-in tariff <span class="unit">€/kWh exported</span></label><input type="number" id="feedIn" step="0.01" min="0"></div>
-          <div class="f"><label>Gas heat price <span class="unit">€/kWh thermal</span></label><input type="number" id="gasPrice" step="0.01" min="0"></div>
-          <div class="f"><label>Solar O&amp;M <span class="unit">€/kWh self-used</span></label><input type="number" id="omSolar" step="0.005" min="0"></div>
+          <div class="f"><label>Grid price <span class="unit"><span class="cur">€</span>/kWh</span></label><input type="number" id="gridPrice" step="0.01" min="0"></div>
+          <div class="f"><label>Feed-in tariff <span class="unit"><span class="cur">€</span>/kWh exported</span></label><input type="number" id="feedIn" step="0.01" min="0"></div>
+          <div class="f"><label>Gas heat price <span class="unit"><span class="cur">€</span>/kWh thermal</span></label><input type="number" id="gasPrice" step="0.01" min="0"></div>
+          <div class="f"><label>Solar O&amp;M <span class="unit"><span class="cur">€</span>/kWh self-used</span></label><input type="number" id="omSolar" step="0.005" min="0"></div>
           <div class="f"><label>Depreciation <span class="unit">years</span></label><input type="number" id="deprYears" step="1" min="1"></div>
           <div class="f"><label>Chart horizon <span class="unit">years</span></label><input type="number" id="horizonYears" step="1" min="3" max="40"></div>
         </div>
@@ -207,20 +196,20 @@
           <div class="pairs" id="fish-pairs"></div>
         </div>
         <div class="idx">
-          <div class="row"><span>Value index <small>price net of feed &amp; stock</small></span><span class="score" id="fish-score">–<small>/100</small></span></div>
+          <div class="row big"><span>Margin / kg <small>after feed &amp; juveniles</small></span><span class="raw" id="fish-raw">–</span></div>
+          <div class="row" style="margin-top:8px"><span>Value index <small>rank vs the other species here</small></span><span class="score" id="fish-score">–<small>/100</small></span></div>
           <div class="track"><div class="fill" id="fish-fill"></div></div>
-          <div class="row" style="margin-top:8px"><span>Gross margin</span><span class="raw" id="fish-raw">–</span></div>
         </div>
       </div>
       <div class="card">
         <h2>Fish economics</h2>
         <div class="grid2">
           <div class="f"><label>Harvest <span class="unit">kg live / yr (steady)</span></label><input type="number" id="fishKg" step="50" min="0"></div>
-          <div class="f"><label>Sale price <span class="unit">€/kg</span></label><input type="number" id="fishPrice" step="0.5" min="0"></div>
+          <div class="f"><label>Sale price <span class="unit"><span class="cur">€</span>/kg</span></label><input type="number" id="fishPrice" step="0.5" min="0"></div>
           <div class="f"><label>Grow-out to harvest <span class="unit">months — first revenue lag</span></label><input type="number" id="growMonths" step="1" min="0"></div>
           <div class="f"><label>Feed conversion <span class="unit">kg feed / kg</span></label><input type="number" id="fcr" step="0.05" min="0"></div>
-          <div class="f"><label>Feed price <span class="unit">€/kg</span></label><input type="number" id="feedPrice" step="0.1" min="0"></div>
-          <div class="f"><label>Juvenile cost <span class="unit">€/kg — bought-in fingerlings</span></label><input type="number" id="stockCost" step="0.1" min="0"></div>
+          <div class="f"><label>Feed price <span class="unit"><span class="cur">€</span>/kg</span></label><input type="number" id="feedPrice" step="0.1" min="0"></div>
+          <div class="f"><label>Juvenile cost <span class="unit"><span class="cur">€</span>/kg — bought-in fingerlings</span></label><input type="number" id="stockCost" step="0.1" min="0"></div>
         </div>
       </div>
     </div>
@@ -237,9 +226,9 @@
           <p class="pairline" id="crop-pair"></p>
         </div>
         <div class="idx">
-          <div class="row"><span>Value index <small>yield × price</small></span><span class="score" id="crop-score">–<small>/100</small></span></div>
+          <div class="row big"><span>Revenue / m² / yr <small>yield × price</small></span><span class="raw" id="crop-raw">–</span></div>
+          <div class="row" style="margin-top:8px"><span>Value index <small>rank vs the other crops here</small></span><span class="score" id="crop-score">–<small>/100</small></span></div>
           <div class="track"><div class="fill" id="crop-fill"></div></div>
-          <div class="row" style="margin-top:8px"><span>Revenue density</span><span class="raw" id="crop-raw">–</span></div>
         </div>
       </div>
       <div class="card">
@@ -250,8 +239,8 @@
           <div class="f"><label>Vertical layers <span class="unit">× yield (towers/multi-tier; adds light + racks)</span></label><input type="number" id="stackFactor" step="0.5" min="1" max="4"></div>
           <div class="f"><label>Days to first harvest <span class="unit">cycle lag</span></label><input type="number" id="cycleDays" step="1" min="0"></div>
           <div class="f"><label>Yield <span class="unit">kg / m² / yr</span></label><input type="number" id="yieldM2" step="1" min="0"></div>
-          <div class="f"><label>Plant price <span class="unit">€/kg</span></label><input type="number" id="plantPrice" step="0.25" min="0"></div>
-          <div class="f"><label>Seedling cost <span class="unit">€/m²/yr</span></label><input type="number" id="seedCost" step="1" min="0"></div>
+          <div class="f"><label>Plant price <span class="unit"><span class="cur">€</span>/kg</span></label><input type="number" id="plantPrice" step="0.25" min="0"></div>
+          <div class="f"><label>Seedling cost <span class="unit"><span class="cur">€</span>/m²/yr</span></label><input type="number" id="seedCost" step="1" min="0"></div>
         </div>
       </div>
     </div>
@@ -285,7 +274,7 @@
         <div class="mini">
           <div><div class="k">PV generated</div><div class="v" id="e-gen">–</div></div>
           <div><div class="k">Grid imported</div><div class="v" id="e-imp">–</div></div>
-          <div><div class="k">Effective €/kWh</div><div class="v" id="e-eff">–</div></div>
+          <div><div class="k">Effective price /kWh</div><div class="v" id="e-eff">–</div></div>
         </div>
       </div>
       <div class="card">
@@ -294,6 +283,15 @@
         <div id="energy-totals"></div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- SUBSIDIES -->
+<section class="pane" id="pane-subsidies">
+  <div class="card">
+    <h2>Subsidies &amp; grants <span class="h2note">applied only when eligible</span></h2>
+    <p class="note">One-off capital grants for the <b id="sub-focus">Lease &amp; build</b> scenario (follows the Lease/Rent view on the Results tab). They cut the upfront cash and the depreciation base — not operating profit. Programs switch with the Region selector; verify rates and eligibility before relying on them.</p>
+    <div id="subsidy-breakdown"></div>
   </div>
 </section>
 

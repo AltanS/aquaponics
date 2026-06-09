@@ -1,0 +1,103 @@
+meta:
+  schemaVersion: "1.0"
+  region: spain
+  label: "Spain"
+  currency: { code: "EUR", symbol: "€", locale: "es-ES", fxToEur: 1 }
+  lastUpdated: "2026-06-08"
+  notes: "Location assumed: Valencia/Murcia coastal SE Spain (temperate-Mediterranean horticulture/aquaculture belt). Sources: AEMET monthly normals; Eurostat/OMIE electricity; MIBGAS/TUR gas 2025-2026; Observatorio de Precios MAPA + Mercasa origin prices; FEMPA 2021-2027 (GVA & Región de Murcia); PERTE Agroalimentario (MAPA); IDAE Next Generation autoconsumo. PVGIS optimal-tilt yields Valencia/Murcia ~1550-1650 kWh/kWp/yr."
+
+climate:
+  climateZone: temperate-mediterranean
+  monthlyAmbientC: [11.5, 12.5, 14.5, 16.5, 19.5, 23.5, 26.0, 26.5, 24.0, 20.0, 15.5, 12.5]  # AEMET Valencia/Murcia coast
+  supplementalLight: [true, true, false, false, false, false, false, false, false, false, true, true]
+
+enclosure:
+  type: polytunnel
+  heatLossFactor: 0.28   # W/m²/°C; single/double polytunnel in mild Mediterranean climate
+
+economics:
+  feedPrice: 1.65        # EUR/kg aquafeed (RAS extruded pellet, bulk 2025)
+  cop: 3.2               # seasonal COP, mild climate air/water heat pump
+  pvYield: 1600          # kWh/kWp/yr, PVGIS optimal tilt Valencia/Murcia
+  scRate: 65             # % of PV self-consumed (24/7 RAS base load)
+  gridPrice: 0.19        # EUR/kWh all-in commercial (energy+tolls+taxes, 2025)
+  feedIn: 0.05           # EUR/kWh exported surplus (compensación de excedentes ~ pool price)
+  gasPrice: 0.055        # EUR/kWh thermal (natural gas, SME, 2025-2026)
+  omSolar: 0.01          # EUR/kWh O&M attributable to self-used PV
+  pvCostPerKwp: 850      # EUR/kWp installed, commercial rooftop 30-100 kWp (2025)
+  hpCostPerKw: 750       # EUR/kW thermal installed
+  hpFullLoadHours: 1400  # h/yr; milder than Germany -> lower heating demand
+  rentPerM2Month: 4.0    # EUR/m²/month, peri-urban agro/light-industrial nave SE Spain
+  wage: 13.5             # EUR/h fully loaded farm labour (SMI 2025 ~9.26 EUR/h gross + ~30% social charges)
+  deprYears: 12
+  horizonYears: 15
+  fishPrices:            # EUR/kg direct farm-gate / direct-sale, Spain 2025
+    catfish: 6.0         # African/European catfish (siluro), niche direct sale
+    tilapia: 7.0         # whole live/fresh, limited domestic production, premium local
+    trout: 6.5           # rainbow trout farm-gate ~5.5 origin, ~6.5 direct-sale
+    carp: 4.0            # low domestic demand, direct sale
+    perch: 11.0          # European perch (perca), premium freshwater
+    pikeperch: 16.0      # lucioperca, high-value
+    archar: 14.0         # Arctic char, premium niche
+    sturgeon: 18.0       # Riofrío/Caviar Pirinea farm flesh (excl. caviar)
+    redclaw: 22.0        # redclaw / freshwater crayfish, premium live
+    prawn: 18.0          # freshwater prawn (Macrobrachium), direct sale
+    noblecray: 28.0      # noble crayfish (Astacus), high-value protected market
+  cropPrices:            # EUR/kg direct-sale, Spain 2025
+    greens_mix: 4.5
+    premium_mix: 7.0
+    lettuce_head: 1.8    # whole-head retail/direct (origin ~1.4)
+    lettuce_leaf: 5.0    # baby-leaf / IV gama
+    rocket: 8.0          # rúcula, baby-leaf premium
+    basil: 14.0          # albahaca, fresh herb
+    spinach: 3.5         # espinaca baby
+    chard: 2.5           # acelga
+    pakchoi: 4.0         # pak choi, specialty
+    feldsalat: 12.0      # canónigos / lamb's lettuce, premium IV gama
+    herbs: 12.0          # mixed fresh culinary herbs
+    microgreens: 35.0    # microgreens, high-value direct
+
+subsidies:
+  fempa_acuicultura_cv:
+    label: "FEMPA Acuicultura sostenible (C. Valenciana)"
+    description: "Productive investment & climate-neutral investment grants for aquaculture facilities (construction, equipment, RAS) under FEMPA 2021-2027, managed by Generalitat Valenciana."
+    rate: 0.50
+    basis: eligibleCapex
+    capEligible: 6000000   # operations must be under 6,000,000 EUR
+    commercialOnly: true
+    source: "https://sede.gva.es/es/inicio/procedimientos?id_proc=18622"
+    sourceLabel: "GVA Sede Electrónica proc. 18622 (Orden 7/2024, FEMPA)"
+    note: "Aid intensity 50% of eligible expense (exceptions in Annex I of Orden 7/2024). Co-financed 70% FEMPA / 30% Generalitat. SMEs prioritised; competitive call."
+
+  fempa_acuicultura_murcia:
+    label: "FEMPA Pesca y Acuicultura (Región de Murcia)"
+    description: "Regional FEMPA grants for productive investments in aquaculture, modernisation of facilities and processing/marketing in the Región de Murcia."
+    rate: 0.50
+    basis: eligibleCapex
+    commercialOnly: true
+    source: "https://sede.carm.es/web/pagina?IDCONTENIDO=1395&IDTIPO=240&RASTRO=c$m40288"
+    sourceLabel: "CARM Sede Electrónica - Ayudas FEMPA (4.5M EUR call 2025)"
+    note: "Standard FEMPA public-aid intensity up to 50%; higher for collective/high-added-value projects. Call ~4.57M EUR executed 2026-2027."
+
+  perte_agroalimentario_pesca:
+    label: "PERTE Agroalimentario - Industria pesquera y acuícola"
+    description: "Next Generation grants (Plan de Recuperación) to modernise and decarbonise fish/aquaculture processing and production industry."
+    rate: 0.50
+    basis: eligibleCapex
+    capGrant: 5000000      # up to 5,000,000 EUR grant per project
+    minInvestment: 1500000 # investment must exceed 1,500,000 EUR
+    commercialOnly: true
+    source: "https://planderecuperacion.gob.es/noticias/agricultura-convoca-ayudas-industria-pesquera-acuicola-plan-recuperacion-20-millones-euros-perte-agroalimentario-prtr"
+    sourceLabel: "Plan de Recuperación - PERTE Agroalimentario (MAPA)"
+    note: "Up to 50% of eligible costs, max 5M EUR/project; min investment 1.5M EUR. Geared to larger industrial/processing projects; execution deadlines apply (NGEU)."
+
+  idae_autoconsumo_ng:
+    label: "IDAE Next Generation - Autoconsumo solar"
+    description: "Next Generation EU rebate for self-consumption solar PV (and storage) installations on commercial/productive premises, administered via IDAE and regional energy agencies."
+    rate: 0.30
+    basis: pv
+    requiresSolar: true
+    commercialOnly: true
+    source: "https://www.idae.es/ayudas-y-financiacion/programa-energias-renovables-innovadoras"
+    sourceLabel: "IDAE - Programa autoconsumo / Energías Renovables Innovadoras (NGEU)"
+    note: "Effective rebate for businesses typically 15-45% of eligible PV cost (≈460-1188 EUR/kWp); ~30% used as representative. Storage attracts higher rates. Subject to open regional calls and de minimis limits."

@@ -1,5 +1,5 @@
 /**
- * Reference-data shapes (see HANDOFF.md §3).
+ * Reference-data shapes — the typed view of the YAML in /data.
  * These files are version-controlled, read-only at runtime — edit them to
  * update the model's defaults; never mutate them from code.
  * All monetary defaults are Berlin/Brandenburg 2026 point estimates.
@@ -14,7 +14,8 @@ export interface FishSpecies {
   type: 'Fish' | 'Crustacean';
   /** €/kg, direct-sale / restaurant channel */
   price: number;
-  /** feed kg per kg live weight — BIOLOGICAL FCR (see HANDOFF.md §5.1) */
+  /** feed kg per kg live weight — BIOLOGICAL FCR (optimistic; no survival rate,
+   *  so the real economic FCR is higher — see README "Known limitations") */
   fcr: number;
   /** €/kg produced — bought-in juveniles (the model does NOT breed) */
   stockCost: number;

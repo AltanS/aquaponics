@@ -2,7 +2,7 @@ meta:
   schemaVersion: "1.0"
   region: universal
   lastUpdated: "2026-06-04"
-  notes: "Scale ladder: hobby → pilot → small → mid (HANDOFF.md §2.4). Build standard (€/m²) and land lease travel with the scale — commercial tiers use insulated-greenhouse rates, hobby uses a polytunnel."
+  notes: "Scale ladder: hobby → pilot → small → mid. Build standard (€/m²) and land lease travel with the scale — commercial tiers use insulated-greenhouse rates, hobby uses a polytunnel."
 
 entities:
   hobby:

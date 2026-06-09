@@ -2,9 +2,8 @@
 
 Interactive feasibility model for commercial aquaponics. Pick a region, a fish, a
 crop and a scale, tune the inputs, and the model live-computes whether the venture
-pays back — and when. Vite + TypeScript rebuild of the original single-file
-prototype (`aquaponics-calculator.html`, kept as the behavioural reference —
-see `HANDOFF.md` for the full domain handoff).
+pays back — and when. Vanilla TypeScript + Vite; the original single-file
+prototype is kept as `aquaponics-calculator.html` for reference.
 
 ## What it does
 
@@ -16,9 +15,9 @@ see `HANDOFF.md` for the full domain handoff).
   for the grow-out ramp (no fish income until the fish reach market size, no crop
   income until the first cycle), so the chart shows the cash valley → payback
   J-curve, not an idealised flat year.
-- **Three honest profit views.** Operating cash (before paying yourself),
-  profit after paying yourself a wage, and accounting profit after depreciation —
-  shown as parallel lenses, not a misleading running total.
+- **Three honest profit views.** Operating cash (before paying yourself), profit
+  after paying yourself a wage, and accounting profit after depreciation — shown
+  as parallel lenses, not a misleading running total.
 - **Fish × crop pairing.** The selected fish sets the shared loop temperature;
   each crop is rated good / workable / poor against it (poor = a decoupled design,
   never a hard block).
@@ -31,9 +30,9 @@ see `HANDOFF.md` for the full domain handoff).
   comparison) and **capital-subsidy programmes** with real, sourced eligibility
   gates.
 - **Everything is an editable assumption.** All defaults come from version-
-  controlled YAML (`data/`); your in-browser tweaks persist locally. Figures are
-  dated point estimates — the UI says so, and rounds break-even to a range rather
-  than feigning precision.
+  controlled YAML; your in-browser tweaks persist locally. Figures are dated point
+  estimates — the UI says so, and rounds break-even to a range rather than feigning
+  precision.
 
 ## Run
 
@@ -45,158 +44,95 @@ pnpm test        # golden-value + unit tests + YAML schema/staleness checks
 pnpm build:data  # regenerate src/data/generated.ts after editing /data/*.yaml
 ```
 
-A `pre-push` git hook in `.githooks/` runs the tests before every push
-(activated via `core.hooksPath` by the `prepare` script on `pnpm install`).
-
-### Tailscale access
-
-`pnpm dev` / `pnpm preview` listen on **all interfaces, port 5174**
-(`vite.config.ts`: `host: true`; 5173 belongs to `../tgl` on this host —
-override with `PORT=…`). Tailscale MagicDNS hostnames (`bluefin`,
-`*.tailnet.internal`, `*.ts.net`) are allowlisted through Vite's Host-header
-check; other Host values get a 403. Open `http://bluefin:5174/` (or the
-node's `100.x` Tailscale IP) from any device on the tailnet.
+A `pre-push` git hook runs the tests before every push. `pnpm dev` / `pnpm preview`
+serve on all interfaces, port 5174 (override with `PORT=…`); Tailscale MagicDNS
+hosts are allow-listed, so `http://bluefin:5174/` works from any device on the
+tailnet.
 
 ## Architecture
 
-Data / logic / UI are strictly separated (HANDOFF.md §6):
+Data, logic and UI are strictly separated:
 
 ```
-data/              human-editable YAML reference data (source of truth)
-  fish.yaml  crops.yaml  scales.yaml  regions/berlin-brandenburg.yaml
+data/              human-editable YAML reference data (the source of truth)
+  fish.yaml  crops.yaml  scales.yaml  model.yaml  regions/*.yaml
 scripts/
   build-data.ts    YAML → zod validation → src/data/generated.ts codegen
 src/
-  data/    generated artifact + shared types — read-only at runtime
-           generated.ts (checked in)  types.ts  berlin-defaults.ts
-  core/    pure, DOM-free calculation functions (the asset — guarded by tests)
-           energy.ts  scenario.ts  simulate.ts  derive.ts  pairing.ts  indices.ts
-  ui/      thin DOM layer: reads data, calls the core, renders
+  data/   generated artifact + shared types (read-only at runtime)
+  core/   pure, DOM-free calculation functions — guarded by golden tests
+  ui/     thin DOM layer: reads data, calls the core, renders
 test/
-  core.test.ts     golden values pinned from the prototype + unit tests
+  core.test.ts     golden values + unit tests
   schema.test.ts   YAML validation + generated.ts staleness guard
 ```
 
-- **All fish/crop/scale/economics assumptions live in `/data/*.yaml`** — edit
-  those files to update defaults; nothing economic is hard-coded elsewhere.
-- `src/core/` mirrors the calculation reference in HANDOFF.md §4
-  (`computeScenario`, `simulateMonthly`, `pairFishPlant`, `indexScore`, …)
-  and never touches the DOM.
-- The UI is organised into main tabs (Results · Scale & costs · Fish & plants ·
-  Energy · Subsidies) under a sticky header that keeps the four key metrics and a
-  cash-flow sparkline visible while adjusting variables. It re-renders live on any
-  input. Headline money figures in non-EUR regions carry a small comparison-only
-  "≈ €" companion (a dated FX rate per region file — not a quote).
-- **Local persistence:** the whole session (selections, toggles, active tab,
-  every input value) is stored in the browser via
-  [TinyBase](https://tinybase.org/) (`src/ui/persist.ts`, localStorage key
-  `aquaponics-calculator`) — same library/pattern as `~/playground/synth`.
-  Reloading restores the exact session; the **Reset** button in the tab bar
-  wipes it back to defaults. TinyBase is the app's only runtime dependency.
+- **All economic assumptions live in `/data/*.yaml`** — nothing is hard-coded.
+- `src/core/` is pure and DOM-free (`computeScenario`, `simulateMonthly`,
+  `pairFishPlant`, `indexScore`, …) — the asset; changing it means re-pinning the
+  golden tests.
+- The UI re-renders live on any input. Tabs: Results · Scale & costs ·
+  Fish & plants · Energy · Subsidies, under a sticky header with the key metrics.
+- **Persistence:** the whole session (selections, toggles, every input) is stored
+  in the browser via [TinyBase](https://tinybase.org/) (localStorage); the
+  **Reset** button wipes it back to defaults. TinyBase is the only runtime
+  dependency.
 
 ## Domain notes
 
-Key semantics that must survive future changes (HANDOFF.md §2):
-
-- Lease-vs-rent are mutually exclusive property scenarios — construction CAPEX
+- Lease and rent are mutually exclusive property scenarios — construction CAPEX
   belongs to *lease only*.
-- The model **buys** juveniles; it does not breed. FCR defaults are biological
-  (optimistic) — an economic-FCR/survival input is the highest-value next fix.
+- The model **buys** juveniles; it does not breed (some species, e.g. African
+  catfish and freshwater prawn, can't complete their lifecycle in the loop anyway).
 - A "poor" fish↔crop pairing is not a hard block — it implies a decoupled
   (separate-loop) design.
-- All monetary defaults are dated 2026 point estimates; provenance in
-  HANDOFF.md §7.
-- Per-species/per-crop real-world feasibility research (grower forums, blogs,
-  commercial cases) lives in `docs/research/` — rankings, cross-cutting themes,
-  and the model-corrections table that drove the current YAML values.
+- Per-species/per-crop feasibility research (grower forums, commercial cases,
+  the model-corrections table behind the YAML values) lives in `docs/research/`.
 
-## Data pipeline
+## Known limitations
 
-Reference data lives in human-editable YAML files under `/data/` at repo root.
-A build-time codegen script validates them and emits a typed TypeScript artifact.
+A feasibility estimate, not a business plan:
 
-### File layout
+- **FCR is biological (optimistic)** — no survival rate, so real "economic" feed
+  and juvenile costs run higher. Matters more for comparing species than for the
+  break-even of any one.
+- **Seasonal energy is flattened** to an annual self-consumption %, which flatters
+  winter (heat demand peaks exactly as PV collapses).
+- **All-cash financing** — year 0 is a single CAPEX outflow; no debt or interest.
+- **Not modelled:** tax/VAT, working capital, and regulatory overhead (permits,
+  effluent rules, food-hygiene registration) — all real time and money.
+- **Figures are dated point estimates** with wide error bars; high-value niche
+  species (pikeperch, prawn, noble crayfish) are especially soft.
 
-```
-data/
-  fish.yaml                   # universal biology — 11 species (fcr, temp band, growMonths, marketWeightKg, wiki, …)
-  crops.yaml                  # universal biology — 12 crops (yld, cycleDays, temp ranges, unit weights, wiki, …)
-  scales.yaml                 # 4 scale tiers (hobby → mid; harvest, build standards, total + owner labour hrs)
-  model.yaml                  # model assumptions — labour/energy attribution shares, cropAreaFraction (canopy ÷ footprint)
-  regions/                    # one self-contained file per region (loaded automatically)
-    berlin-brandenburg.yaml   #   meta+currency, climate, enclosure, economics (+ price overrides), subsidies
-    spain.yaml  turkey.yaml  usa-west.yaml  usa-east.yaml  australia.yaml  thailand.yaml
-```
+## Working with the data
 
-**Taxonomy:** Biology (fish.yaml, crops.yaml) is region-independent — no prices, no display strings. Everything that varies by place lives in the region file: climate, enclosure, economics, per-species/-crop price overrides (a missing id falls back to the universal price), the local **currency**, and that region's **capital-subsidy programs**. Derived values (heatDemand, suitability, annualMeanAmbientC) are never stored — they're computed. The codegen emits a `REGIONS` map + `RegionId` union from every `regions/*.yaml`; `berlin-brandenburg` is the default and backs the legacy `ENERGY`/`PROPERTY`/`FINANCE`/`SUBSIDIES`/`REGION` exports the pure core + golden tests use.
+`scripts/build-data.ts` parses the YAML, validates every entity against a `zod`
+schema (errors name the file, entity, field and expected unit), and emits
+`src/data/generated.ts` — a deterministic, sorted, **checked-in** artifact so the
+app imports data at zero runtime cost (`zod`/`yaml` stay devDeps). `pnpm build`
+regenerates it; tests don't — instead a staleness guard regenerates in memory and
+fails if the checked-in file is out of date (`run pnpm build:data and commit the
+result`).
 
-### Running the codegen
+**Taxonomy.** Biology (`fish.yaml`, `crops.yaml`) is region-independent — no prices,
+no display strings. Everything place-specific lives in a region file: climate,
+enclosure, economics, per-species/-crop price overrides (a missing id falls back to
+the universal price), the local currency, and that region's subsidy programmes.
+Derived values (heat demand, suitability, mean ambient temp) are computed, never
+stored.
 
-```sh
-pnpm run build:data
-```
+**Editing data:** edit the YAML (cite the source in a comment), run `pnpm build:data`,
+run `pnpm test`, and commit the YAML + regenerated `generated.ts` together.
 
-This runs `scripts/build-data.ts` which:
-1. Parses all YAML files with the `yaml` package.
-2. Validates every entity against a `zod` schema — errors name file, entity, field, and expected unit.
-3. Emits `src/data/generated.ts` — a deterministic, sorted, byte-reproducible TypeScript file.
+**Adding a region:** drop a `data/regions/<id>.yaml` in (mirror
+`berlin-brandenburg.yaml`) — the codegen auto-loads it into the `REGIONS` map, the
+`RegionId` union and the region selector, no code changes. It needs `meta`
+(incl. `currency` with `fxToEur` — EUR per local unit, `1` for EUR regions),
+`climate` (12 monthly temps + supplemental-light flags), `enclosure`, `economics`
+(all money in local currency, with `fishPrices`/`cropPrices` overrides) and
+`subsidies`. **Only add a region with real, sourced numbers** — see `docs/research/`
+for why fabricated zone data is the failure mode to avoid.
 
-The generated file is **checked in** so Vite and vitest can import it at zero
-runtime cost (no YAML parsing in production). `pnpm build` regenerates it as a
-pre-step (`prebuild`); **tests deliberately do not** — instead a staleness test
-in `test/schema.test.ts` regenerates in memory and compares against the
-checked-in file. If you edit YAML without regenerating, `pnpm test` (and
-therefore the pre-push hook) fails with:
-
-```
-src/data/generated.ts is stale — run `pnpm build:data` and commit the result
-```
-
-> **Watch-mode caveat:** `pnpm test:watch` does not re-run codegen when you edit
-> YAML files. Run `pnpm build:data` after a data edit, then re-run the tests.
-
-### Why generated.ts is checked in
-
-- No data-pipeline code in the bundle: `zod` and `yaml` are devDeps only — the data ships as plain TypeScript.
-- Fast imports: no file I/O at startup.
-- CI re-validates YAML via `test/schema.test.ts` — a bad edit fails immediately.
-- Diffs are readable: the generated file is sorted and human-inspectable.
-
-### Editing existing data
-
-1. Edit the relevant YAML file (add a comment citing the source if you change a value).
-2. Run `pnpm run build:data` to regenerate `src/data/generated.ts`.
-3. Run `pnpm test` to confirm existing golden tests still pass (or re-pin if you intentionally changed a value).
-4. Commit both the YAML and the generated file.
-
-### Adding a new region
-
-The codegen loads **every** `data/regions/*.yaml` automatically and emits the
-`REGIONS` map, the `RegionId` union and the region `<select>` from it — no code
-changes needed. **Only add a region when you have real, sourced numbers for it**
-(see `docs/research/` for why fabricated zone data is the failure mode to avoid).
-
-1. Create `/data/regions/<region-id>.yaml` with all required blocks
-   (mirror `berlin-brandenburg.yaml`):
-   - `meta:` header — `schemaVersion`, `region` (must equal the filename id),
-     `label`, `currency:` (`code`, `symbol`, `locale`, `fxToEur` — EUR per 1
-     local unit, a dated rate driving the comparison-only "≈ €" companion;
-     use `1` for EUR regions), `lastUpdated`, `notes`
-   - `climate:` block — `climateZone`, `monthlyAmbientC` (12 numbers), `supplementalLight` (12 bools)
-   - `enclosure:` block — `type`, `heatLossFactor`
-   - `economics:` block — all energy constants, `rentPerM2Month`, `wage`,
-     `deprYears`, `horizonYears`, plus `fishPrices`/`cropPrices` overrides
-     (partial — any omitted id falls back to the universal price). **All money
-     in the region's local currency.**
-   - `subsidies:` block — region-scoped capital grants (`rate`, `basis`, caps,
-     eligibility gates, `source`/`sourceLabel`/`note`)
-2. Run `pnpm run build:data`, then `pnpm test`, and commit the YAML + regenerated
-   `generated.ts` together. The build validates currency, climate-array lengths,
-   and that every price-map key references a real fish/crop id.
-
-### Adding a new species or crop
-
-1. Add an entry to `data/fish.yaml` or `data/crops.yaml` following the existing pattern. Add a comment citing your data source.
-2. Add its price to every region file under `fishPrices:` or `cropPrices:`.
-3. Run `pnpm run build:data`. The generated ID union type (`FishId`, `CropId`) updates automatically.
-4. Run `pnpm test` to confirm the schema test passes.
+**Adding a species/crop:** add the entry to `fish.yaml`/`crops.yaml`, add its price
+to each region's `fishPrices`/`cropPrices`, then `pnpm build:data` (the `FishId` /
+`CropId` unions update automatically) and `pnpm test`.

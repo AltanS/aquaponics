@@ -4,7 +4,7 @@ meta:
   label: "Berlin / Brandenburg"
   currency: { code: "EUR", symbol: "€", locale: "de-DE", fxToEur: 1 }
   lastUpdated: "2026-06-04"
-  notes: "Berlin/Brandenburg regional data — 2026 figures. Climate: cold-continental. Economics from HANDOFF.md §7."
+  notes: "Berlin/Brandenburg regional data — 2026 figures. Climate: cold-continental. Economics (~mid-2026): grid ~25 ct/kWh (BDEW/Bundesnetzagentur), EEG feed-in ~7-8 ct/kWh, PV yield ~950 kWh/kWp/yr (Brandenburg), commercial hall rent ~€3.5-5.7/m²/mo, loaded wage ~€17/h (min wage €13.90 + employer contributions), arable lease ~168 €/ha/yr."
 
 # Climate block — populated fully in spec-02
 climate:

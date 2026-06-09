@@ -35,7 +35,7 @@ export interface RampSeries {
 }
 
 /**
- * Month-by-month cash-flow ramp (HANDOFF.md §4). Continuous stocking is
+ * Month-by-month cash-flow ramp. Continuous stocking is
  * assumed (smooth ramp, not lumpy batches); year 0 is the CAPEX outflow.
  * This produces the realistic cash valley that pushes break-even well past
  * the naive CAPEX / annual-profit figure.

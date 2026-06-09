@@ -38,7 +38,7 @@ export interface ScenarioResult {
 }
 
 /**
- * Steady-state annual economics for one property scenario (HANDOFF.md §4).
+ * Steady-state annual economics for one property scenario.
  * Equipment, solar and heat-pump CAPEX are shared between scenarios;
  * construction belongs to lease ONLY — putting it in both double-counts
  * the building.

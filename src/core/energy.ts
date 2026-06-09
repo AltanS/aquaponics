@@ -22,7 +22,7 @@ export interface EnergyResult {
 }
 
 /**
- * Solar-first energy model with an electric heat pump (HANDOFF.md §2.2).
+ * Solar-first energy model with an electric heat pump.
  * Heat pump converts thermal demand to electricity via SCOP; toggled off it
  * falls back to a gas boiler. Self-consumed solar costs only O&M; surplus is
  * exported at the feed-in tariff; the rest is grid import.

@@ -315,7 +315,7 @@ export const CROPS = {
     difficulty: "Medium",
     label: "Lamb's lettuce",
     notes: "Cold-hardy winter premium — slow and low-yielding but high-priced.",
-    price: 13,
+    price: 24,
     seedCost: 10,
     wiki: "https://en.wikipedia.org/wiki/Valerianella_locusta",
     yld: 7,

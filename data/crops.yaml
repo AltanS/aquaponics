@@ -149,7 +149,7 @@ entities:
     wiki: "https://en.wikipedia.org/wiki/Valerianella_locusta"
     cat: Leafy
     yld: 7          # kg/m²/yr — conservative low-yield winter premium (docs/research/crop-feldsalat.md)
-    price: 13
+    price: 24       # €/kg — corrected to research value (docs/research/crop-feldsalat.md); regions override
     seedCost: 10
     cycleDays: 50
     cMin: 8

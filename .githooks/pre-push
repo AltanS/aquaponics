@@ -1,7 +1,30 @@
 #!/bin/sh
-# Run the test suite before every push; abort the push on failure.
+# Pre-push: gate on tests, then keep the checked-in single-file build in sync.
+
 echo "pre-push: running tests…"
 pnpm test || {
   echo "pre-push: tests failed — push aborted." >&2
   exit 1
 }
+
+# Rebuild the downloadable single-file artifact (build/aquaponics-calculator.html)
+# from source so the tracked copy never drifts from the code being pushed.
+echo "pre-push: building single-file artifact…"
+pnpm run build:single >/dev/null || {
+  echo "pre-push: single-file build failed — push aborted." >&2
+  exit 1
+}
+
+ARTIFACT="build/aquaponics-calculator.html"
+
+# Stale if the rebuild differs from the committed copy, or it isn't tracked yet.
+if ! git diff --quiet -- "$ARTIFACT" \
+  || [ -n "$(git ls-files --others --exclude-standard -- "$ARTIFACT")" ]; then
+  git add "$ARTIFACT"
+  git commit -m "build: refresh single-file artifact" -- "$ARTIFACT" >/dev/null
+  echo "pre-push: artifact was out of date — committed a fresh build." >&2
+  echo "pre-push: re-run your push to include that commit." >&2
+  exit 1
+fi
+
+echo "pre-push: single-file artifact is up to date."

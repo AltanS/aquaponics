@@ -49,11 +49,14 @@ h1{font-family:"IBM Plex Sans",system-ui,sans-serif;font-weight:600;font-size:cl
 @media (max-width:560px){.sk-sep{padding-left:0;border-left:none}}
 .sk .k{font:500 10px/1.2 "IBM Plex Mono";letter-spacing:.07em;text-transform:uppercase;color:var(--ink-2)}
 .sk .k small{font-weight:400;letter-spacing:.02em;text-transform:none;opacity:.85}
-.sk .v{font-family:"IBM Plex Mono";font-weight:500;font-size:19px;margin-top:4px} .sk .v small{font-size:.62em;color:var(--ink-2)}
+/* Reserve room for an optional second line (the break-even ".vsub" clarifier
+   past the horizon, or the non-EUR ".eurx" companion) so the sticky header never
+   grows a row and shifts the page when payback climbs above the chart horizon. */
+.sk .v{font-family:"IBM Plex Mono";font-weight:500;font-size:19px;margin-top:4px;min-height:2.5em} .sk .v small{font-size:.62em;color:var(--ink-2)}
 /* Text-valued tiles (scenario name, "Neither pays back") — not a big mono number. */
 .sk .v.txt{font-family:"IBM Plex Sans";font-size:14px;font-weight:600;line-height:1.25}
 /* One-line clarifier under a non-payback break-even value. */
-.sk .v .vsub{display:block;font:400 10.5px/1.25 "IBM Plex Sans";color:var(--ink-2);margin-top:3px}
+.sk .v .vsub{display:block;font:400 10.5px/1.25 "IBM Plex Sans";color:var(--ink-2);margin-top:3px;white-space:nowrap}
 
 .cols{display:grid;grid-template-columns:1fr 1.04fr;gap:22px;align-items:start}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;margin-bottom:18px}
@@ -66,8 +69,14 @@ h1{font-family:"IBM Plex Sans",system-ui,sans-serif;font-weight:600;font-size:cl
 .dot.rent{background:transparent;border:1.5px solid var(--ink-2)}
 
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:13px 16px}
-.f{display:flex;flex-direction:column;gap:6px}.f.full{grid-column:1/-1}
-.f label{font-size:13px;color:var(--ink-2)} .f .unit{font:400 11px/1 "IBM Plex Mono";color:var(--ink-2)}
+/* Each field subgrids onto its row's label + input tracks (grid-row:span 2), so a
+   label that wraps to two lines grows the shared label track and lifts BOTH inputs
+   in that row equally — the inputs can never drift out of horizontal alignment,
+   however long any single label runs. */
+.f{display:grid;grid-template-rows:subgrid;grid-row:span 2;gap:6px}.f.full{grid-column:1/-1}
+/* Bottom-align a short label so it sits next to its input when the row's other
+   label wraps taller, rather than floating at the top of the track. */
+.f label{font-size:13px;color:var(--ink-2);align-self:end} .f .unit{font:400 11px/1 "IBM Plex Mono";color:var(--ink-2)}
 input,select{font:500 15px/1 "IBM Plex Mono";color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-s);padding:10px 12px;width:100%;transition:border-color .15s,box-shadow .15s}
 input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
 
@@ -189,6 +198,21 @@ table.yt tr.y0 td{color:var(--ink-2)}
 .foot{color:var(--ink-2);font-size:12.5px;margin-top:24px;max-width:90ch}
 .foot code{font-family:"IBM Plex Mono";background:var(--surface-2);padding:1px 5px;border-radius:0}
 @media (max-width:900px){.cols{grid-template-columns:1fr}.skstats{margin-left:0}}
+
+/* Injected tables (prod totals are 4 cols, energy/subsidy 2-3) scroll inside
+   their card instead of overflowing the viewport on narrow screens — same trick
+   as .ytwrap already uses for the year-by-year table. */
+#prod-totals,#energy-totals,#subsidy-breakdown{overflow-x:auto}
+
+@media (max-width:560px){
+  /* Stack the two number columns and reclaim horizontal room. */
+  .grid2{grid-template-columns:1fr}
+  .wrap{padding:0 14px 70px}
+  .card{padding:16px 15px}
+  details.cfg>summary,details.cfg .cbody{padding-left:15px;padding-right:15px}
+  /* Give the lease/rent number columns more room than their label. */
+  .lvr th:first-child{width:38%}
+}
 
 /* ── Spec-06: Suitability badges, vintage banner, region selector ─────────── */
 .badge-native{display:inline-block;font-size:10px;font-weight:600;padding:1px 6px;border-radius:0;background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good);margin-left:4px;vertical-align:middle;letter-spacing:.02em}
